@@ -1,0 +1,110 @@
+---
+title: "Anchor"
+description: "The Anchor is a styled link that helps users navigate from one location to another."
+---
+
+## Installation
+
+```bash
+npm install @zendeskgarden/react-buttons styled-components
+```
+
+```tsx
+import { Anchor } from '@zendeskgarden/react-buttons';
+```
+
+## When to use
+
+**Use an Anchor:**
+- To navigate from one page to another
+- To navigate within a page (hash links)
+- To display links alongside body text
+
+**Do not use an Anchor:**
+- To prompt an action or submit data — use a [Button](/components/button) instead
+
+<Note>
+  The distinction between Anchor and Button is semantic. An Anchor navigates — it changes the user's location. A Button acts — it triggers a process or mutation. Choosing the right element ensures correct browser behavior and accessible semantics.
+</Note>
+
+## Usage
+
+### Default
+
+`Anchor` is a styled `<a>` element. It accepts all standard anchor attributes, including `href`, `target`, and `rel`.
+
+```tsx
+import { Anchor } from '@zendeskgarden/react-buttons';
+
+function Example() {
+  return (
+    <p>
+      Read the{' '}
+      <Anchor href="/components/introduction">components overview</Anchor>{' '}
+      for installation instructions.
+    </p>
+  );
+}
+```
+
+### Danger
+
+Danger styling communicates that navigating away from your current location will have destructive results — for example, a "cancel changes" link.
+
+```tsx
+<Anchor href="/discard" isDanger>
+  Discard all changes
+</Anchor>
+```
+
+### External links
+
+When linking to an external domain, set `isExternal` to automatically append an external-link icon and add `target="_blank"` and `rel="noopener noreferrer"` for security.
+
+```tsx
+<Anchor href="https://github.com/zendeskgarden" isExternal>
+  View on GitHub
+</Anchor>
+```
+
+<Tip>
+  `isExternal` automatically adds `rel="noopener noreferrer"`, which prevents the new tab from gaining access to the opener page's `window` object. You do not need to set this manually.
+</Tip>
+
+### Hidden underline
+
+Hide an anchor's underline to reduce visual fatigue when multiple links are displayed close together (for example, in a navigation list).
+
+```tsx
+<Anchor href="/components/button" isUnderlined={false}>
+  Button
+</Anchor>
+```
+
+## API
+
+### Anchor props
+
+<ParamField path="props.href" type="string" required>
+  The URL the anchor navigates to.
+</ParamField>
+
+<ParamField path="props.isDanger" type="boolean" default="false">
+  Applies danger styling to communicate destructive navigation.
+</ParamField>
+
+<ParamField path="props.isExternal" type="boolean" default="false">
+  Appends an external-link icon and sets `target="_blank"` and `rel="noopener noreferrer"`.
+</ParamField>
+
+<ParamField path="props.isUnderlined" type="boolean" default="true">
+  Controls whether the anchor's underline is visible.
+</ParamField>
+
+<ParamField path="props.target" type="string">
+  Standard HTML anchor `target` attribute (e.g., `'_blank'`).
+</ParamField>
+
+<ParamField path="props.rel" type="string">
+  Standard HTML anchor `rel` attribute.
+</ParamField>

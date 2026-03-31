@@ -1,0 +1,122 @@
+---
+title: "Badge (Status indicator)"
+description: "The StatusIndicator component provides a consistent, accessible representation of a user's current status with an icon and label."
+---
+
+`StatusIndicator` is part of the `@zendeskgarden/react-avatars` package. Use it to display contextual information for a user's presence or availability status.
+
+<Note>
+  To communicate other kinds of status (categories, labels, filters), use a [Tag](/components/tags) instead.
+</Note>
+
+## Installation
+
+```bash
+npm install @zendeskgarden/react-avatars
+```
+
+```tsx
+import { StatusIndicator } from '@zendeskgarden/react-avatars';
+```
+
+## Usage
+
+### Default
+
+A `StatusIndicator` renders an icon alongside a label. Always provide an `aria-label` for accessibility.
+
+```tsx
+import { StatusIndicator } from '@zendeskgarden/react-avatars';
+
+const Example = () => (
+  <StatusIndicator type="offline" aria-label="status: offline">
+    Offline
+  </StatusIndicator>
+);
+```
+
+### Types
+
+There are four status types: `available`, `away`, `transfers`, and `offline`.
+
+```tsx
+import { StatusIndicator } from '@zendeskgarden/react-avatars';
+
+const Example = () => (
+  <>
+    <StatusIndicator type="available" aria-label="status: available">
+      Available
+    </StatusIndicator>
+    <StatusIndicator type="away" aria-label="status: away">
+      Away
+    </StatusIndicator>
+    <StatusIndicator type="transfers" aria-label="status: transfers only">
+      Transfers only
+    </StatusIndicator>
+    <StatusIndicator type="offline" aria-label="status: offline">
+      Offline
+    </StatusIndicator>
+  </>
+);
+```
+
+### Custom caption
+
+Pass any string as children to use a custom caption, or omit children to show no label at all.
+
+```tsx
+import { StatusIndicator } from '@zendeskgarden/react-avatars';
+
+const Example = () => (
+  <>
+    {/* Custom caption */}
+    <StatusIndicator type="away" aria-label="status: away">
+      Foraging for mushrooms
+    </StatusIndicator>
+
+    {/* No caption */}
+    <StatusIndicator type="away" aria-label="status: away" />
+  </>
+);
+```
+
+### Size
+
+Status indicators come in two sizes: default and compact.
+
+```tsx
+import { StatusIndicator } from '@zendeskgarden/react-avatars';
+
+const Example = () => (
+  <>
+    <StatusIndicator type="offline" aria-label="status: offline">
+      Offline
+    </StatusIndicator>
+    <StatusIndicator type="offline" aria-label="status: offline" isCompact>
+      Offline
+    </StatusIndicator>
+  </>
+);
+```
+
+## Component structure
+
+```tsx
+<StatusIndicator type="available" aria-label="status: available">
+  {/* Optional label text */}
+</StatusIndicator>
+```
+
+## Props
+
+<ParamField path="type" type="'available' | 'away' | 'transfers' | 'offline'" required>
+  Determines the icon and color used to represent the status.
+</ParamField>
+
+<ParamField path="aria-label" type="string" required>
+  Accessible label for the status indicator. Required for screen reader support.
+</ParamField>
+
+<ParamField path="isCompact" type="boolean" default="false">
+  Renders the indicator in a smaller, compact size.
+</ParamField>

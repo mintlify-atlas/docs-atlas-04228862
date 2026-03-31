@@ -1,0 +1,222 @@
+---
+title: "Accordion"
+description: "Expandable and collapsible section headers for organizing related content through progressive disclosure."
+---
+
+```tsx
+import { Accordion, Stepper } from '@zendeskgarden/react-accordions';
+```
+
+Accordions are headers that can be expanded to reveal content or collapsed to hide it. Use them to organize related information into sections and surface content through progressive disclosure.
+
+Do not use Accordion to guide users through a sequential process — use [Stepper](#stepper) instead.
+
+## Basic usage
+
+By default, only one section can be open at a time. Clicking an open section's header will collapse it.
+
+```tsx
+import { Accordion } from '@zendeskgarden/react-accordions';
+
+const Example = () => (
+  <Accordion level={4}>
+    <Accordion.Section>
+      <Accordion.Header>
+        <Accordion.Label>How do you start gardening?</Accordion.Label>
+      </Accordion.Header>
+      <Accordion.Panel>
+        Turnip greens yarrow ricebean rutabaga endive cauliflower sea lettuce kohlrabi amaranth
+        water spinach avocado daikon napa cabbage asparagus winter purslane kale.
+      </Accordion.Panel>
+    </Accordion.Section>
+    <Accordion.Section>
+      <Accordion.Header>
+        <Accordion.Label>What are the basics of gardening?</Accordion.Label>
+      </Accordion.Header>
+      <Accordion.Panel>
+        Corn amaranth salsify bunya nuts nori azuki bean chickweed potato bell pepper artichoke.
+        Nori grape silver beet broccoli kombu beet greens fava bean potato quandong celery.
+      </Accordion.Panel>
+    </Accordion.Section>
+    <Accordion.Section>
+      <Accordion.Header>
+        <Accordion.Label>What are the best tools?</Accordion.Label>
+      </Accordion.Header>
+      <Accordion.Panel>
+        Celery quandong swiss chard chicory earthnut pea potato. Salsify taro catsear garlic
+        gram celery bitterleaf wattle seed collard greens nori.
+      </Accordion.Panel>
+    </Accordion.Section>
+  </Accordion>
+);
+```
+
+## Component structure
+
+```tsx
+<Accordion level={4}>
+  <Accordion.Section>
+    <Accordion.Header>
+      <Accordion.Label>{/* section title */}</Accordion.Label>
+    </Accordion.Header>
+    <Accordion.Panel>
+      {/* collapsible content */}
+    </Accordion.Panel>
+  </Accordion.Section>
+  {/* additional sections */}
+</Accordion>
+```
+
+## Multiple sections open
+
+Add `isExpandable` to allow multiple sections to be open or closed at the same time.
+
+```tsx
+<Accordion level={4} isExpandable>
+  <Accordion.Section>
+    <Accordion.Header>
+      <Accordion.Label>How do you start gardening?</Accordion.Label>
+    </Accordion.Header>
+    <Accordion.Panel>
+      Turnip greens yarrow ricebean rutabaga endive cauliflower...
+    </Accordion.Panel>
+  </Accordion.Section>
+  <Accordion.Section>
+    <Accordion.Header>
+      <Accordion.Label>What are the basics of gardening?</Accordion.Label>
+    </Accordion.Header>
+    <Accordion.Panel>
+      Corn amaranth salsify bunya nuts nori azuki bean chickweed...
+    </Accordion.Panel>
+  </Accordion.Section>
+</Accordion>
+```
+
+## Bare (no borders)
+
+Remove section borders with `isBare`.
+
+```tsx
+<Accordion level={4} isBare>
+  <Accordion.Section>
+    <Accordion.Header>
+      <Accordion.Label>Section title</Accordion.Label>
+    </Accordion.Header>
+    <Accordion.Panel>Section content without borders.</Accordion.Panel>
+  </Accordion.Section>
+</Accordion>
+```
+
+## Size
+
+An Accordion can be default or compact.
+
+```tsx
+<Accordion level={4} size="compact">
+  {/* sections */}
+</Accordion>
+```
+
+## Props
+
+### Accordion
+
+<ParamField path="level" type="1 | 2 | 3 | 4 | 5 | 6" required>
+  The ARIA heading level for all `Accordion.Header` elements in this accordion. Choose a level that fits the document outline of the page.
+</ParamField>
+
+<ParamField path="isExpandable" type="boolean">
+  When `true`, multiple sections can be open simultaneously. Defaults to `false` (single-open).
+</ParamField>
+
+<ParamField path="isBare" type="boolean">
+  Removes section borders. Defaults to `false`.
+</ParamField>
+
+<ParamField path="isAnimated" type="boolean">
+  Enables expand/collapse animations. Defaults to `true`.
+</ParamField>
+
+<ParamField path="isCollapsible" type="boolean">
+  When `true`, the currently open section can be collapsed by clicking its header again. Defaults to `true`.
+</ParamField>
+
+<ParamField path="size" type="'compact' | 'default'">
+  Controls the padding of accordion headers and panels. Defaults to `'default'`.
+</ParamField>
+
+### Accordion.Header
+
+Renders as a button inside the heading element specified by `level` on the parent `Accordion`. It shows an expand/collapse icon to indicate state. Nest inside `Accordion.Section`.
+
+### Accordion.Label
+
+The visible text label for the section. Nest inside `Accordion.Header`.
+
+### Accordion.Panel
+
+The collapsible content region for a section. Nest alongside `Accordion.Header` inside `Accordion.Section`.
+
+### Accordion.Section
+
+Wraps a paired `Accordion.Header` and `Accordion.Panel`. Each section is independent.
+
+## Accessibility
+
+- The Accordion follows the [W3C Accordion pattern](https://www.w3.org/TR/wai-aria-practices/#accordion).
+- `Accordion.Header` renders as a `<button>` inside a heading element. The heading level is determined by the required `level` prop.
+- `aria-expanded` is set automatically on each header button.
+- `aria-controls` and `aria-labelledby` are wired between each header and its panel automatically.
+- Keyboard navigation: `Tab` moves focus between accordion headers. `Enter` or `Space` toggles the focused section.
+
+---
+
+## Stepper
+
+`Stepper` is also exported from `@zendeskgarden/react-accordions`. Use it to guide users through a sequential multi-step process.
+
+```tsx
+import React, { useState } from 'react';
+import { Stepper } from '@zendeskgarden/react-accordions';
+import { Button } from '@zendeskgarden/react-buttons';
+
+const Example = () => {
+  const [step, setStep] = useState(0);
+
+  return (
+    <Stepper activeIndex={step}>
+      <Stepper.Step>
+        <Stepper.Label>Choose a good location</Stepper.Label>
+        <Stepper.Content>
+          Your garden's success depends on its location, so choose a spot that has healthy
+          soil, gets good light, and is easily watered.
+          <Button onClick={() => setStep(step + 1)}>Next</Button>
+        </Stepper.Content>
+      </Stepper.Step>
+      <Stepper.Step>
+        <Stepper.Label>Plan your garden's layout</Stepper.Label>
+        <Stepper.Content>
+          The layout of your garden depends on its purpose.
+          <Button onClick={() => setStep(step - 1)}>Back</Button>
+          <Button onClick={() => setStep(step + 1)}>Next</Button>
+        </Stepper.Content>
+      </Stepper.Step>
+      <Stepper.Step>
+        <Stepper.Label>Buy great seeds</Stepper.Label>
+        <Stepper.Content>
+          Buy clean, hearty, disease-free seeds from reliable seed companies.
+          <Button onClick={() => setStep(step - 1)}>Back</Button>
+        </Stepper.Content>
+      </Stepper.Step>
+    </Stepper>
+  );
+};
+```
+
+<ParamField path="activeIndex" type="number" required>
+  The zero-based index of the currently active step.
+</ParamField>
+
+<ParamField path="isHorizontal" type="boolean">
+  Renders the stepper horizontally instead of vertically. Defaults to `false`.
+</ParamField>

@@ -1,0 +1,68 @@
+---
+title: "Patterns overview"
+description: "Higher-level guidance on how to combine Garden components into complete workflows and user flows."
+---
+
+Patterns are not individual components — they are guidance on how to use components together to solve common design and engineering problems. Where a component like Button or Input is a building block, a pattern describes the right combination of those blocks for a specific context.
+
+## Components vs patterns
+
+| | Components | Patterns |
+|---|---|---|
+| **What they are** | Individual UI building blocks | Multi-component workflows |
+| **Example** | `<Button>`, `<Input>`, `<Table>` | Form validation flow, loading state management |
+| **Scope** | Single element behavior | Cross-component interaction |
+| **When to use** | Rendering a specific piece of UI | Solving a broader UX problem |
+
+<Note>
+All patterns in Garden are built from the component library. Before reading a pattern, familiarize yourself with the individual components it references.
+</Note>
+
+## Available patterns
+
+<CardGroup cols={2}>
+  <Card title="Button patterns" icon="mouse-pointer-click" href="/patterns/buttons">
+    Anatomy, sizing, alignment, loading states, disabled states, and content guidelines for buttons. Covers the difference between buttons and anchors, RTL support, and accessibility.
+  </Card>
+  <Card title="Form patterns" icon="square-pen" href="/patterns/forms">
+    Layout best practices, label placement, inline validation, field grouping, required vs optional labeling, and accessible fieldset usage.
+  </Card>
+  <Card title="Table patterns" icon="table" href="/patterns/tables">
+    Column alignment, sorting, row selection, empty states, pagination, bulk actions, loading skeletons, and draggable row reordering.
+  </Card>
+  <Card title="Loader patterns" icon="spinner" href="/patterns/loaders">
+    When to use Skeleton, Spinner, Dots, Progress, and Inline loaders. Includes accessibility guidance and RTL considerations.
+  </Card>
+  <Card title="Drag and drop" icon="grip-vertical" href="/patterns/drag-and-drop">
+    Draggable component usage, drop zones, placeholders, collision algorithms, keyboard reordering, and screen reader announcements.
+  </Card>
+  <Card title="Error handling" icon="circle-exclamation" href="/patterns/errors">
+    Inline validation errors, page-level alerts, system-level Global Alerts, notification errors, and error message content guidelines.
+  </Card>
+</CardGroup>
+
+## How to use this section
+
+Each pattern page follows a consistent structure:
+
+<Steps>
+  <Step title="Anatomy">
+    Understand which components are involved and how they relate to each other.
+  </Step>
+  <Step title="Formatting">
+    Learn the sizing, alignment, and layout rules that make the pattern work correctly.
+  </Step>
+  <Step title="States">
+    See how the pattern handles loading, error, disabled, and other states.
+  </Step>
+  <Step title="Flows">
+    Follow step-by-step interaction sequences for the most common use cases.
+  </Step>
+  <Step title="Accessibility">
+    Apply keyboard, ARIA, and screen reader requirements specific to the pattern.
+  </Step>
+</Steps>
+
+<Tip>
+Patterns cross-reference each other. For example, the Tables pattern links to the Loaders pattern for skeleton loading states, and the Errors pattern links to form field validation in the Forms pattern.
+</Tip>

@@ -1,0 +1,311 @@
+---
+title: "Date picker"
+description: "A Date picker lets users select a date by showing them a calendar. It works in combination with a text input."
+---
+
+Package: `@zendeskgarden/react-datepickers`
+
+```tsx
+import { DatePicker, DatePickerRange } from '@zendeskgarden/react-datepickers';
+import { Field, Input } from '@zendeskgarden/react-forms';
+```
+
+## When to use it
+
+- To select a single date, use `DatePicker`.
+- To select a start and an end date, use `DatePickerRange`.
+
+## Basic usage
+
+`DatePicker` wraps an `Input` and manages calendar state. Bind `value` and `onChange` for controlled usage.
+
+```tsx
+import React, { useState } from 'react';
+import { DatePicker } from '@zendeskgarden/react-datepickers';
+import { Field, Input } from '@zendeskgarden/react-forms';
+
+const Example = () => {
+  const [date, setDate] = useState(new Date());
+
+  return (
+    <Field>
+      <Field.Label>Select a date</Field.Label>
+      <DatePicker value={date} onChange={setDate}>
+        <Input />
+      </DatePicker>
+    </Field>
+  );
+};
+
+export default Example;
+```
+
+## Date range picker
+
+`DatePickerRange` manages two inputs and a shared calendar. Use `DatePickerRange.Start` and `DatePickerRange.End` to wrap each input, and `DatePickerRange.Calendar` to render the calendar.
+
+```tsx
+import React, { useState } from 'react';
+import { DatePickerRange } from '@zendeskgarden/react-datepickers';
+import { Field, Input } from '@zendeskgarden/react-forms';
+import { compareAsc, addDays } from 'date-fns';
+
+const Example = () => {
+  const [startValue, setStartValue] = useState(new Date());
+  const [endValue, setEndValue] = useState(addDays(new Date(), 16));
+
+  const isInvalid = compareAsc(startValue, endValue) === 1;
+
+  return (
+    <DatePickerRange
+      startValue={startValue}
+      endValue={endValue}
+      onChange={changes => {
+        if (changes.startValue) setStartValue(changes.startValue);
+        if (changes.endValue)   setEndValue(changes.endValue);
+      }}
+    >
+      <div style={{ display: 'flex', gap: 16 }}>
+        <Field>
+          <Field.Label>Start</Field.Label>
+          <DatePickerRange.Start>
+            <Input />
+          </DatePickerRange.Start>
+        </Field>
+        <Field>
+          <Field.Label>End</Field.Label>
+          <DatePickerRange.End>
+            <Input validation={isInvalid ? 'error' : undefined} />
+          </DatePickerRange.End>
+          {isInvalid && (
+            <Field.Message validation="error">
+              End date must occur after the start date
+            </Field.Message>
+          )}
+        </Field>
+      </div>
+      <DatePickerRange.Calendar />
+    </DatePickerRange>
+  );
+};
+
+export default Example;
+```
+
+## Localization
+
+Dates are formatted and parsed using the browser's built-in [`Intl.DateTimeFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat) API. Pass the `locale` prop to change the calendar and input language.
+
+```tsx
+import React, { useState } from 'react';
+import { DatePicker } from '@zendeskgarden/react-datepickers';
+import { Field, Input } from '@zendeskgarden/react-forms';
+
+const Example = () => {
+  const [date, setDate] = useState(new Date());
+
+  return (
+    <Field>
+      <Field.Label>Select a date</Field.Label>
+      <Field.Hint>Arabic localization</Field.Hint>
+      <DatePicker value={date} onChange={setDate} locale="ar-EG">
+        <Input lang="ar-EG" />
+      </DatePicker>
+    </Field>
+  );
+};
+
+export default Example;
+```
+
+<Tip>
+  For custom date formats beyond what `Intl.DateTimeFormat` supports, use the `customParseDate` prop alongside a formatting library such as [date-fns](https://date-fns.org/) or [Day.js](https://day.js.org/).
+</Tip>
+
+## Custom date format
+
+Use the `formatDate` prop (or pair `customParseDate` with a library) to control how dates are displayed in the input.
+
+```tsx
+import React, { useState } from 'react';
+import { DatePicker } from '@zendeskgarden/react-datepickers';
+import { Field, Input } from '@zendeskgarden/react-forms';
+import { format, parse } from 'date-fns';
+
+const Example = () => {
+  const [date, setDate] = useState(new Date());
+
+  return (
+    <Field>
+      <Field.Label>Select a date</Field.Label>
+      <DatePicker
+        value={date}
+        onChange={setDate}
+        formatDate={d => format(d, 'MM/dd/yyyy')}
+        customParseDate={str => parse(str, 'MM/dd/yyyy', new Date())}
+      >
+        <Input placeholder="MM/DD/YYYY" />
+      </DatePicker>
+    </Field>
+  );
+};
+
+export default Example;
+```
+
+## Time window (min/max dates)
+
+Disable dates outside an allowed range using `minValue` and `maxValue`.
+
+```tsx
+import React, { useState } from 'react';
+import { DatePicker } from '@zendeskgarden/react-datepickers';
+import { Field, Input } from '@zendeskgarden/react-forms';
+import { addDays, subDays } from 'date-fns';
+
+const Example = () => {
+  const [date, setDate] = useState(new Date());
+  const today = new Date();
+
+  return (
+    <Field>
+      <Field.Label>Select a date</Field.Label>
+      <Field.Hint>Available dates: next 30 days only</Field.Hint>
+      <DatePicker
+        value={date}
+        onChange={setDate}
+        minValue={today}
+        maxValue={addDays(today, 30)}
+      >
+        <Input />
+      </DatePicker>
+    </Field>
+  );
+};
+
+export default Example;
+```
+
+## Compact size
+
+Use `isCompact` to render a smaller DatePicker.
+
+```tsx
+import React, { useState } from 'react';
+import { DatePicker } from '@zendeskgarden/react-datepickers';
+import { Field, Input } from '@zendeskgarden/react-forms';
+
+const Example = () => {
+  const [date, setDate] = useState(new Date());
+
+  return (
+    <Field>
+      <Field.Label>Select a date</Field.Label>
+      <DatePicker value={date} onChange={setDate} isCompact>
+        <Input isCompact />
+      </DatePicker>
+    </Field>
+  );
+};
+
+export default Example;
+```
+
+## Component structure
+
+```tsx
+{/* Single date */}
+<Field>
+  <Field.Label />
+  <DatePicker value={date} onChange={setDate}>
+    <Input />
+  </DatePicker>
+</Field>
+
+{/* Date range */}
+<DatePickerRange startValue={start} endValue={end} onChange={handleChange}>
+  <Field>
+    <Field.Label />
+    <DatePickerRange.Start>
+      <Input />
+    </DatePickerRange.Start>
+  </Field>
+  <Field>
+    <Field.Label />
+    <DatePickerRange.End>
+      <Input />
+    </DatePickerRange.End>
+  </Field>
+  <DatePickerRange.Calendar />
+</DatePickerRange>
+```
+
+## API reference
+
+### DatePicker
+
+Manages the calendar state for a single date. Nest an `Input` as its child.
+
+<ParamField path="body.value" type="Date">
+  The currently selected date (controlled usage).
+</ParamField>
+
+<ParamField path="body.onChange" type="(date: Date) => void">
+  Called with the newly selected `Date` when the user makes a selection.
+</ParamField>
+
+<ParamField path="body.locale" type="string">
+  A BCP 47 language tag (e.g. `"ar-EG"`, `"fr-FR"`) passed to `Intl.DateTimeFormat` for calendar and input localization.
+</ParamField>
+
+<ParamField path="body.formatDate" type="(date: Date) => string">
+  Custom function for formatting the date displayed in the input.
+</ParamField>
+
+<ParamField path="body.customParseDate" type="(inputValue: string) => Date">
+  Custom function for parsing the string typed into the input back into a `Date`.
+</ParamField>
+
+<ParamField path="body.minValue" type="Date">
+  Disables calendar dates before this value.
+</ParamField>
+
+<ParamField path="body.maxValue" type="Date">
+  Disables calendar dates after this value.
+</ParamField>
+
+<ParamField path="body.isCompact" type="boolean">
+  Renders a smaller calendar and input.
+</ParamField>
+
+### DatePickerRange
+
+Manages start and end date state for a range selection. Nest `DatePickerRange.Start`, `DatePickerRange.End`, and `DatePickerRange.Calendar` as children.
+
+<ParamField path="body.startValue" type="Date">
+  The currently selected start date.
+</ParamField>
+
+<ParamField path="body.endValue" type="Date">
+  The currently selected end date.
+</ParamField>
+
+<ParamField path="body.onChange" type="(changes: { startValue?: Date; endValue?: Date }) => void">
+  Called when the user selects a start or end date.
+</ParamField>
+
+<ParamField path="body.isCompact" type="boolean">
+  Renders a smaller calendar and inputs.
+</ParamField>
+
+#### DatePickerRange.Start
+
+Wraps the start date `Input`. Nest inside `DatePickerRange`.
+
+#### DatePickerRange.End
+
+Wraps the end date `Input`. Nest inside `DatePickerRange`.
+
+#### DatePickerRange.Calendar
+
+Renders the shared date range calendar. Nest inside `DatePickerRange`.

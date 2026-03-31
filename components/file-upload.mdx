@@ -1,0 +1,251 @@
+---
+title: "File upload"
+description: "File upload lets users select and attach files via drag-and-drop or a file picker dialog."
+---
+
+Package: `@zendeskgarden/react-forms`
+
+```tsx
+import { Field, Input, FileUpload, FileList, File } from '@zendeskgarden/react-forms';
+```
+
+## When to use it
+
+- To let users attach a file or image to a record.
+- To let users upload a profile avatar image.
+
+## Basic usage
+
+Users drag and drop files onto the target or click to open the file picker. The `FileUpload` component is designed to work alongside a library like [react-dropzone](https://react-dropzone.js.org/). An `Input` with `type="file"` is nested inside and receives the dropzone's input props.
+
+```tsx
+import React, { useCallback, useState } from 'react';
+import { useDropzone } from 'react-dropzone';
+import { Field, Input, FileUpload, FileList, File } from '@zendeskgarden/react-forms';
+import { Progress } from '@zendeskgarden/react-loaders';
+
+const Example = () => {
+  const [files, setFiles] = useState<string[]>([]);
+
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    const names = acceptedFiles.map(f => f.name);
+    setFiles(prev => [...prev, ...names]);
+  }, []);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    accept: { 'image/*': ['.jpeg', '.png', '.gif'] },
+    onDrop
+  });
+
+  return (
+    <Field>
+      <Field.Label>Upload a photo</Field.Label>
+      <Field.Hint>Include the entire plant in your photo</Field.Hint>
+      <FileUpload {...getRootProps()} isDragging={isDragActive}>
+        {isDragActive ? (
+          <span>Drop files here</span>
+        ) : (
+          <span>Choose a file or drag and drop here</span>
+        )}
+        <Input {...getInputProps()} />
+      </FileUpload>
+      {files.length === 0 ? (
+        <Field.Message>Acceptable formats: JPG, PNG, GIF</Field.Message>
+      ) : (
+        <FileList>
+          {files.map((name, index) => (
+            <FileList.Item key={index}>
+              <File type="image">{name}</File>
+            </FileList.Item>
+          ))}
+        </FileList>
+      )}
+    </Field>
+  );
+};
+
+export default Example;
+```
+
+## File list with progress
+
+Use `FileList`, `FileList.Item`, `File`, `File.Close`, and `File.Delete` together with a `Progress` component to display uploaded files and their upload status.
+
+```tsx
+import React from 'react';
+import { FileList, File } from '@zendeskgarden/react-forms';
+import { Progress } from '@zendeskgarden/react-loaders';
+
+const Example = () => (
+  <FileList>
+    <FileList.Item>
+      <File type="document" tabIndex={0} aria-label="Document file">
+        Plant ecology.doc
+        <File.Close aria-label="Stop upload" onClick={() => {}} />
+        <Progress value={16} aria-label="Uploading Plant ecology.doc" />
+      </File>
+    </FileList.Item>
+    <FileList.Item>
+      <File type="image" tabIndex={0} aria-label="Image file">
+        Rose petals.jpg
+        <File.Close aria-label="Stop upload" onClick={() => {}} />
+        <Progress value={64} aria-label="Uploading Rose petals.jpg" />
+      </File>
+    </FileList.Item>
+    <FileList.Item>
+      <File type="pdf" tabIndex={0} aria-label="PDF file — upload complete">
+        Basics of gardening.pdf
+        <File.Delete aria-label="Remove file" onClick={() => {}} />
+        <Progress value={100} aria-hidden="true" />
+      </File>
+    </FileList.Item>
+  </FileList>
+);
+
+export default Example;
+```
+
+<Tip>
+  Use `File.Close` while an upload is in progress and `File.Delete` after the upload completes, so the button label and icon communicate the correct action.
+</Tip>
+
+## Compact size
+
+Use `isCompact` on `FileUpload` for a denser layout.
+
+```tsx
+import React from 'react';
+import { useDropzone } from 'react-dropzone';
+import { Field, Input, FileUpload } from '@zendeskgarden/react-forms';
+
+const Example = () => {
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({});
+
+  return (
+    <Field>
+      <Field.Label>Attachment</Field.Label>
+      <FileUpload {...getRootProps()} isDragging={isDragActive} isCompact>
+        <span>Choose a file or drag and drop here</span>
+        <Input {...getInputProps()} />
+      </FileUpload>
+    </Field>
+  );
+};
+
+export default Example;
+```
+
+## Disabled state
+
+A disabled `FileUpload` prevents interaction and cannot receive focus.
+
+```tsx
+import React from 'react';
+import { Field, Input, FileUpload } from '@zendeskgarden/react-forms';
+
+const Example = () => (
+  <Field>
+    <Field.Label>Upload</Field.Label>
+    <FileUpload disabled>
+      <span>File upload is currently unavailable</span>
+      <Input type="file" disabled />
+    </FileUpload>
+  </Field>
+);
+
+export default Example;
+```
+
+## Component structure
+
+```tsx
+<Field>
+  <Field.Label />
+  <Field.Hint />
+  <FileUpload>
+    <Input />  {/* receives dropzone getInputProps() */}
+  </FileUpload>
+  <Field.Message />
+</Field>
+<FileList>
+  <FileList.Item>
+    <File type="image">
+      filename.jpg
+      <File.Close />   {/* while uploading */}
+      {/* or */}
+      <File.Delete />  {/* after upload completes */}
+      <Progress value={50} />
+    </File>
+  </FileList.Item>
+</FileList>
+```
+
+## API reference
+
+### Field
+
+Wraps `FileUpload` and its label, hint, and message. Associates child elements for accessibility.
+
+### Field.Label
+
+Renders a `<label>` associated with the upload area.
+
+### Field.Hint
+
+Renders supplementary hint text such as accepted file types. Nest inside `Field`.
+
+### Field.Message
+
+Renders a message or validation feedback below the upload area.
+
+<ParamField path="body.validation" type="'success' | 'warning' | 'error'">
+  Determines the icon and color of the message.
+</ParamField>
+
+### FileUpload
+
+The drag-and-drop target area. Nest an `Input` inside and spread the root props from your dropzone library onto this component.
+
+<ParamField path="body.isDragging" type="boolean">
+  Applies active drag styling when a file is being dragged over the target.
+</ParamField>
+
+<ParamField path="body.isCompact" type="boolean">
+  Renders a smaller upload area with reduced padding.
+</ParamField>
+
+<ParamField path="body.disabled" type="boolean">
+  Prevents interaction with the upload area.
+</ParamField>
+
+### Input
+
+A standard Garden `Input`. When nested inside `FileUpload`, pass `type="file"` (handled automatically by `react-dropzone`'s `getInputProps()`).
+
+### FileList
+
+A container for displaying multiple `FileList.Item` components after files are selected.
+
+### FileList.Item
+
+Wraps a single `File` row inside a `FileList`.
+
+### File
+
+Displays a single file with an icon determined by `type`, a file name, an action button, and an optional progress indicator.
+
+<ParamField path="body.type" type="'generic' | 'image' | 'document' | 'pdf' | 'presentation' | 'spreadsheet' | 'zip'">
+  Determines which icon is shown for the file type. Defaults to a generic icon when omitted.
+</ParamField>
+
+<ParamField path="body.title" type="string">
+  Tooltip text for the file name.
+</ParamField>
+
+#### File.Close
+
+An icon button shown while a file is uploading. Clicking it cancels the upload.
+
+#### File.Delete
+
+An icon button shown after a file finishes uploading. Clicking it removes the file from the list.

@@ -1,0 +1,363 @@
+---
+title: "Table patterns"
+description: "Formatting, alignment, sorting, row selection, empty states, pagination, bulk actions, and loading for Garden tables."
+---
+
+Tables display sets of related data across rows and columns, making it easier for users to compare and analyze information. This page covers usage patterns built on top of `@zendeskgarden/react-tables`.
+
+## Anatomy
+
+A table has three structural parts:
+
+1. **Columns** — vertical groupings that categorize and prioritize data
+2. **Header row** — describes the data in each column
+3. **Data rows** — horizontal groups of data beneath the headers
+
+```tsx
+import {
+  Table,
+  Head,
+  HeaderRow,
+  HeaderCell,
+  Body,
+  Row,
+  Cell,
+} from '@zendeskgarden/react-tables';
+
+<Table>
+  <Head>
+    <HeaderRow>
+      <HeaderCell>Subject</HeaderCell>
+      <HeaderCell>Status</HeaderCell>
+      <HeaderCell>Created</HeaderCell>
+      <HeaderCell isNumeric>Ticket ID</HeaderCell>
+    </HeaderRow>
+  </Head>
+  <Body>
+    <Row>
+      <Cell>Cannot log in</Cell>
+      <Cell>Open</Cell>
+      <Cell>Jan 12, 2026</Cell>
+      <Cell isNumeric>104823</Cell>
+    </Row>
+  </Body>
+</Table>
+```
+
+<Note>
+A table must have at least 2 columns. For single-column data, use a List component instead.
+</Note>
+
+## Formatting
+
+### Size
+
+Tables come in three sizes:
+
+| Size | When to use |
+|---|---|
+| **Medium** (default) | Most situations — accommodates information density well |
+| **Large** | When Avatars are introduced into rows, creating more breathing room |
+| **Small** | When greater information density is needed |
+
+```tsx
+<Table size="small">…</Table>
+<Table>…</Table>           {/* medium by default */}
+<Table size="large">…</Table>
+```
+
+### Column alignment
+
+| Content type | Alignment |
+|---|---|
+| Text | Left |
+| Categorical data with numbers (dates, phone numbers) | Left |
+| Quantitative / numeric data | Right |
+| Tags or Avatars | Left |
+| Icons | Center |
+
+```tsx
+<HeaderCell isNumeric>Revenue</HeaderCell>  // right-aligned
+<Cell isNumeric>$4,200.00</Cell>
+```
+
+Use horizontal lines to reduce visual noise. White space signals column boundaries — you do not need vertical borders.
+
+### Row heights
+
+Header rows should be visually taller than body rows to create clear separation between the header and data. Do not use identical heights for header and body rows.
+
+### Header cell content
+
+- Use one or two nouns that quickly help users understand what data is in the column
+- Avoid verbs in header labels to prevent confusion with CTAs
+- Use sentence case
+- Mark up header cells with `<HeaderCell>` (renders as `<th>`) for accessibility
+
+### Wrapping and truncation
+
+Text wrapping is the default and recommended behavior. Ensure cells in a row are top-aligned.
+
+To truncate long text, use `Ellipsis` and provide a `title` attribute that appears on hover:
+
+```tsx
+import { Ellipsis } from '@zendeskgarden/react-typography';
+
+<Cell>
+  <Ellipsis title="Very long ticket subject that exceeds cell width">
+    Very long ticket subject that exceeds cell width
+  </Ellipsis>
+</Cell>
+```
+
+## Variations
+
+### Striped rows
+
+Use striped rows when a table has many rows of data to help users keep their place when scanning horizontally.
+
+```tsx
+<Table>
+  <Body>
+    <Row isStriped>…</Row>
+    <Row>…</Row>
+    <Row isStriped>…</Row>
+  </Body>
+</Table>
+```
+
+### Grouped rows
+
+Use grouped rows to create additional categorization of similar items. Guidelines:
+
+- Use only when groups contain 10 or more items
+- Avoid overuse — it produces busy layouts
+- Do not combine striped and grouped rows
+
+## Sorting
+
+Sorting is implemented by selecting sort controls in table headers. Behavior:
+
+- First click: ascending order (A→Z, 1→9, oldest→newest)
+- Second click: descending order
+- Third click: removes sorting
+
+If any ordering is applied (including a default), the sorting icon should always be visible to communicate current order and provide a clear affordance for control.
+
+```tsx
+import { SortableCell } from '@zendeskgarden/react-tables';
+
+const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | undefined>();
+
+<HeaderRow>
+  <SortableCell
+    onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+    sort={sortOrder}
+  >
+    Subject
+  </SortableCell>
+</HeaderRow>
+```
+
+<Note>
+Only one column can be sorted at a time. The currently sorted column must always show its sort direction indicator.
+</Note>
+
+## Row selection
+
+Use checkboxes in rows to allow users to select one or more items. In paginated tables, selection only affects the current page.
+
+```tsx
+import { Checkbox } from '@zendeskgarden/react-forms';
+
+<Row isSelected={selected}>
+  <Cell>
+    <Checkbox
+      checked={selected}
+      onChange={() => toggleRow(id)}
+      aria-label={`Select ${subject}`}
+    />
+  </Cell>
+  <Cell>{subject}</Cell>
+</Row>
+```
+
+### Select all
+
+The select-all checkbox in the header selects all rows on the current page only. Users should only be able to act on what they can see.
+
+```tsx
+<HeaderRow>
+  <HeaderCell>
+    <Checkbox
+      indeterminate={someSelected && !allSelected}
+      checked={allSelected}
+      onChange={toggleAll}
+      aria-label="Select all tickets on this page"
+    />
+  </HeaderCell>
+</HeaderRow>
+```
+
+## Bulk actions
+
+When rows are selected, surface bulk action controls above the table. Common bulk actions include Delete, Export, Assign, and Tag.
+
+```tsx
+{selectedCount > 0 && (
+  <div role="toolbar" aria-label="Bulk actions">
+    <span>{selectedCount} selected</span>
+    <Button isBasic onClick={handleBulkDelete}>Delete</Button>
+    <Button isBasic onClick={handleBulkExport}>Export</Button>
+  </div>
+)}
+```
+
+<Warning>
+When a filter is applied while rows are selected, filters override the selection and deselect all rows.
+</Warning>
+
+## Empty states
+
+When a table has no data, show an empty state inside the table body — not a blank table skeleton.
+
+```tsx
+<Body>
+  {rows.length === 0 ? (
+    <Row>
+      <Cell colSpan={4} style={{ textAlign: 'center' }}>
+        No tickets found. Create a new ticket to get started.
+      </Cell>
+    </Row>
+  ) : (
+    rows.map((row) => <DataRow key={row.id} {...row} />)
+  )}
+</Body>
+```
+
+## Loading states
+
+Use `Skeleton` loaders inside table cells to indicate a section is loading. Do not show a blank table or a spinner centered over the entire table.
+
+```tsx
+import { Skeleton } from '@zendeskgarden/react-loaders';
+
+// Show up to 3 skeleton rows
+{isLoading
+  ? Array.from({ length: 3 }).map((_, i) => (
+      <Row key={i}>
+        <Cell><Skeleton /></Cell>
+        <Cell><Skeleton width="60%" /></Cell>
+        <Cell><Skeleton width="40%" /></Cell>
+      </Row>
+    ))
+  : rows.map((row) => <DataRow key={row.id} {...row} />)
+}
+```
+
+- Show skeleton loaders in the first 3 rows — this is enough to convey loading
+- Keep header cells visible at all times to provide instant context of incoming data
+- Skeleton height should be 60% of the font size; width should approximate actual content width
+
+See the [Loader patterns](/patterns/loaders) page for full loader selection guidance.
+
+## Pagination
+
+Pair the table with the `Pagination` component.
+
+### Cursor pagination (recommended)
+
+Use cursor pagination for real-time or frequently updated data. There is no concept of total page count.
+
+```tsx
+import { Pagination } from '@zendeskgarden/react-pagination';
+
+<Pagination
+  currentPage={currentPage}
+  totalPages={undefined}
+  onNextPage={() => fetchNextPage(cursor)}
+  onPreviousPage={() => fetchPreviousPage(cursor)}
+  previousPageLabel="Previous"
+  nextPageLabel="Next"
+/>
+```
+
+### Offset pagination
+
+Use offset pagination when you know the total number of records.
+
+```tsx
+<Pagination
+  currentPage={currentPage}
+  totalPages={Math.ceil(totalCount / pageSize)}
+  onChange={setCurrentPage}
+/>
+```
+
+Cap a single page view at **100 rows**.
+
+## Draggable rows
+
+To enable row reordering, apply drag-and-drop functionality using dnd-kit. See the [Drag and drop patterns](/patterns/drag-and-drop) page for full guidance.
+
+```tsx
+import { DndContext, closestCenter } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+
+<DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+  <SortableContext items={rowIds} strategy={verticalListSortingStrategy}>
+    <Table>
+      <Body>
+        {rows.map((row) => (
+          <SortableRow key={row.id} id={row.id} {...row} />
+        ))}
+      </Body>
+    </Table>
+  </SortableContext>
+</DndContext>
+```
+
+## Row actions
+
+### View and edit
+
+"View" or "Edit" actions should appear within data cells in the first column and also in the overflow menu — giving users two ways to reach the same content.
+
+```tsx
+<Cell>
+  <Anchor href={`/tickets/${ticket.id}`}>{ticket.subject}</Anchor>
+</Cell>
+```
+
+### Overflow menu
+
+All additional actions belong inside the overflow menu. Group complementary actions with separators, and place destructive actions below a separator using the `isDanger` prop.
+
+```tsx
+import { Table } from '@zendeskgarden/react-tables';
+import { Menu, Item, Separator } from '@zendeskgarden/react-dropdowns';
+
+<Table.OverflowButton aria-label={`Actions for ${ticket.subject}`}>
+  <Menu>
+    <Item value="view">View</Item>
+    <Item value="edit">Edit</Item>
+    <Separator />
+    <Item value="delete" isDanger>Delete</Item>
+  </Menu>
+</Table.OverflowButton>
+```
+
+## Accessibility
+
+- All Garden tables use accessible markup (`<th>`, `<td>`, `caption`/`aria-describedby`)
+- Every table must have a `Caption` or `aria-describedby` attribute that identifies or describes the table
+- Informational icons in cells must include a `title` attribute and `aria-label`
+- Overflow buttons must have a descriptive `aria-label` (e.g., `"Actions for ${row.name}"`)
+- Screen readers navigate tables cell by cell and announce the associated header context automatically
+
+```tsx
+<Table aria-describedby="tickets-caption">
+  <Caption id="tickets-caption">Open support tickets</Caption>
+  …
+</Table>
+```

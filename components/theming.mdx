@@ -1,0 +1,238 @@
+---
+title: "Theming"
+description: "Customise Garden's visual language — colors, typography, spacing, and border radii — using ThemeProvider and the theme object."
+---
+
+Garden's theming system is built on [styled-components](https://styled-components.com). A single `ThemeProvider` injects a theme object into the React context that every Garden component reads from. You can pass the built-in `DEFAULT_THEME` unchanged, override specific values for branding, or extend it with entirely new tokens.
+
+## ThemeProvider
+
+`ThemeProvider` is exported from `@zendeskgarden/react-theming`. Wrap it around the root of your application (or any subtree that needs Garden styling).
+
+```tsx
+import { ThemeProvider, DEFAULT_THEME } from '@zendeskgarden/react-theming';
+
+function App() {
+  return (
+    <ThemeProvider theme={DEFAULT_THEME}>
+      {/* your application */}
+    </ThemeProvider>
+  );
+}
+```
+
+<Note>
+  `ThemeProvider` without a `theme` prop defaults to `DEFAULT_THEME`, so the explicit prop is optional when you are not customising anything.
+</Note>
+
+## Branding overrides
+
+Pass a partial theme object to change visual properties across all components at once. The example below replaces the primary accent color and sets square corners:
+
+```tsx
+import { ThemeProvider, DEFAULT_THEME } from '@zendeskgarden/react-theming';
+
+const brandTheme = {
+  ...DEFAULT_THEME,
+  colors: {
+    ...DEFAULT_THEME.colors,
+    primaryHue: 'crimson',
+  },
+  borderRadii: {
+    ...DEFAULT_THEME.borderRadii,
+    md: '0',
+    sm: '0',
+  },
+};
+
+function App() {
+  return (
+    <ThemeProvider theme={brandTheme}>
+      {/* all buttons, inputs, etc. now use crimson + square corners */}
+    </ThemeProvider>
+  );
+}
+```
+
+## Theme extension
+
+Extend the palette with a custom hue and wire it to a semantic role:
+
+```tsx
+import { ThemeProvider, DEFAULT_THEME } from '@zendeskgarden/react-theming';
+
+const extendedTheme = {
+  ...DEFAULT_THEME,
+  palette: {
+    ...DEFAULT_THEME.palette,
+    deepOrange: {
+      100: '#fbe9e7',
+      200: '#ffccbc',
+      300: '#ffab91',
+      400: '#ff8a65',
+      500: '#ff7043',
+      600: '#f4511e',
+      700: '#e64a19',
+      800: '#d84315',
+      900: '#bf360c',
+    },
+  },
+  colors: {
+    ...DEFAULT_THEME.colors,
+    dangerHue: 'deepOrange',
+  },
+};
+```
+
+## Nested ThemeProvider
+
+Nest a second `ThemeProvider` to apply a scoped override to one subtree without affecting the rest of the application:
+
+```tsx
+import { ThemeProvider, DEFAULT_THEME } from '@zendeskgarden/react-theming';
+
+function Page() {
+  return (
+    <ThemeProvider theme={DEFAULT_THEME}>
+      <Header />
+      {/* compact, square-cornered sidebar */}
+      <ThemeProvider
+        theme={parentTheme => ({
+          ...parentTheme,
+          space: { ...parentTheme.space, base: 3 },
+          borderRadii: { ...parentTheme.borderRadii, md: '0', sm: '0' },
+        })}
+      >
+        <Sidebar />
+      </ThemeProvider>
+    </ThemeProvider>
+  );
+}
+```
+
+The inner `ThemeProvider` receives the parent theme as a function argument, letting you read and modify it.
+
+## ColorSchemeProvider
+
+`ColorSchemeProvider` wraps your application to track and persist the user's preferred color scheme. It works in concert with `ThemeProvider`'s `colors.base` value (`'light'` or `'dark'`).
+
+```tsx
+import {
+  ColorSchemeProvider,
+  ThemeProvider,
+  DEFAULT_THEME,
+  useColorScheme,
+} from '@zendeskgarden/react-theming';
+
+function ThemedApp() {
+  const { colorScheme } = useColorScheme();
+
+  const theme = {
+    ...DEFAULT_THEME,
+    colors: {
+      ...DEFAULT_THEME.colors,
+      base: colorScheme === 'dark' ? 'dark' : 'light',
+    },
+  };
+
+  return (
+    <ThemeProvider theme={theme}>
+      {/* components automatically adapt to light or dark */}
+    </ThemeProvider>
+  );
+}
+
+function App() {
+  return (
+    <ColorSchemeProvider>
+      <ThemedApp />
+    </ColorSchemeProvider>
+  );
+}
+```
+
+<Tip>
+  `ColorSchemeProvider` persists the user's choice to `localStorage` by default. Use the `storageKey` prop to customise the key or set it to `null` to disable persistence.
+</Tip>
+
+## Theme object structure
+
+The `DEFAULT_THEME` object contains the following top-level keys:
+
+| Key | Description |
+|---|---|
+| `colors` | Semantic color variables and hue assignments (`primaryHue`, `dangerHue`, etc.) |
+| `palette` | Full color palette — all hues and shades |
+| `shadows` | Shadow functions (`xs`, `sm`, `md`, `lg`) |
+| `fonts` | Font stacks: `system` and `mono` |
+| `fontSizes` | Type scale values |
+| `fontWeights` | Weight names mapped to numeric values |
+| `lineHeights` | Line height scale values |
+| `space` | Spacing scale (`xxs` → `xxl`) with a `base` unit |
+| `borders` | Combined border shorthand values |
+| `borderRadii` | Corner radius values (`sm`, `md`) |
+| `borderStyles` | Border style (`solid`) |
+| `borderWidths` | Border width values (`sm`, `md`) |
+| `breakpoints` | Responsive breakpoint values |
+| `iconSizes` | Icon size values (`sm`, `md`, `lg`) |
+| `opacity` | Opacity scale values |
+| `rtl` | `boolean` — enables right-to-left layout |
+| `components` | Targeted component overrides keyed by `COMPONENT_ID` |
+| `document` | DOM `document` reference for portal-based components |
+| `window` | DOM `window` reference for portal-based components |
+
+### Color hues
+
+| Hue | Default | Purpose |
+|---|---|---|
+| `primaryHue` | `'blue'` | Primary accent |
+| `dangerHue` | `'red'` | Danger and error states |
+| `warningHue` | `'yellow'` | Caution and warning states |
+| `successHue` | `'green'` | Success states |
+| `neutralHue` | `'grey'` | Neutral and disabled states |
+| `chromeHue` | `'kale'` | Chrome navigation and drop shadows |
+
+### Color variables
+
+Garden uses semantic variable keys that resolve differently for `'light'` and `'dark'` bases. Key groups include:
+
+- **Background** — `background.default`, `background.raised`, `background.recessed`, `background.subtle`, `background.emphasis`, and state-specific variants
+- **Border** — `border.default`, `border.emphasis`, `border.subtle`, and state-specific variants
+- **Foreground** — `foreground.default`, `foreground.subtle`, `foreground.onEmphasis`, and state-specific variants
+- **Shadow** — `shadow.small`, `shadow.medium`, `shadow.large`
+
+### Targeted component overrides
+
+The `components` key accepts CSS template strings keyed by Garden's internal `COMPONENT_ID` values. Use the [Garden Inspect](https://chrome.google.com/webstore/detail/zendesk-garden-inspect/gegnmdnjkodmkohdbljgjpaifiphnjig) Chrome extension to find component IDs.
+
+```tsx
+import { ThemeProvider, DEFAULT_THEME } from '@zendeskgarden/react-theming';
+import { css } from 'styled-components';
+
+const theme = {
+  ...DEFAULT_THEME,
+  components: {
+    'tabs.tab': css`
+      font-weight: ${p => p.theme.fontWeights.semibold};
+    `,
+  },
+};
+```
+
+## getColor utility
+
+`getColor` resolves a semantic color variable or palette hue to a CSS color string. It respects the current color scheme automatically:
+
+```tsx
+import styled from 'styled-components';
+import { getColor } from '@zendeskgarden/react-theming';
+
+const CustomBadge = styled.span`
+  background-color: ${p => getColor({ theme: p.theme, variable: 'background.primaryEmphasis' })};
+  color: ${p => getColor({ theme: p.theme, variable: 'foreground.onEmphasis' })};
+`;
+```
+
+<Tip>
+  Always use `getColor` with semantic color variables rather than hardcoded hex values when building custom components — this ensures they work correctly in both light and dark modes.
+</Tip>

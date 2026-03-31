@@ -1,0 +1,137 @@
+---
+title: "Icons"
+description: "The Garden SVG icon library: installation, usage, sizes, styles, and accessibility guidance."
+---
+
+Garden provides a comprehensive SVG icon library through the `@zendeskgarden/svg-icons` package. Icons are available in two sizes and two styles, and are published to npm for use in any JavaScript or React project.
+
+## Package
+
+The icon library is published as `@zendeskgarden/svg-icons` on npm. Source files and contribution guidelines are available on GitHub.
+
+- **npm**: [npmjs.com/package/@zendeskgarden/svg-icons](https://www.npmjs.com/package/@zendeskgarden/svg-icons)
+- **GitHub**: [github.com/zendeskgarden/svg-icons](https://github.com/zendeskgarden/svg-icons)
+
+## Installation
+
+```bash
+npm install @zendeskgarden/svg-icons
+```
+
+## Sizes
+
+Garden icons come in two sizes:
+
+| Size | Use |
+| :--- | :-- |
+| 16px | Default size for the majority of UI contexts |
+| 12px | Compact spaces where 16px icons break line height or do not fit |
+| 32px | Scaled-up 16px icons; for illustration use only, not interactions |
+
+Use 16px icons wherever possible. Reserve 12px icons for genuinely constrained layouts. Do not use 32px icons for interactive controls — they are illustrative only.
+
+## Styles
+
+Icons come in two styles:
+
+- **Stroke** — the default style. Use stroke icons in all standard UI contexts.
+- **Fill** — use fill icons exclusively to represent selected or active states.
+
+<Tip>
+  Stroke is the correct default. Only switch to fill when you need to communicate a selected or toggled state — for example, a favorited item or an active navigation item.
+</Tip>
+
+## Usage in React
+
+Garden's SVG icons are plain SVG files. In a React project, you can import them as React components using a bundler plugin (such as `@svgr/webpack` or Vite's built-in SVG handling), or use them inline.
+
+### Importing an icon as a React component
+
+```tsx
+import { ReactComponent as StarStrokeIcon } from '@zendeskgarden/svg-icons/src/16/star-stroke.svg';
+import { ReactComponent as StarFillIcon } from '@zendeskgarden/svg-icons/src/16/star-fill.svg';
+
+function FavoriteButton({ isFavorited }: { isFavorited: boolean }) {
+  return (
+    <button aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}>
+      {isFavorited ? <StarFillIcon /> : <StarStrokeIcon />}
+    </button>
+  );
+}
+```
+
+### Importing a 12px icon
+
+```tsx
+import { ReactComponent as SearchIcon } from '@zendeskgarden/svg-icons/src/12/search-stroke.svg';
+
+function CompactSearch() {
+  return (
+    <button aria-label="Search">
+      <SearchIcon />
+    </button>
+  );
+}
+```
+
+### Using the Garden React components package
+
+If your project already uses `@zendeskgarden/react-components`, the `<Icon>` utility is available to wrap SVG icons with proper sizing and color handling:
+
+```tsx
+import { ReactComponent as AlertIcon } from '@zendeskgarden/svg-icons/src/16/alert-warning-stroke.svg';
+import { Tooltip } from '@zendeskgarden/react-tooltips';
+
+function WarningIndicator() {
+  return (
+    <Tooltip content="Requires attention">
+      <button aria-label="Warning">
+        <AlertIcon aria-hidden="true" />
+      </button>
+    </Tooltip>
+  );
+}
+```
+
+## Accessibility
+
+### Always label interactive icons
+
+When an icon is the only content inside an interactive element (button, link), provide an accessible label using `aria-label` on the interactive element. Do not rely on the icon alone to communicate meaning.
+
+```tsx
+// Correct: aria-label on the button
+<button aria-label="Close dialog">
+  <CloseIcon aria-hidden="true" />
+</button>
+
+// Incorrect: no accessible label
+<button>
+  <CloseIcon />
+</button>
+```
+
+Use `aria-hidden="true"` on the SVG when an accessible label is present elsewhere, to prevent screen readers from announcing the icon twice.
+
+### Use tooltips for icon-only buttons
+
+For interactive icon-only controls in the UI, pair the icon with a `Tooltip` so sighted users who are unfamiliar with the icon's meaning can discover its purpose on hover.
+
+```tsx
+import { Tooltip } from '@zendeskgarden/react-tooltips';
+import { ReactComponent as EditIcon } from '@zendeskgarden/svg-icons/src/16/pencil-stroke.svg';
+
+function EditButton() {
+  return (
+    <Tooltip content="Edit">
+      <button aria-label="Edit">
+        <EditIcon aria-hidden="true" />
+      </button>
+    </Tooltip>
+  );
+}
+```
+
+<Info>
+  The Garden icon library does not ship a React wrapper component. Icons are raw SVG assets. Use your project's preferred SVG import strategy, or pair them with Garden's React component packages for full theme and accessibility integration.
+</Info>

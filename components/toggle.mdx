@@ -1,0 +1,196 @@
+---
+title: "Toggle"
+description: "A Toggle lets users turn something on and off like a light switch. Unlike a Checkbox, which is used for selection, a Toggle is used for activation."
+---
+
+Package: `@zendeskgarden/react-forms`
+
+```tsx
+import { Field, Toggle } from '@zendeskgarden/react-forms';
+```
+
+## When to use it
+
+- To see or compare the results of a settings change.
+- To activate a mode such as dark mode that takes immediate effect.
+
+<Note>
+  To let users select from a list of settings, use [Checkboxes](/components/checkbox) instead.
+</Note>
+
+## Basic usage
+
+A Toggle's label is part of its touch target. Nest `Field.Label` inside the `Toggle` component.
+
+```tsx
+import React from 'react';
+import { Field, Toggle } from '@zendeskgarden/react-forms';
+
+const Example = () => (
+  <Field>
+    <Toggle>
+      <Field.Label>Show flowers</Field.Label>
+    </Toggle>
+  </Field>
+);
+
+export default Example;
+```
+
+## Checked state
+
+Control the toggle state with `checked` and `onChange`.
+
+```tsx
+import React, { useState } from 'react';
+import { Field, Toggle } from '@zendeskgarden/react-forms';
+
+const Example = () => {
+  const [isOn, setIsOn] = useState(false);
+
+  return (
+    <Field>
+      <Toggle checked={isOn} onChange={() => setIsOn(!isOn)}>
+        <Field.Label>Dark mode</Field.Label>
+      </Toggle>
+    </Field>
+  );
+};
+
+export default Example;
+```
+
+## Hint text
+
+Use `Field.Hint` inside `Toggle` to add supporting context.
+
+```tsx
+import React from 'react';
+import { Field, Toggle } from '@zendeskgarden/react-forms';
+
+const Example = () => (
+  <Field>
+    <Toggle>
+      <Field.Label>Notifications</Field.Label>
+      <Field.Hint>Receive alerts when plants need watering</Field.Hint>
+    </Toggle>
+  </Field>
+);
+
+export default Example;
+```
+
+## Disabled state
+
+A disabled Toggle prevents user interaction, does not appear in the tab order, and cannot receive focus.
+
+```tsx
+import React from 'react';
+import { Field, Toggle } from '@zendeskgarden/react-forms';
+
+const Example = () => (
+  <Field>
+    <Toggle disabled>
+      <Field.Label>Auto-watering</Field.Label>
+    </Toggle>
+  </Field>
+);
+
+export default Example;
+```
+
+## Validation states
+
+Use `Field.Message` inside `Toggle` to display success, warning, or error messages.
+
+```tsx
+import React from 'react';
+import { Field, Toggle } from '@zendeskgarden/react-forms';
+
+const Example = () => (
+  <>
+    <Field>
+      <Toggle>
+        <Field.Label>Show tulips</Field.Label>
+        <Field.Message validation="success">Tulips are blooming</Field.Message>
+      </Toggle>
+    </Field>
+    <Field>
+      <Toggle>
+        <Field.Label>Show marigolds</Field.Label>
+        <Field.Message validation="warning">It's not the right season for marigolds</Field.Message>
+      </Toggle>
+    </Field>
+    <Field>
+      <Toggle>
+        <Field.Label>Show roses</Field.Label>
+        <Field.Message validation="error">There are no roses available</Field.Message>
+      </Toggle>
+    </Field>
+  </>
+);
+
+export default Example;
+```
+
+## Component structure
+
+```tsx
+<Field>
+  <Toggle>
+    <Field.Label />
+    <Field.Hint />
+    <Field.Message />
+  </Toggle>
+</Field>
+```
+
+## API reference
+
+### Field
+
+Wraps the Toggle and its associated label, hint, and message. Provides accessibility attributes.
+
+### Field.Label
+
+Renders a `<label>` associated with the Toggle. Nest inside `Toggle`.
+
+<ParamField path="body.isRegular" type="boolean">
+  Renders label text at regular font weight instead of bold (default).
+</ParamField>
+
+<ParamField path="body.hidden" type="boolean">
+  Visually hides the label while keeping it accessible to screen readers.
+</ParamField>
+
+### Field.Hint
+
+Renders supplementary hint text. Nest inside `Toggle`.
+
+### Field.Message
+
+Renders a validation message. Nest inside `Toggle`.
+
+<ParamField path="body.validation" type="'success' | 'warning' | 'error'">
+  Determines the icon and color of the message.
+</ParamField>
+
+### Toggle
+
+A styled toggle switch backed by `<input type="checkbox">`. Nest inside `Field`. Place `Field.Label`, `Field.Hint`, and `Field.Message` as children.
+
+<ParamField path="body.checked" type="boolean">
+  Controls the on/off state (controlled usage).
+</ParamField>
+
+<ParamField path="body.defaultChecked" type="boolean">
+  Sets the initial on/off state (uncontrolled usage).
+</ParamField>
+
+<ParamField path="body.disabled" type="boolean">
+  Prevents user interaction and removes the element from the tab order.
+</ParamField>
+
+<ParamField path="body.onChange" type="(event: React.ChangeEvent<HTMLInputElement>) => void">
+  Called when the toggle state changes.
+</ParamField>

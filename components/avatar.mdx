@@ -1,0 +1,159 @@
+---
+title: "Avatar"
+description: "An Avatar is a visual way to represent a person, brand, or product. It can display an icon, an image, or initials."
+---
+
+Avatars come from the `@zendeskgarden/react-avatars` package. Use them to visually represent people, brands, or Zendesk products across the UI.
+
+## Installation
+
+```bash
+npm install @zendeskgarden/react-avatars
+```
+
+```tsx
+import { Avatar } from '@zendeskgarden/react-avatars';
+```
+
+## Usage
+
+### Shape
+
+Use a **circle** for people and a **rounded square** (system avatar, via `isSystem`) for objects, brands, or products. This distinction helps users scan a page quickly.
+
+```tsx
+import { Avatar } from '@zendeskgarden/react-avatars';
+import { PALETTE } from '@zendeskgarden/react-theming';
+import { ReactComponent as UserIcon } from '@zendeskgarden/svg-icons/src/16/user-solo-stroke.svg';
+import { ReactComponent as ZendeskIcon } from '@zendeskgarden/svg-icons/src/16/zendesk-stroke.svg';
+
+const Example = () => (
+  <>
+    {/* Circle — for people */}
+    <Avatar backgroundColor="background.emphasis" size="medium">
+      <UserIcon role="img" aria-label="User" />
+    </Avatar>
+
+    {/* Rounded square — for objects, brands, or products */}
+    <Avatar backgroundColor={PALETTE.kale[900]} size="medium" isSystem>
+      <ZendeskIcon role="img" aria-label="Zendesk" />
+    </Avatar>
+  </>
+);
+```
+
+### Type
+
+An Avatar can contain an **icon**, an **image**, or **text initials** via `Avatar.Text`.
+
+```tsx
+import { Avatar } from '@zendeskgarden/react-avatars';
+import { ReactComponent as UserIcon } from '@zendeskgarden/svg-icons/src/16/user-solo-stroke.svg';
+
+const Example = () => (
+  <>
+    {/* Icon */}
+    <Avatar backgroundColor="background.emphasis">
+      <UserIcon role="img" aria-label="icon avatar" />
+    </Avatar>
+
+    {/* Image */}
+    <Avatar backgroundColor="background.emphasis">
+      <img alt="Jane Doe" src="https://example.com/jane.png" />
+    </Avatar>
+
+    {/* Text initials */}
+    <Avatar backgroundColor="background.emphasis">
+      <Avatar.Text>ZD</Avatar.Text>
+    </Avatar>
+  </>
+);
+```
+
+### Size
+
+Five sizes are available. The default is `medium`.
+
+```tsx
+import { Avatar } from '@zendeskgarden/react-avatars';
+import { ReactComponent as UserIcon } from '@zendeskgarden/svg-icons/src/16/user-solo-stroke.svg';
+
+const Example = () => (
+  <>
+    <Avatar backgroundColor="background.emphasis" size="extraextrasmall">
+      <UserIcon role="img" aria-label="extra extra small avatar" />
+    </Avatar>
+    <Avatar backgroundColor="background.emphasis" size="extrasmall">
+      <UserIcon role="img" aria-label="extra small avatar" />
+    </Avatar>
+    <Avatar backgroundColor="background.emphasis" size="small">
+      <UserIcon role="img" aria-label="small avatar" />
+    </Avatar>
+    <Avatar backgroundColor="background.emphasis" size="medium">
+      <UserIcon role="img" aria-label="medium avatar" />
+    </Avatar>
+    <Avatar backgroundColor="background.emphasis" size="large">
+      <UserIcon role="img" aria-label="large avatar" />
+    </Avatar>
+  </>
+);
+```
+
+### Status
+
+A colored ring outside the avatar communicates a user's current status. Options are `'available'` and `'away'`. Use `badge` to display a numeric count instead.
+
+```tsx
+import { Avatar } from '@zendeskgarden/react-avatars';
+import { ReactComponent as UserIcon } from '@zendeskgarden/svg-icons/src/16/user-solo-stroke.svg';
+
+const Example = () => (
+  <>
+    <Avatar backgroundColor="background.emphasis" status="away">
+      <UserIcon role="img" aria-label="user, away" />
+    </Avatar>
+    <Avatar backgroundColor="background.emphasis" status="available">
+      <UserIcon role="img" aria-label="user, available" />
+    </Avatar>
+    <Avatar backgroundColor="background.emphasis" badge={8}>
+      <UserIcon role="img" aria-label="user, 8 notifications" />
+    </Avatar>
+  </>
+);
+```
+
+## Component structure
+
+```tsx
+<Avatar>
+  {/* One of: icon element, <img>, or <Avatar.Text> */}
+</Avatar>
+```
+
+## Props
+
+### Avatar
+
+<ParamField path="size" type="'extraextrasmall' | 'extrasmall' | 'small' | 'medium' | 'large'" default="'medium'">
+  Controls the dimensions of the avatar.
+</ParamField>
+
+<ParamField path="status" type="'available' | 'away'">
+  Displays a colored status ring around the avatar.
+</ParamField>
+
+<ParamField path="badge" type="string | number">
+  Displays a numeric badge on the avatar. Use for notification counts.
+</ParamField>
+
+<ParamField path="isSystem" type="boolean" default="false">
+  Renders the avatar as a rounded square instead of a circle. Use for objects, brands, or products.
+</ParamField>
+
+<ParamField path="backgroundColor" type="string">
+  Sets the avatar background color. Accepts a theme token (e.g. `'background.emphasis'`) or a palette value.
+</ParamField>
+
+### Avatar.Text
+
+Applies appropriate styles to child text (typically initials). Nest inside an `Avatar` component.

@@ -1,122 +1,81 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Garden",
+  "theme": "willow",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#7a6040",
+    "light": "#3c4833",
+    "dark": "#cbb7a2"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "https://media.brand.dev/02732def-2bfe-46d2-b272-df0c47053d9e.png",
+  "navbar": {
+    "primary": {
+      "type": "github",
+      "href": "https://github.com/zendeskgarden/website"
+    }
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/zendeskgarden/website"
+    }
+  },
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Design",
         "groups": [
           {
-            "group": "Getting started",
-            "pages": [
-              "index",
-              "quickstart",
-              "development"
-            ]
+            "group": "Get Started",
+            "pages": ["design/introduction", "design/getting-started"]
           },
           {
-            "group": "Customization",
-            "pages": [
-              "essentials/settings",
-              "essentials/navigation"
-            ]
-          },
-          {
-            "group": "Writing content",
-            "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
-            ]
-          },
-          {
-            "group": "AI tools",
-            "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
-            ]
+            "group": "Foundations",
+            "pages": ["design/color", "design/palette", "design/icons", "design/typography"]
           }
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "Components",
         "groups": [
           {
-            "group": "API documentation",
-            "pages": [
-              "api-reference/introduction"
-            ]
+            "group": "Overview",
+            "pages": ["components/introduction", "components/theming", "components/versions"]
           },
           {
-            "group": "Endpoint examples",
-            "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
-            ]
+            "group": "Actions",
+            "pages": ["components/button", "components/icon-button", "components/split-button", "components/toggle-button", "components/anchor", "components/menu"]
+          },
+          {
+            "group": "Forms",
+            "pages": ["components/input", "components/combobox", "components/checkbox", "components/radio", "components/toggle", "components/select", "components/textarea", "components/file-upload", "components/date-picker"]
+          },
+          {
+            "group": "Feedback & Overlays",
+            "pages": ["components/notifications", "components/modal", "components/tooltip", "components/drawer", "components/progress"]
+          },
+          {
+            "group": "Layout & Navigation",
+            "pages": ["components/table", "components/tabs", "components/pagination", "components/breadcrumbs", "components/grid", "components/accordion"]
+          },
+          {
+            "group": "Display",
+            "pages": ["components/tags", "components/avatar", "components/badge", "components/typography", "components/well"]
+          }
+        ]
+      },
+      {
+        "tab": "Patterns",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": ["patterns/introduction"]
+          },
+          {
+            "group": "Usage Patterns",
+            "pages": ["patterns/buttons", "patterns/forms", "patterns/tables", "patterns/loaders", "patterns/drag-and-drop", "patterns/errors"]
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
-  },
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
-  },
-  "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
-      }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
-    }
-  },
-  "contextual": {
-    "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
-  },
-  "footer": {
-    "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
-    }
+    ]
   }
 }

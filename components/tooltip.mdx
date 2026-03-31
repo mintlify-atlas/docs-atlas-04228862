@@ -1,0 +1,191 @@
+---
+title: "Tooltip"
+description: "Contextual labels that appear on hover or focus, and richer interactive tooltip dialogs, from @zendeskgarden/react-tooltips."
+---
+
+```tsx
+import { Tooltip } from '@zendeskgarden/react-tooltips';
+```
+
+Tooltips appear when a user hovers or focuses an element. They provide contextual information about the element they are paired with.
+
+Use a Tooltip to describe the function of an element when it might be ambiguous, or to label unlabeled icons. Do not use tooltips to display information a user needs to remember, or to show truncated text (use a native `title` attribute instead).
+
+## Basic usage
+
+Wrap any focusable element with `Tooltip` and pass the tooltip text via the `content` prop.
+
+```tsx
+import { Tooltip } from '@zendeskgarden/react-tooltips';
+import { Button } from '@zendeskgarden/react-buttons';
+
+const Example = () => (
+  <Tooltip content="Eat, drink, and be rosemary">
+    <Button isBasic>Hover for a tooltip</Button>
+  </Tooltip>
+);
+```
+
+## Placement
+
+There are 13 placement options. The Tooltip occupies the `top` position by default. `auto` chooses the placement with the most available space.
+
+```tsx
+<Tooltip content="Tooltip text" placement="bottom-start">
+  <Button>Bottom start</Button>
+</Tooltip>
+```
+
+<ParamField path="placement" type="'auto' | 'top' | 'top-start' | 'top-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'start' | 'start-top' | 'start-bottom' | 'end' | 'end-top' | 'end-bottom'">
+  Controls the preferred position of the tooltip relative to its trigger. Defaults to `'top'`.
+</ParamField>
+
+## Size
+
+Tooltips come in four sizes: `small`, `medium`, `large`, and `extra-large`. Only `large` and `extra-large` can contain a `Tooltip.Title`.
+
+```tsx
+<Tooltip size="small" content="Small tooltip">
+  <Button size="small">Small</Button>
+</Tooltip>
+
+<Tooltip size="large" content={
+  <>
+    <Tooltip.Title>Words of wisdom</Tooltip.Title>
+    <Tooltip.Paragraph>
+      I asked the staff at my local garden center what to grow in my garden.
+      They gave me some sage advice.
+    </Tooltip.Paragraph>
+  </>
+}>
+  <Button>Large</Button>
+</Tooltip>
+```
+
+<ParamField path="size" type="'small' | 'medium' | 'large' | 'extra-large'">
+  Controls the tooltip dimensions. Defaults to `'small'`. Use `'large'` or `'extra-large'` when including a title.
+</ParamField>
+
+## Type (light / dark)
+
+Tooltips can be `light` or `dark`. Small and medium tooltips default to `dark`. Large and extra-large tooltips default to `light`.
+
+```tsx
+import { Tooltip } from '@zendeskgarden/react-tooltips';
+import { Button } from '@zendeskgarden/react-buttons';
+
+const Example = () => (
+  <>
+    <Tooltip type="dark" size="small" content="Eat, drink, and be rosemary">
+      <Button size="small" isPrimary>Dark tooltip</Button>
+    </Tooltip>
+
+    <Tooltip
+      type="light"
+      size="large"
+      placement="top-end"
+      content={
+        <>
+          <Tooltip.Title>Words of wisdom</Tooltip.Title>
+          <Tooltip.Paragraph>
+            I asked the staff at my local garden center what to grow in my garden.
+            They gave me some sage advice.
+          </Tooltip.Paragraph>
+        </>
+      }
+    >
+      <Button isPrimary>Light tooltip</Button>
+    </Tooltip>
+  </>
+);
+```
+
+<ParamField path="type" type="'light' | 'dark'">
+  The color theme of the tooltip. Small/medium default to `'dark'`; large/extra-large default to `'light'`.
+</ParamField>
+
+## Subcomponents
+
+### Tooltip.Title
+
+A bold heading rendered inside a large or extra-large tooltip. Only valid when `size` is `'large'` or `'extra-large'`.
+
+### Tooltip.Paragraph
+
+Body text inside a large or extra-large tooltip. Use for multi-sentence descriptions.
+
+---
+
+## TooltipDialog
+
+```tsx
+import { TooltipDialog } from '@zendeskgarden/react-modals';
+```
+
+`TooltipDialog` is a richer popover that supports interactive content — buttons, links, and a focus loop. It is appropriate when a user needs to take action within the tooltip.
+
+<Note>
+  Use `TooltipDialog` when you need interactive controls inside the popover. For read-only hover text, use `Tooltip` instead.
+</Note>
+
+### Basic usage
+
+```tsx
+import { TooltipDialog } from '@zendeskgarden/react-modals';
+import { Button } from '@zendeskgarden/react-buttons';
+import { IconButton } from '@zendeskgarden/react-buttons';
+
+const Example = () => (
+  <TooltipDialog
+    content={
+      <>
+        <TooltipDialog.Title>Garden tips</TooltipDialog.Title>
+        <TooltipDialog.Body>
+          Water your plants in the morning to reduce evaporation and fungal growth.
+        </TooltipDialog.Body>
+        <TooltipDialog.Footer>
+          <TooltipDialog.FooterItem>
+            <Button isBasic size="small">Dismiss</Button>
+          </TooltipDialog.FooterItem>
+          <TooltipDialog.FooterItem>
+            <Button isPrimary size="small">Learn more</Button>
+          </TooltipDialog.FooterItem>
+        </TooltipDialog.Footer>
+        <TooltipDialog.Close aria-label="Close" />
+      </>
+    }
+  >
+    <Button isBasic>Open tooltip dialog</Button>
+  </TooltipDialog>
+);
+```
+
+### Placement
+
+There are 13 placement options. The default is `top`. `auto` chooses the position with the most available space.
+
+<ParamField path="placement" type="'auto' | 'top' | 'top-start' | 'top-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'start' | 'start-top' | 'start-bottom' | 'end' | 'end-top' | 'end-bottom'">
+  Controls the preferred position of the dialog. Defaults to `'top'`.
+</ParamField>
+
+### Component structure
+
+```tsx
+<TooltipDialog>
+  {/* trigger element */}
+  <content>
+    <TooltipDialog.Title />
+    <TooltipDialog.Body />
+    <TooltipDialog.Footer>
+      <TooltipDialog.FooterItem />
+    </TooltipDialog.Footer>
+    <TooltipDialog.Close aria-label="Close" />
+  </content>
+</TooltipDialog>
+```
+
+## Accessibility
+
+- `Tooltip` automatically links its content to the trigger element via `aria-describedby`. Do not manually set this attribute.
+- `TooltipDialog` creates a focus trap while open, following the ARIA dialog pattern.
+- Always ensure the trigger element is focusable (a native button or element with `tabIndex={0}`) so keyboard users can access the tooltip.

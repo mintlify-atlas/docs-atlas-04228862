@@ -1,0 +1,257 @@
+---
+title: "Input"
+description: "An Input lets users enter text into a field."
+---
+
+Package: `@zendeskgarden/react-forms`
+
+```tsx
+import { Field, Input, MediaInput } from '@zendeskgarden/react-forms';
+```
+
+## When to use it
+
+- To let the user enter data into a field.
+- For multi-line text, use [Textarea](/components/textarea) instead.
+
+## Basic usage
+
+An Input comes with a label indicating what goes into the field.
+
+```tsx
+import React from 'react';
+import { Field, Input } from '@zendeskgarden/react-forms';
+
+const Example = () => (
+  <Field>
+    <Field.Label>Plant</Field.Label>
+    <Input />
+  </Field>
+);
+
+export default Example;
+```
+
+## Hint text
+
+Use `Field.Hint` to provide additional context alongside the label.
+
+```tsx
+import React from 'react';
+import { Field, Input } from '@zendeskgarden/react-forms';
+
+const Example = () => (
+  <Field>
+    <Field.Label>Evergreen</Field.Label>
+    <Field.Hint>Foliage throughout the year</Field.Hint>
+    <Input />
+  </Field>
+);
+
+export default Example;
+```
+
+## Validation states
+
+Show success, warning, and error states by passing the `validation` prop to both `Input` and `Field.Message`.
+
+<Tabs>
+  <Tab title="Success">
+    ```tsx
+    import React from 'react';
+    import { Field, Input } from '@zendeskgarden/react-forms';
+
+    const Example = () => (
+      <Field>
+        <Field.Label>Plant</Field.Label>
+        <Input validation="success" />
+        <Field.Message validation="success">A cactus is a beautiful plant</Field.Message>
+      </Field>
+    );
+
+    export default Example;
+    ```
+  </Tab>
+  <Tab title="Warning">
+    ```tsx
+    import React from 'react';
+    import { Field, Input } from '@zendeskgarden/react-forms';
+
+    const Example = () => (
+      <Field>
+        <Field.Label>Plant</Field.Label>
+        <Input validation="warning" />
+        <Field.Message validation="warning">A cactus has thorns</Field.Message>
+      </Field>
+    );
+
+    export default Example;
+    ```
+  </Tab>
+  <Tab title="Error">
+    ```tsx
+    import React from 'react';
+    import { Field, Input } from '@zendeskgarden/react-forms';
+
+    const Example = () => (
+      <Field>
+        <Field.Label>Plant</Field.Label>
+        <Input validation="error" />
+        <Field.Message validation="error">A cactus belongs in the desert</Field.Message>
+      </Field>
+    );
+
+    export default Example;
+    ```
+  </Tab>
+</Tabs>
+
+## Compact size
+
+Use `isCompact` to render a smaller input, useful in dense layouts.
+
+```tsx
+import React from 'react';
+import { Field, Input } from '@zendeskgarden/react-forms';
+
+const Example = () => (
+  <Field>
+    <Field.Label>Shrub</Field.Label>
+    <Input isCompact />
+  </Field>
+);
+
+export default Example;
+```
+
+## Disabled state
+
+A disabled Input prevents user interaction. It does not appear in the tab order and cannot receive focus.
+
+```tsx
+import React from 'react';
+import { Field, Input } from '@zendeskgarden/react-forms';
+
+const Example = () => (
+  <Field>
+    <Field.Label>Plant</Field.Label>
+    <Input disabled />
+  </Field>
+);
+
+export default Example;
+```
+
+## Media input (start and end adornments)
+
+Use `MediaInput` to display icons or other media at the start and/or end of the input.
+
+```tsx
+import React from 'react';
+import { Field, MediaInput } from '@zendeskgarden/react-forms';
+import { ReactComponent as StartIcon } from '@zendeskgarden/svg-icons/src/16/search-stroke.svg';
+import { ReactComponent as EndIcon } from '@zendeskgarden/svg-icons/src/16/leaf-stroke.svg';
+
+const Example = () => (
+  <Field>
+    <Field.Label>Prune</Field.Label>
+    <MediaInput start={<StartIcon />} end={<EndIcon />} />
+  </Field>
+);
+
+export default Example;
+```
+
+## Component structure
+
+```tsx
+<Field>
+  <Field.Label />
+  <Field.Hint />
+  <Input />
+  <Field.Message />
+</Field>
+```
+
+For inputs with icons, substitute `Input` with `MediaInput`:
+
+```tsx
+<Field>
+  <Field.Label />
+  <MediaInput start={<Icon />} end={<Icon />} />
+</Field>
+```
+
+## API reference
+
+### Field
+
+Wraps an input and its associated label, hint, and message. Provides accessibility attributes that associate child elements with each other.
+
+<ParamField path="body.isCompact" type="boolean">
+  Reduces the vertical padding of all child form elements.
+</ParamField>
+
+### Field.Label
+
+Renders a `<label>` associated with the input inside the Field.
+
+<ParamField path="body.isRegular" type="boolean">
+  Renders label text at regular font weight instead of bold.
+</ParamField>
+
+<ParamField path="body.hidden" type="boolean">
+  Visually hides the label while keeping it accessible to screen readers.
+</ParamField>
+
+### Field.Hint
+
+Renders supplementary hint text below the label. Nest inside a `Field`.
+
+### Field.Message
+
+Renders a validation message below the input. Applies an icon and color that match the `validation` value.
+
+<ParamField path="body.validation" type="'success' | 'warning' | 'error'">
+  The validation state that determines the icon and color of the message.
+</ParamField>
+
+### Input
+
+A styled `<input>` element. Nest inside a `Field`.
+
+<ParamField path="body.validation" type="'success' | 'warning' | 'error'">
+  Applies validation styling to the input border.
+</ParamField>
+
+<ParamField path="body.isCompact" type="boolean">
+  Renders a smaller input with reduced padding.
+</ParamField>
+
+<ParamField path="body.focusInset" type="boolean">
+  Places the focus ring inside the element boundary. Useful when the input is flush with an adjacent component.
+</ParamField>
+
+<ParamField path="body.disabled" type="boolean">
+  Prevents user interaction and removes the element from the tab order.
+</ParamField>
+
+### MediaInput
+
+A styled input that accepts `start` and `end` slots for icons or other media. Nest inside a `Field`.
+
+<ParamField path="body.start" type="ReactNode">
+  Content rendered at the leading edge of the input.
+</ParamField>
+
+<ParamField path="body.end" type="ReactNode">
+  Content rendered at the trailing edge of the input.
+</ParamField>
+
+<ParamField path="body.validation" type="'success' | 'warning' | 'error'">
+  Applies validation styling to the input border.
+</ParamField>
+
+<ParamField path="body.isCompact" type="boolean">
+  Renders a smaller input with reduced padding.
+</ParamField>

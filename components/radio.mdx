@@ -1,0 +1,247 @@
+---
+title: "Radio"
+description: "Radio buttons let users choose a single option among two or more mutually exclusive options."
+---
+
+Package: `@zendeskgarden/react-forms`
+
+```tsx
+import { Field, Radio, Fieldset } from '@zendeskgarden/react-forms';
+```
+
+## When to use it
+
+- For choices that cannot occur at the same time.
+- To make a mutually exclusive selection between two or more options.
+
+<Note>
+  If the user can choose more than one option at once, use [Checkbox](/components/checkbox) instead. For a long list of options, use [Combobox](/components/combobox) instead.
+</Note>
+
+## Basic usage
+
+All Radio buttons in a group share the same `name` prop so the browser treats them as mutually exclusive. Manage selected state with controlled `checked` and `onChange` props.
+
+```tsx
+import React, { useState } from 'react';
+import { Field, Radio } from '@zendeskgarden/react-forms';
+
+const Example = () => {
+  const [radioValue, setRadioValue] = useState('annual');
+
+  return (
+    <div role="group" aria-label="Choose a plant lifecycle">
+      <Field>
+        <Radio
+          name="lifecycle"
+          value="annual"
+          checked={radioValue === 'annual'}
+          onChange={event => setRadioValue(event.target.value)}
+        >
+          <Field.Label>Annual</Field.Label>
+        </Radio>
+      </Field>
+      <Field>
+        <Radio
+          name="lifecycle"
+          value="perennial"
+          checked={radioValue === 'perennial'}
+          onChange={event => setRadioValue(event.target.value)}
+        >
+          <Field.Label>Perennial</Field.Label>
+        </Radio>
+      </Field>
+    </div>
+  );
+};
+
+export default Example;
+```
+
+## Hint text
+
+Use `Field.Hint` inside `Radio` to add context below the label.
+
+```tsx
+import React, { useState } from 'react';
+import { Field, Radio } from '@zendeskgarden/react-forms';
+
+const Example = () => {
+  const [value, setValue] = useState('annual');
+
+  return (
+    <div role="group" aria-label="Choose a plant lifecycle">
+      <Field>
+        <Radio
+          name="lifecycle-hint"
+          value="annual"
+          checked={value === 'annual'}
+          onChange={e => setValue(e.target.value)}
+        >
+          <Field.Label>Annual</Field.Label>
+          <Field.Hint>Completes its life cycle in one growing season</Field.Hint>
+        </Radio>
+      </Field>
+      <Field>
+        <Radio
+          name="lifecycle-hint"
+          value="perennial"
+          checked={value === 'perennial'}
+          onChange={e => setValue(e.target.value)}
+        >
+          <Field.Label>Perennial</Field.Label>
+          <Field.Hint>Returns each year from the same root system</Field.Hint>
+        </Radio>
+      </Field>
+    </div>
+  );
+};
+
+export default Example;
+```
+
+## Validation
+
+Use `Fieldset` and `Fieldset.Legend` to group the options, and `Field.Message` to display a validation message for the group.
+
+```tsx
+import React, { useState } from 'react';
+import { Fieldset, Field, Radio } from '@zendeskgarden/react-forms';
+
+const lifecycle: Record<string, { validation: 'success' | 'warning' | 'error'; message: string }> = {
+  annual:    { validation: 'success', message: 'Growing all the time' },
+  perennial: { validation: 'warning', message: 'Growing regularly' },
+  biennial:  { validation: 'error',   message: 'Growing slowly' }
+};
+
+const Example = () => {
+  const [radioValue, setRadioValue] = useState('annual');
+
+  return (
+    <Fieldset>
+      <Fieldset.Legend>Choose a growth type</Fieldset.Legend>
+      <Field>
+        <Radio
+          name="validation-example"
+          value="annual"
+          checked={radioValue === 'annual'}
+          onChange={e => setRadioValue(e.target.value)}
+        >
+          <Field.Label isRegular>Annual</Field.Label>
+        </Radio>
+      </Field>
+      <Field>
+        <Radio
+          name="validation-example"
+          value="perennial"
+          checked={radioValue === 'perennial'}
+          onChange={e => setRadioValue(e.target.value)}
+        >
+          <Field.Label isRegular>Perennial</Field.Label>
+        </Radio>
+      </Field>
+      <Field>
+        <Radio
+          name="validation-example"
+          value="biennial"
+          checked={radioValue === 'biennial'}
+          onChange={e => setRadioValue(e.target.value)}
+        >
+          <Field.Label isRegular>Biennial</Field.Label>
+        </Radio>
+        <Field.Message validation={lifecycle[radioValue].validation}>
+          {lifecycle[radioValue].message}
+        </Field.Message>
+      </Field>
+    </Fieldset>
+  );
+};
+
+export default Example;
+```
+
+## Component structure
+
+```tsx
+<Fieldset>
+  <Fieldset.Legend />
+  <Field>
+    <Radio name="group-name" value="option-a">
+      <Field.Label />
+      <Field.Hint />
+    </Radio>
+  </Field>
+  <Field>
+    <Radio name="group-name" value="option-b">
+      <Field.Label />
+    </Radio>
+    <Field.Message />
+  </Field>
+</Fieldset>
+```
+
+## API reference
+
+### Field
+
+Wraps a Radio and its label, hint, and message. Associates child elements for accessibility.
+
+### Field.Label
+
+Renders a `<label>` associated with the Radio. Nest inside `Radio`.
+
+<ParamField path="body.isRegular" type="boolean">
+  Renders label text at regular font weight instead of bold (default).
+</ParamField>
+
+<ParamField path="body.hidden" type="boolean">
+  Visually hides the label while keeping it accessible to screen readers.
+</ParamField>
+
+### Field.Hint
+
+Renders supplementary hint text. Nest inside `Radio`.
+
+### Field.Message
+
+Renders a validation message. Nest inside `Field`.
+
+<ParamField path="body.validation" type="'success' | 'warning' | 'error'">
+  Determines the icon and color of the message.
+</ParamField>
+
+### Fieldset
+
+Provides styles for grouping related `Field` + `Radio` components.
+
+### Fieldset.Legend
+
+Renders a `<legend>` inside a `Fieldset` to label the group.
+
+### Radio
+
+A styled `<input type="radio">`. Nest inside `Field`. Place `Field.Label` and `Field.Hint` as children.
+
+<ParamField path="body.name" type="string" required>
+  Groups radio buttons together. All radios sharing a `name` are mutually exclusive.
+</ParamField>
+
+<ParamField path="body.value" type="string" required>
+  The value submitted when this radio is selected.
+</ParamField>
+
+<ParamField path="body.checked" type="boolean">
+  Controls the selected state (controlled usage).
+</ParamField>
+
+<ParamField path="body.defaultChecked" type="boolean">
+  Sets the initial selected state (uncontrolled usage).
+</ParamField>
+
+<ParamField path="body.disabled" type="boolean">
+  Prevents user interaction and removes the element from the tab order.
+</ParamField>
+
+<ParamField path="body.onChange" type="(event: React.ChangeEvent<HTMLInputElement>) => void">
+  Called when this radio is selected.
+</ParamField>

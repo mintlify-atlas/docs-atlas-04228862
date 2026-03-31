@@ -1,0 +1,211 @@
+---
+title: "Textarea"
+description: "A Textarea is a form control for multi-line text input."
+---
+
+Package: `@zendeskgarden/react-forms`
+
+```tsx
+import { Field, Textarea } from '@zendeskgarden/react-forms';
+```
+
+## When to use it
+
+- To let users enter multi-line text.
+- For single-line text, use [Input](/components/input) instead.
+
+## Basic usage
+
+By default, Textarea height is fixed.
+
+```tsx
+import React from 'react';
+import { Field, Textarea } from '@zendeskgarden/react-forms';
+
+const Example = () => (
+  <Field>
+    <Field.Label>Shrub</Field.Label>
+    <Textarea />
+  </Field>
+);
+
+export default Example;
+```
+
+## Auto-expand
+
+Use `minRows` and `maxRows` to allow the Textarea to grow automatically as the user types.
+
+```tsx
+import React from 'react';
+import { Field, Textarea } from '@zendeskgarden/react-forms';
+
+const Example = () => (
+  <Field>
+    <Field.Label>Soil notes</Field.Label>
+    <Textarea minRows={2} maxRows={12} />
+  </Field>
+);
+
+export default Example;
+```
+
+<Tip>
+  `minRows` sets the minimum visible rows. `maxRows` caps the height after which the textarea begins to scroll.
+</Tip>
+
+## Manual resizing
+
+Add `isResizable` to provide a drag handle, letting users manually resize the textarea.
+
+```tsx
+import React from 'react';
+import { Field, Textarea } from '@zendeskgarden/react-forms';
+
+const Example = () => (
+  <Field>
+    <Field.Label>Ivy notes</Field.Label>
+    <Textarea isResizable />
+  </Field>
+);
+
+export default Example;
+```
+
+## Hidden label
+
+Textarea labels can be visually hidden while remaining accessible to screen readers.
+
+```tsx
+import React from 'react';
+import { Field, Textarea } from '@zendeskgarden/react-forms';
+
+const Example = () => (
+  <Field>
+    <Field.Label hidden>Description</Field.Label>
+    <Textarea placeholder="Describe the plant..." />
+  </Field>
+);
+
+export default Example;
+```
+
+## Validation states
+
+Pass the `validation` prop to both `Textarea` and `Field.Message`.
+
+<Tabs>
+  <Tab title="Success">
+    ```tsx
+    import React from 'react';
+    import { Field, Textarea } from '@zendeskgarden/react-forms';
+
+    const Example = () => (
+      <Field>
+        <Field.Label>Plant description</Field.Label>
+        <Textarea validation="success" />
+        <Field.Message validation="success">Description looks great</Field.Message>
+      </Field>
+    );
+
+    export default Example;
+    ```
+  </Tab>
+  <Tab title="Warning">
+    ```tsx
+    import React from 'react';
+    import { Field, Textarea } from '@zendeskgarden/react-forms';
+
+    const Example = () => (
+      <Field>
+        <Field.Label>Plant description</Field.Label>
+        <Textarea validation="warning" />
+        <Field.Message validation="warning">Description is very short</Field.Message>
+      </Field>
+    );
+
+    export default Example;
+    ```
+  </Tab>
+  <Tab title="Error">
+    ```tsx
+    import React from 'react';
+    import { Field, Textarea } from '@zendeskgarden/react-forms';
+
+    const Example = () => (
+      <Field>
+        <Field.Label>Plant description</Field.Label>
+        <Textarea validation="error" />
+        <Field.Message validation="error">Description is required</Field.Message>
+      </Field>
+    );
+
+    export default Example;
+    ```
+  </Tab>
+</Tabs>
+
+## Component structure
+
+```tsx
+<Field>
+  <Field.Label />
+  <Field.Hint />
+  <Textarea />
+  <Field.Message />
+</Field>
+```
+
+## API reference
+
+### Field
+
+Wraps the Textarea and its label, hint, and message. Associates child elements for accessibility.
+
+### Field.Label
+
+Renders a `<label>` associated with the Textarea.
+
+<ParamField path="body.hidden" type="boolean">
+  Visually hides the label while keeping it accessible to screen readers.
+</ParamField>
+
+### Field.Hint
+
+Renders supplementary hint text. Nest inside `Field`.
+
+### Field.Message
+
+Renders a validation message. Nest inside `Field`.
+
+<ParamField path="body.validation" type="'success' | 'warning' | 'error'">
+  Determines the icon and color of the message.
+</ParamField>
+
+### Textarea
+
+A Garden-styled `<textarea>` element. Nest inside `Field`.
+
+<ParamField path="body.minRows" type="number">
+  Minimum number of visible rows. Enables auto-expand when set together with `maxRows`.
+</ParamField>
+
+<ParamField path="body.maxRows" type="number">
+  Maximum number of rows before the textarea scrolls instead of expanding.
+</ParamField>
+
+<ParamField path="body.isResizable" type="boolean">
+  Adds a drag handle so users can manually resize the textarea.
+</ParamField>
+
+<ParamField path="body.isCompact" type="boolean">
+  Renders a smaller Textarea with reduced padding.
+</ParamField>
+
+<ParamField path="body.validation" type="'success' | 'warning' | 'error'">
+  Applies validation border styling to the Textarea.
+</ParamField>
+
+<ParamField path="body.disabled" type="boolean">
+  Prevents user interaction and removes the element from the tab order.
+</ParamField>

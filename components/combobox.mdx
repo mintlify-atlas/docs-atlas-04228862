@@ -1,0 +1,346 @@
+---
+title: "Combobox"
+description: "Combobox is an input paired with a listbox that searches and filters options, allowing the user to select one or more values."
+---
+
+Package: `@zendeskgarden/react-dropdowns`
+
+```tsx
+import { Combobox, Field, Option, OptGroup } from '@zendeskgarden/react-dropdowns';
+```
+
+## When to use it
+
+- To filter down a large list of options.
+- To make a selection from a list of options.
+
+<Note>
+  On mobile devices or in performance-constrained environments, use the native [Select](/components/select) instead.
+</Note>
+
+## Basic usage
+
+By default, the Combobox presents a list of suggested options when the user interacts with the input.
+
+```tsx
+import React from 'react';
+import { Combobox, Field, Option } from '@zendeskgarden/react-dropdowns';
+
+const Example = () => (
+  <Field>
+    <Field.Label>Choose a vegetable</Field.Label>
+    <Combobox>
+      <Option value="Asparagus" />
+      <Option value="Broccoli" />
+      <Option value="Cauliflower" />
+      <Option value="Kale" />
+      <Option value="Lettuce" />
+      <Option value="Onion" />
+      <Option value="Radish" />
+      <Option value="Spinach" />
+      <Option value="Tomato" />
+      <Option value="Zucchini" />
+    </Combobox>
+  </Field>
+);
+
+export default Example;
+```
+
+## Autocomplete with filtering
+
+Use `isAutocomplete` together with user-provided filtering to highlight a matching option as the user types. Debounce the `onChange` handler to avoid excessive filtering on every keystroke.
+
+```tsx
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import debounce from 'lodash.debounce';
+import { Combobox, Field, IComboboxProps, Option } from '@zendeskgarden/react-dropdowns';
+
+const OPTIONS = [
+  'Asparagus', 'Broccoli', 'Brussel sprouts', 'Cauliflower',
+  'Garlic', 'Kale', 'Lettuce', 'Onion', 'Spinach', 'Tomato', 'Zucchini'
+];
+
+const Example = () => {
+  const [options, setOptions] = useState(OPTIONS);
+
+  const handleChange = useCallback<NonNullable<IComboboxProps['onChange']>>(({ inputValue }) => {
+    if (inputValue !== undefined) {
+      if (inputValue === '') {
+        setOptions(OPTIONS);
+      } else {
+        const regex = new RegExp(
+          inputValue.replace(/[.*+?^${}()|[\]\\]/giu, '\\$&'),
+          'giu'
+        );
+        setOptions(OPTIONS.filter(option => option.match(regex)));
+      }
+    }
+  }, []);
+
+  const debounceHandleChange = useMemo(
+    () => debounce(handleChange, 300),
+    [handleChange]
+  );
+
+  useEffect(() => () => { debounceHandleChange.cancel(); }, [debounceHandleChange]);
+
+  return (
+    <Field>
+      <Field.Label>Vegetables</Field.Label>
+      <Combobox isAutocomplete onChange={debounceHandleChange}>
+        {options.length === 0 ? (
+          <Option isDisabled label="" value="No matches found" />
+        ) : (
+          options.map(value => <Option key={value} value={value} />)
+        )}
+      </Combobox>
+    </Field>
+  );
+};
+
+export default Example;
+```
+
+## Multi-select
+
+Use `isMultiselectable` to allow selecting more than one option. Selected values appear as tags inside the input.
+
+```tsx
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import debounce from 'lodash.debounce';
+import { Combobox, Field, IComboboxProps, Option } from '@zendeskgarden/react-dropdowns';
+
+const OPTIONS = [
+  'Asparagus', 'Broccoli', 'Cauliflower', 'Kale',
+  'Lettuce', 'Onion', 'Spinach', 'Tomato', 'Zucchini'
+];
+
+const Example = () => {
+  const [options, setOptions] = useState(OPTIONS);
+
+  const handleChange = useCallback<NonNullable<IComboboxProps['onChange']>>(({ inputValue }) => {
+    if (inputValue !== undefined) {
+      if (inputValue === '') {
+        setOptions(OPTIONS);
+      } else {
+        const regex = new RegExp(
+          inputValue.replace(/[.*+?^${}()|[\]\\]/giu, '\\$&'),
+          'giu'
+        );
+        setOptions(OPTIONS.filter(option => option.match(regex)));
+      }
+    }
+  }, []);
+
+  const debounceHandleChange = useMemo(
+    () => debounce(handleChange, 300),
+    [handleChange]
+  );
+
+  useEffect(() => () => { debounceHandleChange.cancel(); }, [debounceHandleChange]);
+
+  return (
+    <Field>
+      <Field.Label>Seeds</Field.Label>
+      <Field.Hint>Plan your vegetable garden</Field.Hint>
+      <Combobox
+        isAutocomplete
+        isMultiselectable
+        maxHeight="auto"
+        onChange={debounceHandleChange}
+      >
+        {options.length === 0 ? (
+          <Option isDisabled label="" value="No matches found" />
+        ) : (
+          options.map(value => <Option key={value} value={value} />)
+        )}
+      </Combobox>
+    </Field>
+  );
+};
+
+export default Example;
+```
+
+## Grouped options
+
+Use `OptGroup` to categorize options under labeled headings.
+
+```tsx
+import React from 'react';
+import { Combobox, Field, OptGroup, Option } from '@zendeskgarden/react-dropdowns';
+
+const Example = () => (
+  <Field>
+    <Field.Label>Fruits and vegetables</Field.Label>
+    <Combobox>
+      <OptGroup legend="Fruits">
+        <Option value="Apple" />
+        <Option value="Banana" />
+        <Option value="Cherry" />
+      </OptGroup>
+      <OptGroup legend="Vegetables">
+        <Option value="Asparagus" />
+        <Option value="Broccoli" />
+        <Option value="Cauliflower" />
+      </OptGroup>
+    </Combobox>
+  </Field>
+);
+
+export default Example;
+```
+
+## Validation states
+
+Pass the `validation` prop to both `Combobox` and `Field.Message` to show success, warning, or error states.
+
+```tsx
+import React from 'react';
+import { Combobox, Field, Option } from '@zendeskgarden/react-dropdowns';
+
+const Example = () => (
+  <Field>
+    <Field.Label>Plant</Field.Label>
+    <Combobox validation="error">
+      <Option value="Cactus" isDisabled isSelected />
+    </Combobox>
+    <Field.Message validation="error">Cactus is currently unavailable</Field.Message>
+  </Field>
+);
+
+export default Example;
+```
+
+## Select-only mode
+
+Add `isEditable={false}` to disable text input, making the Combobox behave like a native `<select>` while retaining Garden styling and keyboard navigation.
+
+```tsx
+import React from 'react';
+import { Combobox, Field, Option } from '@zendeskgarden/react-dropdowns';
+
+const Example = () => (
+  <Field>
+    <Field.Label>Houseplant</Field.Label>
+    <Combobox isEditable={false}>
+      <Option value="Fern" />
+      <Option value="Snake plant" />
+      <Option value="Rubber tree" />
+    </Combobox>
+  </Field>
+);
+
+export default Example;
+```
+
+## Component structure
+
+```tsx
+<Field>
+  <Field.Label />
+  <Combobox>
+    <Option />
+    <Option />
+    <OptGroup legend="Group name">
+      <Option />
+    </OptGroup>
+  </Combobox>
+  <Field.Message />
+</Field>
+```
+
+<Tip>
+  Use `Array.map` to iterate over an options array rather than listing each `Option` statically. When wrapping `Option` or `OptGroup` in your own components, use `forwardRef` and spread all props to preserve Combobox's internal wiring.
+</Tip>
+
+## API reference
+
+### Field
+
+Wraps the Combobox and its label, hint, and message. Associates all child elements for accessibility.
+
+### Field.Label
+
+Renders a `<label>` associated with the Combobox.
+
+<ParamField path="body.hidden" type="boolean">
+  Visually hides the label while keeping it accessible to screen readers.
+</ParamField>
+
+### Field.Hint
+
+Renders supplementary hint text. Nest inside `Field`.
+
+### Field.Message
+
+Renders a validation message. Applies an icon and color that match the `validation` value.
+
+<ParamField path="body.validation" type="'success' | 'warning' | 'error'">
+  The validation state for the message icon and color.
+</ParamField>
+
+### Combobox
+
+The main input-plus-listbox component. Nest inside `Field`.
+
+<ParamField path="body.isAutocomplete" type="boolean">
+  Highlights a matching option for keyboard selection as the user types.
+</ParamField>
+
+<ParamField path="body.isMultiselectable" type="boolean">
+  Allows selecting multiple options. Selected values render as removable tags.
+</ParamField>
+
+<ParamField path="body.isEditable" type="boolean" default="true">
+  When `false`, the text input is disabled and the Combobox behaves like a native select.
+</ParamField>
+
+<ParamField path="body.validation" type="'success' | 'warning' | 'error'">
+  Applies validation border styling to the Combobox.
+</ParamField>
+
+<ParamField path="body.isCompact" type="boolean">
+  Renders a smaller Combobox with reduced padding.
+</ParamField>
+
+<ParamField path="body.maxHeight" type="string">
+  Sets a CSS `max-height` on the dropdown listbox. Pass `"auto"` to remove the default maximum.
+</ParamField>
+
+<ParamField path="body.onChange" type="(changes: IComboboxChange) => void">
+  Called when the input value or selection changes. Receives `{ inputValue, selectionValue }`.
+</ParamField>
+
+### Option
+
+A single selectable item inside a `Combobox` or `OptGroup`.
+
+<ParamField path="body.value" type="string" required>
+  The option's value and default display label.
+</ParamField>
+
+<ParamField path="body.label" type="string">
+  Overrides the display label while keeping `value` as the submitted value.
+</ParamField>
+
+<ParamField path="body.isDisabled" type="boolean">
+  Prevents selection of the option.
+</ParamField>
+
+<ParamField path="body.isSelected" type="boolean">
+  Marks the option as selected.
+</ParamField>
+
+<ParamField path="body.tagProps" type="object">
+  Props forwarded to the `Tag` rendered for this option when `isMultiselectable` is true.
+</ParamField>
+
+### OptGroup
+
+Groups `Option` components under a labeled heading inside a `Combobox`.
+
+<ParamField path="body.legend" type="string">
+  The visible heading text for the group.
+</ParamField>

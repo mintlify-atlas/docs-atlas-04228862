@@ -1,0 +1,180 @@
+---
+title: "Split button"
+description: "A Split button is a hybrid between a dropdown menu and a button — it lets users choose from parallel actions and take action on their choice."
+---
+
+## Installation
+
+```bash
+npm install @zendeskgarden/react-buttons @zendeskgarden/react-dropdowns styled-components
+```
+
+```tsx
+import { SplitButton, Button, ChevronButton } from '@zendeskgarden/react-buttons';
+import { Menu, Item } from '@zendeskgarden/react-dropdowns';
+```
+
+## When to use
+
+**Use a Split button:**
+- To let users select from multiple parallel actions, where each action is a path forward and none cancel the current workflow
+- To reduce visual complexity when multiple related actions are available
+
+**Do not use a Split button:**
+- To provide a way to navigate between pages — use [Anchor](/components/anchor) instead
+- To provide primary and secondary actions that are distinctly different in importance — use two separate [Buttons](/components/button) instead
+
+## Usage
+
+### Default
+
+A Split button combines a primary action `Button` with a `ChevronButton` that reveals a `Menu` of secondary parallel actions.
+
+```tsx
+import { SplitButton, Button, ChevronButton } from '@zendeskgarden/react-buttons';
+import { Menu, Item, Dropdown, Trigger } from '@zendeskgarden/react-dropdowns';
+
+function Example() {
+  return (
+    <SplitButton>
+      <Button>Save draft</Button>
+      <Dropdown>
+        <Trigger>
+          <ChevronButton aria-label="Other save options" />
+        </Trigger>
+        <Menu>
+          <Item value="publish">Publish</Item>
+          <Item value="schedule">Schedule</Item>
+          <Item value="template">Save as template</Item>
+        </Menu>
+      </Dropdown>
+    </SplitButton>
+  );
+}
+```
+
+### Danger
+
+Use danger styling when the actions involve destructive or irreversible changes.
+
+```tsx
+<SplitButton>
+  <Button isDanger>Delete</Button>
+  <Dropdown>
+    <Trigger>
+      <ChevronButton aria-label="More delete options" isDanger />
+    </Trigger>
+    <Menu>
+      <Item value="archive">Archive instead</Item>
+      <Item value="delete-all" isDanger>Delete all versions</Item>
+    </Menu>
+  </Dropdown>
+</SplitButton>
+```
+
+### Disabled
+
+Disable both the `Button` and the `ChevronButton` to prevent all interaction.
+
+```tsx
+<SplitButton>
+  <Button disabled>Save draft</Button>
+  <Dropdown>
+    <Trigger>
+      <ChevronButton aria-label="Other save options" disabled />
+    </Trigger>
+    <Menu>
+      <Item value="publish">Publish</Item>
+    </Menu>
+  </Dropdown>
+</SplitButton>
+```
+
+### Sizes
+
+Split buttons support small, medium, and large sizes. Apply the same `size` prop to both the `Button` and the `ChevronButton`.
+
+```tsx
+<SplitButton>
+  <Button size="small">Save</Button>
+  <Dropdown>
+    <Trigger>
+      <ChevronButton aria-label="More options" size="small" />
+    </Trigger>
+    <Menu>
+      <Item value="publish">Publish</Item>
+    </Menu>
+  </Dropdown>
+</SplitButton>
+```
+
+### Types
+
+Split buttons can be default or primary. Apply the same type to both child components.
+
+```tsx
+{/* Primary */}
+<SplitButton>
+  <Button isPrimary>Save draft</Button>
+  <Dropdown>
+    <Trigger>
+      <ChevronButton aria-label="More save options" isPrimary />
+    </Trigger>
+    <Menu>
+      <Item value="publish">Publish</Item>
+    </Menu>
+  </Dropdown>
+</SplitButton>
+```
+
+## API
+
+The `SplitButton` component follows this structure:
+
+```tsx
+<SplitButton>
+  <Button />
+  <Dropdown>
+    <Trigger>
+      <ChevronButton />
+    </Trigger>
+    <Menu>
+      <Item />
+      <Item />
+    </Menu>
+  </Dropdown>
+</SplitButton>
+```
+
+The pattern combines four components:
+
+- **SplitButton** — container that groups and styles the button pair
+- **Button** — the primary action trigger
+- **ChevronButton** — the secondary trigger that opens/closes the menu
+- **Dropdown**, **Trigger**, **Menu**, and **Item** — from `@zendeskgarden/react-dropdowns`, they manage the secondary actions list
+
+### SplitButton props
+
+`SplitButton` is a layout container. It accepts standard HTML `div` props and no additional Garden-specific props.
+
+### ChevronButton props
+
+<ParamField path="props.aria-label" type="string" required>
+  Accessible label for the chevron trigger. Required for screen reader support.
+</ParamField>
+
+<ParamField path="props.isPrimary" type="boolean" default="false">
+  Applies filled primary styling. Should match the adjacent `Button`.
+</ParamField>
+
+<ParamField path="props.isDanger" type="boolean" default="false">
+  Applies danger styling. Should match the adjacent `Button`.
+</ParamField>
+
+<ParamField path="props.size" type="'small' | 'medium' | 'large'" default="'medium'">
+  Controls button size. Should match the adjacent `Button`.
+</ParamField>
+
+<ParamField path="props.disabled" type="boolean" default="false">
+  Prevents interaction with the chevron trigger.
+</ParamField>

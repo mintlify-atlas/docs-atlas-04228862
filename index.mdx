@@ -1,97 +1,117 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: Garden Design System
+description: Zendesk's open-source design system for building consistent, accessible user interfaces with React.
 ---
 
-## Setting up
+Garden is Zendesk's design system — a collection of React components, design foundations, and usage patterns that help teams build consistent, accessible, and beautiful product experiences.
 
-Get your documentation site up and running in minutes.
-
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
-
-## Make it yours
-
-Design a docs site that looks great and empowers your users.
-
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
+<CardGroup cols={2}>
+  <Card title="Design Foundations" icon="palette" href="/design/introduction">
+    Explore color systems, typography, icons, and the principles behind Garden's visual language.
   </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
+  <Card title="React Components" icon="puzzle-piece" href="/components/introduction">
+    60+ production-ready, accessible React components with TypeScript support and full theming.
   </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
+  <Card title="Usage Patterns" icon="layer-group" href="/patterns/introduction">
+    Guidance on common UI workflows — buttons, forms, tables, loaders, drag-and-drop, and more.
   </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
+  <Card title="Theming" icon="brush" href="/components/theming">
+    Customize Garden with your own brand colors, typography, and component overrides.
   </Card>
-</Columns>
+</CardGroup>
 
-## Create beautiful pages
+## Get started
 
-Everything you need to create world-class documentation.
+<Steps>
+  <Step title="Install a Garden package">
+    Install the packages you need from npm. All Garden React packages live under the `@zendeskgarden` scope.
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
+    <CodeGroup>
+    ```bash npm
+    npm install @zendeskgarden/react-theming @zendeskgarden/react-buttons styled-components
+    ```
+    ```bash yarn
+    yarn add @zendeskgarden/react-theming @zendeskgarden/react-buttons styled-components
+    ```
+    ```bash pnpm
+    pnpm add @zendeskgarden/react-theming @zendeskgarden/react-buttons styled-components
+    ```
+    </CodeGroup>
+  </Step>
+  <Step title="Wrap your app with ThemeProvider">
+    Garden components require the `ThemeProvider` at the root of your application to supply theming context.
 
-## Need inspiration?
+    ```tsx
+    import { ThemeProvider, DEFAULT_THEME } from '@zendeskgarden/react-theming';
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+    function App() {
+      return (
+        <ThemeProvider theme={DEFAULT_THEME}>
+          {/* your app */}
+        </ThemeProvider>
+      );
+    }
+    ```
+  </Step>
+  <Step title="Use a component">
+    Import and use any Garden component. All components are fully typed and accessible out of the box.
+
+    ```tsx
+    import { Button } from '@zendeskgarden/react-buttons';
+
+    function MyComponent() {
+      return <Button isPrimary>Get started</Button>;
+    }
+    ```
+  </Step>
+  <Step title="Customize the theme">
+    Override Garden's default theme with your own brand values.
+
+    ```tsx
+    import { ThemeProvider, DEFAULT_THEME } from '@zendeskgarden/react-theming';
+
+    const theme = {
+      ...DEFAULT_THEME,
+      colors: {
+        ...DEFAULT_THEME.colors,
+        primaryHue: 'crimson',
+      },
+    };
+
+    function App() {
+      return (
+        <ThemeProvider theme={theme}>
+          {/* your app */}
+        </ThemeProvider>
+      );
+    }
+    ```
+  </Step>
+</Steps>
+
+## Key features
+
+<CardGroup cols={3}>
+  <Card title="Accessible by default" icon="universal-access">
+    All components follow WCAG guidelines, with keyboard navigation, ARIA attributes, and screen reader support built in.
+  </Card>
+  <Card title="TypeScript support" icon="code">
+    Full TypeScript definitions across all packages, with prop types extracted directly from source.
+  </Card>
+  <Card title="Light & dark mode" icon="circle-half-stroke">
+    Automatic light and dark theme support with semantic color variables that adapt to the active color scheme.
+  </Card>
+  <Card title="RTL support" icon="right-left">
+    All components support right-to-left languages. Toggle RTL layout via the `ThemeProvider`.
+  </Card>
+  <Card title="Design tokens" icon="swatchbook">
+    Semantic color variables and design tokens keep your UI consistent and easy to maintain.
+  </Card>
+  <Card title="Figma integration" icon="figma">
+    Garden's components map 1:1 to Figma assets, making design-to-code handoff seamless.
+  </Card>
+</CardGroup>
+
+<Tip>
+  Looking for a specific component? Head to the [Components](/components/introduction) tab for the full library, organized by category.
+</Tip>

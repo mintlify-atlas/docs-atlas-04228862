@@ -1,0 +1,272 @@
+---
+title: "Error handling"
+description: "Inline validation errors, page-level alerts, Global Alerts, notification errors, and error message content guidelines."
+---
+
+Error messages let users know that a problem has occurred and what to do about it. Errors fall into two categories:
+
+- **System errors** — the system failed to load or perform an action
+- **User errors** — the user made an incorrect action or entered invalid input
+
+Use the right component for each context:
+
+| Component | Use for |
+|---|---|
+| [Global Alert](/components/notifications) | System-level errors that interrupt the user's entire session |
+| [Alert](/components/notifications) | Contextual errors related to a specific page or form |
+| [Notification](/components/notifications) | Errors from actions that could not be completed |
+| [Validation message](/components/input#validation) | Inline field-level errors in forms |
+
+## Global Alerts
+
+Use `GlobalAlert` to communicate system-level errors that interrupt a user's task — such as losing connection to the service.
+
+### Anatomy
+
+A Global Alert for errors should always include:
+
+1. A **title** that announces what went wrong
+2. **Content** that describes how to address the issue (may include an anchor for more information)
+3. A **button** that provides a way to resolve the error, placed at the end of the alert
+
+### Layout
+
+Global Alerts sit above all page chrome and push content down. They are the first element seen and announced by screen readers. For errors, Global Alerts should persist until the issue is resolved by the user or system — do not include a close button until the error is fixed.
+
+```tsx
+import { GlobalAlert } from '@zendeskgarden/react-notifications';
+import { Button } from '@zendeskgarden/react-buttons';
+import { Anchor } from '@zendeskgarden/react-buttons';
+
+{isDisconnected && (
+  <GlobalAlert type="error">
+    <GlobalAlert.Title>You've been disconnected</GlobalAlert.Title>
+    <GlobalAlert.Content>
+      Your connection to Zendesk was lost.{' '}
+      <Anchor href="/support">Learn more about connection issues.</Anchor>
+    </GlobalAlert.Content>
+    <GlobalAlert.Button onClick={handleReconnect}>Reconnect</GlobalAlert.Button>
+  </GlobalAlert>
+)}
+```
+
+## Alerts
+
+Use `Alert` to communicate contextual errors on how to fix a problem. Alerts persist until they are dismissed by the user or the issue is resolved. They appear near the related content — most commonly at the top of a form when validation fails.
+
+### Anatomy
+
+1. **Title** — what went wrong
+2. **Content** — detail on how to fix it
+3. **Close button** — an icon button at the end of the alert
+
+### Usage with forms
+
+When a form fails validation, place an Alert at the top of the form summarizing what went wrong, plus inline error messages on each individual field.
+
+```tsx
+import { Alert, Title } from '@zendeskgarden/react-notifications';
+import { Field, Label, Input, Message } from '@zendeskgarden/react-forms';
+import { Close } from '@zendeskgarden/react-notifications';
+
+{hasErrors && (
+  <Alert type="error">
+    <Title>Please fix the following errors to continue:</Title>
+    <ul>
+      {errors.map((error) => (
+        <li key={error.field}>{error.message}</li>
+      ))}
+    </ul>
+    <Close aria-label="Dismiss" onClick={() => setHasErrors(false)} />
+  </Alert>
+)}
+
+<Field>
+  <Label>Email address</Label>
+  <Input validation={errors.email ? 'error' : undefined} />
+  {errors.email && (
+    <Message validation="error">{errors.email}</Message>
+  )}
+</Field>
+```
+
+Alerts expand to fill the width of their container or area.
+
+## Notifications
+
+Use error notifications when an activity could not be completed — for example, a file upload that failed, or a background operation that encountered an error.
+
+### Anatomy
+
+1. **Title** — what could not be completed
+2. **Message** — brief description
+3. **Close button** — icon button
+
+### Layout
+
+Notifications appear in the **top-right** of the workspace and remain on screen for at least **5 seconds**. Avoid covering important page elements.
+
+```tsx
+import { Notification, Title, Close } from '@zendeskgarden/react-notifications';
+
+{uploadFailed && (
+  <Notification type="error">
+    <Title>Image could not be uploaded</Title>
+    The file exceeds the 10 MB limit. Try a smaller image.
+    <Close aria-label="Dismiss" onClick={() => setUploadFailed(false)} />
+  </Notification>
+)}
+```
+
+## Form field errors
+
+Use `Message` with `validation="error"` to help users correct input errors as they happen. Clearly explain what went wrong and how to fix it.
+
+### Anatomy
+
+1. The input's border turns red to indicate an error
+2. A detailed error message below the field describes what went wrong
+
+```tsx
+import { Field, Label, Input, Message } from '@zendeskgarden/react-forms';
+
+<Field>
+  <Label>Password</Label>
+  <Input
+    type="password"
+    validation={errors.password ? 'error' : undefined}
+    aria-describedby={errors.password ? 'password-error' : undefined}
+  />
+  {errors.password && (
+    <Message validation="error" id="password-error">
+      {errors.password}
+    </Message>
+  )}
+</Field>
+```
+
+### Validate on submit
+
+Trigger validation after the user submits, not on every keystroke.
+
+<Tabs>
+  <Tab title="Do">
+    Show validation errors after the user has tried submitting the form. For severe cases (passwords, emails), validate on blur.
+
+    ```tsx
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      const result = validateAll(fields);
+      if (!result.valid) {
+        setErrors(result.errors);
+        return;
+      }
+      submit(fields);
+    };
+    ```
+  </Tab>
+  <Tab title="Avoid">
+    Live validation on every keypress — it interrupts users before they have finished typing and creates noise.
+  </Tab>
+</Tabs>
+
+### Preserve invalid data
+
+When validation fails, keep the values the user entered in the fields. Clearing invalid data forces users to re-enter information and may cause the same mistake again.
+
+```tsx
+// Do: keep invalid values in state
+const [email, setEmail] = useState('');
+
+<Input
+  value={email}            // persisted even if invalid
+  onChange={(e) => setEmail(e.target.value)}
+  validation={errors.email ? 'error' : undefined}
+/>
+```
+
+## Error message content guidelines
+
+Good error messages are:
+
+| Quality | Description | Example |
+|---|---|---|
+| **Specific** | Identify exactly what went wrong | "Email address is missing the @ symbol" not "Invalid input" |
+| **Actionable** | Tell the user what to do | "Enter a valid email address, such as name@example.com" |
+| **Non-blaming** | Do not blame the user | "Email address is required" not "You forgot to enter your email" |
+| **Human** | Write in plain language | "Something went wrong. Try again." not "Error code 500: Internal server error" |
+
+For system errors beyond the user's control, acknowledge the problem and provide a recovery path:
+
+```
+We couldn't save your changes. Check your connection and try again.
+[Try again]
+```
+
+## Network error recovery
+
+For network errors, give users a clear path to retry the action:
+
+```tsx
+{networkError && (
+  <Alert type="error">
+    <Title>Unable to save changes</Title>
+    Check your internet connection and try again.
+    <Button isBasic onClick={handleRetry}>Try again</Button>
+  </Alert>
+)}
+```
+
+## Empty and 404 states
+
+For empty states (no data) or not-found pages, distinguish between:
+
+- **Empty:** No data exists yet — give the user an action to create data
+- **404 / Not found:** The requested resource does not exist — give the user a way back
+
+```tsx
+// Empty state
+{items.length === 0 && (
+  <div role="status">
+    <h2>No tickets yet</h2>
+    <p>Create your first ticket to get started.</p>
+    <Button isPrimary onClick={handleCreate}>Create ticket</Button>
+  </div>
+)}
+
+// Not found
+{isNotFound && (
+  <div>
+    <h1>Page not found</h1>
+    <p>The page you're looking for doesn't exist or has been moved.</p>
+    <Anchor href="/">Go to home</Anchor>
+  </div>
+)}
+```
+
+## Accessibility
+
+Error messages must be perceivable and understandable for all users. An accessible error message:
+
+- Is **written in text** — icons and color can supplement but never replace text
+- Is **close to the element** that triggered the error
+- Is **informative** — it helps the user resolve the issue
+- **References the field** in code via `aria-describedby`
+
+```tsx
+<Input
+  type="email"
+  aria-describedby="email-error"
+  aria-invalid={!!errors.email}
+  validation={errors.email ? 'error' : undefined}
+/>
+{errors.email && (
+  <Message validation="error" id="email-error" role="alert">
+    {errors.email}
+  </Message>
+)}
+```
+
+Use `role="alert"` on inline error messages that appear dynamically after submission so screen readers announce them immediately.
+
+For Global Alerts and page-level errors, screen readers will announce them automatically because they appear as the first element in the page flow.

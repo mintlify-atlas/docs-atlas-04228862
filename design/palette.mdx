@@ -1,0 +1,85 @@
+---
+title: "Color palette"
+description: "The Garden color palette: a 12-shade system covering primary and secondary hues designed for accessibility and scalability."
+---
+
+The Garden palette is a set of purposeful colors designed with brand personality, usability, and accessibility in mind. It is broken down into two core groups: primary (UI structure) and secondary (supplementary elements).
+
+## Shade system
+
+Each hue in the Garden palette has 12 shades numbered 100 through 1200. Shades are distributed with consistent contrast ratios, meaning that every shade at the same number across different hues has the same approximate contrast ratio against white or a `100`-shade background.
+
+This approach ensures:
+- **Scalability** — new hues can be added without designing a new contrast curve.
+- **Theming automation** — light/dark mode switches can use predictable shade offsets.
+- **WCAG compliance** — contrast thresholds map directly to shade numbers.
+
+### Contrast thresholds by shade
+
+| Shade range | Minimum contrast against white | WCAG level |
+| :---------- | :------------------------------ | :--------- |
+| 600 | 3:1 | AA for graphical elements |
+| 700 | 4.5:1 | AA for text |
+| 800–1200 | 7:1 or higher | AAA |
+
+<Info>
+  Use shade 700 for body text and interactive labels in light mode. Use shade 600 for the same in dark mode. Shades 800 and above provide the highest contrast and are appropriate for maximum-legibility scenarios.
+</Info>
+
+## Primary hues
+
+Primary hues are used for the structure of interfaces, actionable items, and validation states. They form the backbone of every Garden-based UI.
+
+| Hue | Role |
+| :-- | :--- |
+| `grey` | Neutral backgrounds, borders, dividers, disabled states, and non-interactive text |
+| `kale` | Zendesk brand accent; used in chrome surfaces and product-branded elements |
+| `blue` | Interactive affordance: buttons, links, focus indicators, selection states |
+| `green` | Success feedback: positive validation, confirmations, success alerts |
+| `red` | Danger feedback: destructive actions, error validation, danger alerts |
+| `yellow` | Warning feedback: cautionary states, warning alerts |
+
+Each primary hue ships with all 12 shades (100–1200). Only specific shades are used in components — refer to the semantic variable layer to determine which shade a given context requires.
+
+## Secondary hues
+
+Secondary hues are used in supplementary interface elements such as icons, tags, status badges, and illustrations. They are not used for validation states or primary interactive elements.
+
+| Hue | Notes |
+| :-- | :---- |
+| `purple` | Suitable for categorical color coding |
+| `royal` | Deep blue-purple; used in illustrations and decorative contexts |
+| `fuschia` | Vibrant pink-purple; use sparingly |
+| `azure` | Light blue; used for informational badges |
+| `pink` | Warm pink; used for decorative elements |
+| `teal` | Blue-green; used for tag and badge accent |
+| `crimson` | Deep red; distinct from `red` to avoid confusion with danger states |
+| `mint` | Light green; distinct from `green` for non-validation use |
+| `orange` | Warm accent; not used for warning (use `yellow` for warnings) |
+| `lime` | Yellow-green accent |
+| `lemon` | Bright yellow; distinct from `yellow` for non-warning use |
+
+<Warning>
+  Secondary hues should not be used for validation states (success, warning, danger, error). Use the designated primary hues (`green`, `yellow`, `red`) for those contexts. Mixing secondary hues into validation patterns undermines the consistency of user expectations.
+</Warning>
+
+## Usage guidelines
+
+### Choosing a shade
+
+When applying palette colors directly (for example, in custom illustrations or one-off UI elements), use these rules:
+
+- **Shade 100–300**: Light tints; suitable for backgrounds and very subtle fills.
+- **Shade 400–500**: Mid-range; use with care, may not meet contrast requirements for text.
+- **Shade 600**: Meets 3:1 contrast; acceptable for icons and graphical elements.
+- **Shade 700**: Meets 4.5:1 contrast; the standard for text in light mode.
+- **Shade 800–1200**: Meets 7:1 or higher; use for maximum-contrast text and critical UI elements.
+
+### Component usage
+
+In most cases, you should not reach for raw palette values directly. Instead, use the semantic variable layer (see [Color](/design/color)) which maps palette shades to purpose-aware tokens. This ensures consistent behavior across themes.
+
+Raw palette values are appropriate when:
+- Creating custom illustrations outside the component system
+- Assigning colors to data visualization elements
+- Documenting or extending the design system itself

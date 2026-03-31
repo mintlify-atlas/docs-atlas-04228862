@@ -1,0 +1,158 @@
+---
+title: "Typography"
+description: "Garden's type scale, semantic hierarchy, and the @zendeskgarden/react-typography component API."
+---
+
+Garden provides a type scale and a set of React components for rendering text clearly and consistently. The `@zendeskgarden/react-typography` package contains all typography primitives used across Garden-based interfaces.
+
+## Installation
+
+```bash
+npm install @zendeskgarden/react-typography
+```
+
+## Type scale
+
+Garden's type scale is based on named size steps rather than raw pixel values. This makes it easier to apply consistent hierarchy without reaching for custom font sizes.
+
+| Component | Approximate size | Typical use |
+| :-------- | :--------------- | :---------- |
+| `SM` | Small | Captions, helper text, metadata, fine print |
+| `MD` | Medium (base) | Body text, default paragraph content |
+| `LG` | Large | Subheadings, emphasized body copy |
+| `XL` | Extra large | Section headings, card titles |
+| `XXL` | Extra extra large | Page-level headings |
+| `XXXL` | Extra extra extra large | Hero headings, prominent display text |
+
+All size components accept a `tag` prop to render the appropriate semantic HTML element while applying Garden's visual styles independently.
+
+## Components
+
+### Size components
+
+Import size components from the package and use the `tag` prop to control the rendered HTML element.
+
+```tsx
+import { SM, MD, LG, XL, XXL, XXXL } from '@zendeskgarden/react-typography';
+
+function TypographyScale() {
+  return (
+    <>
+      <XXXL tag="h1">Page title</XXXL>
+      <XXL tag="h2">Section heading</XXL>
+      <XL tag="h3">Subsection heading</XL>
+      <LG tag="h4">Card title</LG>
+      <MD>Body paragraph text. This is the default reading size.</MD>
+      <SM>Helper text or caption.</SM>
+    </>
+  );
+}
+```
+
+### Semantic hierarchy
+
+Garden separates visual size from semantic heading level. Use the `tag` prop to ensure proper document structure for accessibility and SEO, regardless of the visual size you need.
+
+```tsx
+import { LG, MD } from '@zendeskgarden/react-typography';
+
+// Visually LG, semantically an h2
+<LG tag="h2">Section title</LG>
+
+// Visually MD, semantically a paragraph
+<MD tag="p">Supporting description text.</MD>
+```
+
+<Warning>
+  Do not choose a heading component based on visual size alone. Always set `tag` to the correct semantic element for your document's heading hierarchy. Skipping heading levels (e.g., going from h1 to h3) breaks screen reader navigation.
+</Warning>
+
+### Font modifiers
+
+Garden supports two font modifiers that can be applied to any typography component:
+
+- **`isBold`** — renders text in a bold weight
+- **`isMonospace`** — renders text in a monospace font, suitable for code-adjacent labels or data
+
+```tsx
+import { MD } from '@zendeskgarden/react-typography';
+
+<MD isBold>Bold label</MD>
+<MD isMonospace>Monospace value</MD>
+```
+
+### Blockquote
+
+Use `Blockquote` to present a body of text that originates from another source.
+
+```tsx
+import { Blockquote, MD } from '@zendeskgarden/react-typography';
+
+<Blockquote>
+  <MD>
+    Good design is as little design as possible.
+  </MD>
+</Blockquote>
+```
+
+### Ellipsis
+
+Use `Ellipsis` to automatically truncate overflowing text with an ellipsis and expose the full content via a native `title` attribute (shown on hover).
+
+```tsx
+import { Ellipsis } from '@zendeskgarden/react-typography';
+
+<Ellipsis style={{ maxWidth: 200 }}>
+  This text will be truncated when it overflows the container.
+</Ellipsis>
+```
+
+## Heading levels and document structure
+
+Maintain a logical heading hierarchy throughout each page. Garden components do not enforce hierarchy — you are responsible for ensuring the `tag` values form a coherent document outline.
+
+Guidelines:
+- Use exactly one `h1` per page, typically the page title.
+- Do not skip levels (e.g., do not follow an `h2` directly with an `h4`).
+- Use headings to describe sections, not for visual emphasis. If you need visual emphasis without a semantic heading, use `isBold` on a `MD` or `LG` component.
+
+```tsx
+import { XXXL, XXL, XL, MD } from '@zendeskgarden/react-typography';
+
+function ArticlePage() {
+  return (
+    <article>
+      <XXXL tag="h1">Article title</XXXL>
+      <MD>Introduction paragraph with overview content.</MD>
+
+      <XXL tag="h2">First section</XXL>
+      <MD>Section body content.</MD>
+
+      <XL tag="h3">Subsection</XL>
+      <MD>Subsection body content.</MD>
+    </article>
+  );
+}
+```
+
+## Using typography with theming
+
+Garden's typography components inherit font-family, line-height, and color values from the Garden theme. Wrap your application in `ThemeProvider` from `@zendeskgarden/react-theming` to apply Garden's default theme, or supply a custom theme object.
+
+```tsx
+import { ThemeProvider, DEFAULT_THEME } from '@zendeskgarden/react-theming';
+import { XXXL, MD } from '@zendeskgarden/react-typography';
+
+function App() {
+  return (
+    <ThemeProvider theme={DEFAULT_THEME}>
+      <XXXL tag="h1">Themed heading</XXXL>
+      <MD>Themed body text.</MD>
+    </ThemeProvider>
+  );
+}
+```
+
+<Info>
+  Garden's default typeface is system-ui, falling back to platform-native sans-serif fonts. This avoids loading a custom web font and ensures fast, consistent rendering across operating systems.
+</Info>

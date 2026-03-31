@@ -1,0 +1,101 @@
+{
+  "projectType": "frontend",
+  "projectName": "Garden",
+  "projectDescription": "Garden is Zendesk's design system, providing React components, design foundations, and usage patterns for building consistent, accessible user interfaces.",
+  "theme": "willow",
+  "primaryColor": "#7a6040",
+  "lightColor": "#3c4833",
+  "darkColor": "#cbb7a2",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Design",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": ["design/introduction", "design/getting-started"]
+          },
+          {
+            "group": "Foundations",
+            "pages": ["design/color", "design/palette", "design/icons", "design/typography"]
+          }
+        ]
+      },
+      {
+        "tab": "Components",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": ["components/introduction", "components/theming", "components/versions"]
+          },
+          {
+            "group": "Actions",
+            "pages": ["components/button", "components/icon-button", "components/split-button", "components/toggle-button", "components/anchor", "components/menu"]
+          },
+          {
+            "group": "Forms",
+            "pages": ["components/input", "components/combobox", "components/checkbox", "components/radio", "components/toggle", "components/select", "components/textarea", "components/file-upload", "components/date-picker"]
+          },
+          {
+            "group": "Feedback & Overlays",
+            "pages": ["components/notifications", "components/modal", "components/tooltip", "components/drawer", "components/progress"]
+          },
+          {
+            "group": "Layout & Navigation",
+            "pages": ["components/table", "components/tabs", "components/pagination", "components/breadcrumbs", "components/grid", "components/accordion"]
+          },
+          {
+            "group": "Display",
+            "pages": ["components/tags", "components/avatar", "components/badge", "components/typography", "components/well"]
+          }
+        ]
+      },
+      {
+        "tab": "Patterns",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": ["patterns/introduction"]
+          },
+          {
+            "group": "Usage Patterns",
+            "pages": ["patterns/buttons", "patterns/forms", "patterns/tables", "patterns/loaders", "patterns/drag-and-drop", "patterns/errors"]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "60+ production-ready React components with TypeScript support",
+    "Comprehensive theming system with light and dark mode support",
+    "Accessible components following WCAG guidelines",
+    "Semantic color variables with consistent taxonomy",
+    "RTL (right-to-left) language support",
+    "Design tokens and CSS foundations via Bedrock CSS",
+    "Usage patterns and best-practice guidelines for common UI flows",
+    "Figma integration with design assets and component documentation"
+  ],
+  "publicApiSurface": [
+    "@zendeskgarden/react-buttons — Button, IconButton, SplitButton, ToggleButton",
+    "@zendeskgarden/react-forms — Input, Combobox, Checkbox, Radio, Toggle, Select, Textarea, FileUpload, Range",
+    "@zendeskgarden/react-modals — Modal, Drawer, Sheet",
+    "@zendeskgarden/react-notifications — Alert, GlobalAlert, Notification",
+    "@zendeskgarden/react-tooltips — Tooltip, TooltipDialog",
+    "@zendeskgarden/react-tables — Table",
+    "@zendeskgarden/react-tabs — Tabs",
+    "@zendeskgarden/react-dropdowns — Menu",
+    "@zendeskgarden/react-theming — ThemeProvider, ColorSchemeProvider, DEFAULT_THEME, getColor",
+    "@zendeskgarden/react-accordions — Accordion, Stepper",
+    "@zendeskgarden/react-avatars — Avatar",
+    "@zendeskgarden/react-tags — Tag",
+    "@zendeskgarden/react-typography — Paragraph, Span, Code, Lists, Typography",
+    "@zendeskgarden/react-pagination — Pagination",
+    "@zendeskgarden/react-breadcrumbs — Breadcrumb",
+    "@zendeskgarden/react-grid — Grid, Row, Col",
+    "@zendeskgarden/react-loaders — Dots, Spinner, Progress, Skeleton",
+    "@zendeskgarden/react-datepickers — DatePicker",
+    "@zendeskgarden/react-colorpickers — ColorPicker, ColorSwatch",
+    "@zendeskgarden/react-draggable — Draggable",
+    "@zendeskgarden/svg-icons — SVG icon library"
+  ]
+}

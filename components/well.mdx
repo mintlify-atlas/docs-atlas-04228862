@@ -1,0 +1,121 @@
+---
+title: "Well"
+description: "A Well is a container that groups related content inside a bordered or recessed surface."
+---
+
+`Well` comes from the `@zendeskgarden/react-notifications` package. Use it to group related content on a page. It supports optional titles, multi-paragraph content, a floating (drop shadow) variant, and a recessed (darker background) variant.
+
+<Note>
+  If you need to expand and collapse content, use an [Accordion](/components/accordion) instead.
+  For validation messages, use an [Alert or Notification](/components/notifications).
+  For growl-style notifications that float above page content, use a [Notification](/components/notifications).
+</Note>
+
+## Installation
+
+```bash
+npm install @zendeskgarden/react-notifications
+```
+
+```tsx
+import { Well } from '@zendeskgarden/react-notifications';
+```
+
+## Usage
+
+### Default
+
+A basic Well with a title and inline text content.
+
+```tsx
+import { Well } from '@zendeskgarden/react-notifications';
+
+const Example = () => (
+  <Well>
+    <Well.Title>What is a Garden?</Well.Title>
+    Turnip greens yarrow endive cauliflower sea lettuce kohlrabi amaranth water
+  </Well>
+);
+```
+
+### Recessed
+
+A recessed Well has a filled background to differentiate it from the surrounding page. Use for sidebars, info boxes, or secondary content areas.
+
+```tsx
+import { Well } from '@zendeskgarden/react-notifications';
+
+const Example = () => (
+  <Well isRecessed>
+    <Well.Title>What is a Garden?</Well.Title>
+    Turnip greens yarrow endive cauliflower sea lettuce kohlrabi amaranth water
+  </Well>
+);
+```
+
+### Floating
+
+A floating Well has a drop shadow that visually lifts the content off the page.
+
+```tsx
+import { Well } from '@zendeskgarden/react-notifications';
+
+const Example = () => (
+  <Well isFloating>
+    <Well.Title>What is a Garden?</Well.Title>
+    Turnip greens yarrow endive cauliflower sea lettuce kohlrabi amaranth water
+  </Well>
+);
+```
+
+### Multi-line
+
+Use `Well.Paragraph` for long-form content with multiple paragraphs inside a Well.
+
+```tsx
+import { Well } from '@zendeskgarden/react-notifications';
+
+const Example = () => (
+  <Well>
+    <Well.Title>What is a Garden?</Well.Title>
+    <Well.Paragraph>
+      Turnip greens yarrow endive cauliflower sea lettuce kohlrabi amaranth water. Corn amaranth
+      salsify bunya nuts nori azuki bean chickweed potato bell pepper artichoke.
+    </Well.Paragraph>
+    <Well.Paragraph>
+      Celery quandong swiss chard chicory earthnut pea potato. Salsify taro catsear garlic. Corn
+      amaranth salsify bunya nuts nori azuki bean chickweed potato bell pepper artichoke.
+    </Well.Paragraph>
+  </Well>
+);
+```
+
+## Component structure
+
+```tsx
+<Well>
+  <Well.Title />      {/* optional */}
+  <Well.Paragraph />  {/* optional — use for multi-paragraph content */}
+  {/* or inline text */}
+</Well>
+```
+
+## Props
+
+### Well
+
+<ParamField path="isRecessed" type="boolean" default="false">
+  Applies a filled background color to differentiate the Well from the page surface. Use for sidebars, info boxes, or secondary content areas.
+</ParamField>
+
+<ParamField path="isFloating" type="boolean" default="false">
+  Applies a drop shadow to lift the Well visually off the page.
+</ParamField>
+
+### Well.Title
+
+Renders a title at the top of the Well with appropriate heading styles.
+
+### Well.Paragraph
+
+Renders a paragraph inside the Well with appropriate text and spacing styles. Use multiple `Well.Paragraph` elements for long-form content.

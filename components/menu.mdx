@@ -1,0 +1,338 @@
+---
+title: "Menu"
+description: "Menus help users choose one item from a list of options, triggered by a button or other interactive element."
+---
+
+## Installation
+
+```bash
+npm install @zendeskgarden/react-dropdowns styled-components
+```
+
+```tsx
+import { Menu, Item, ItemGroup, Separator } from '@zendeskgarden/react-dropdowns';
+```
+
+## When to use
+
+**Use a Menu:**
+- To let users see and choose one thing from a list of items
+- To limit user selection within grouped items
+
+**Do not use a Menu:**
+- To let users type or select options in a form — use [Combobox](/components/combobox) instead
+- To move between views — use [Tabs](/components/tabs) instead
+- To let users choose from a list of parallel actions next to a button — combine with [Split button](/components/split-button)
+
+## Usage
+
+### Default
+
+`Menu` renders a trigger button internally and manages its own open/close state. The `button` prop customises the trigger label.
+
+```tsx
+import { Menu, Item } from '@zendeskgarden/react-dropdowns';
+
+function Example() {
+  return (
+    <Menu
+      button="Choose a flower"
+      onSelect={item => console.log('Selected:', item.value)}
+    >
+      <Item value="sunflower">Sunflower</Item>
+      <Item value="violet">Violet</Item>
+      <Item value="daisy">Daisy</Item>
+    </Menu>
+  );
+}
+```
+
+### Custom trigger
+
+Replace the default trigger with any interactive element by providing a `button` prop as a render function or using the `Dropdown` + `Trigger` pattern.
+
+```tsx
+import { Button } from '@zendeskgarden/react-buttons';
+import { Menu, Item } from '@zendeskgarden/react-dropdowns';
+
+function Example() {
+  return (
+    <Menu button={props => <Button {...props}>Custom trigger</Button>}>
+      <Item value="option-1">Option 1</Item>
+      <Item value="option-2">Option 2</Item>
+    </Menu>
+  );
+}
+```
+
+### Danger items
+
+Use danger styling on `Item` components that trigger destructive actions.
+
+```tsx
+<Menu button="Actions">
+  <Item value="edit">Edit</Item>
+  <Item value="duplicate">Duplicate</Item>
+  <Item value="delete" isDanger>Delete</Item>
+</Menu>
+```
+
+### Disabled items
+
+Disable individual items to prevent interaction while keeping them visible.
+
+```tsx
+<Menu button="Actions">
+  <Item value="edit">Edit</Item>
+  <Item value="archive" disabled>Archive (unavailable)</Item>
+  <Item value="delete" isDanger>Delete</Item>
+</Menu>
+```
+
+### Media items
+
+Add icons before or after item text for additional context.
+
+```tsx
+import { ReactComponent as EditIcon } from '@zendeskgarden/svg-icons/src/16/pencil-stroke.svg';
+import { ReactComponent as TrashIcon } from '@zendeskgarden/svg-icons/src/16/trash-stroke.svg';
+
+<Menu button="Actions">
+  <Item value="edit">
+    <Item.StartIcon>
+      <EditIcon />
+    </Item.StartIcon>
+    Edit
+  </Item>
+  <Item value="delete" isDanger>
+    <Item.StartIcon>
+      <TrashIcon />
+    </Item.StartIcon>
+    Delete
+  </Item>
+</Menu>
+```
+
+### Meta text
+
+Add `Item.Meta` inside an item to show supplementary information.
+
+```tsx
+<Menu button="Environments">
+  <Item value="production">
+    Production
+    <Item.Meta>us-east-1</Item.Meta>
+  </Item>
+  <Item value="staging">
+    Staging
+    <Item.Meta>us-west-2</Item.Meta>
+  </Item>
+</Menu>
+```
+
+### Grouped items
+
+Use `ItemGroup` to visually and semantically group related items. Add a `legend` prop to label the group.
+
+```tsx
+import { Menu, Item, ItemGroup, Separator } from '@zendeskgarden/react-dropdowns';
+
+function Example() {
+  return (
+    <Menu button="Choose a flower">
+      <Item value="sunflower">Sunflower</Item>
+      <Separator />
+      <ItemGroup legend="Smaller flowers">
+        <Item value="violet">Violet</Item>
+        <Item value="daisy">Daisy</Item>
+        <Item value="pansy">Pansy</Item>
+      </ItemGroup>
+    </Menu>
+  );
+}
+```
+
+#### Selectable groups
+
+Set `type="checkbox"` or `type="radio"` on `ItemGroup` to make items selectable.
+
+```tsx
+<Menu button="Sort by">
+  <ItemGroup type="radio" legend="Order">
+    <Item value="asc">Ascending</Item>
+    <Item value="desc">Descending</Item>
+  </ItemGroup>
+</Menu>
+```
+
+### Nested menus
+
+Menus can contain nested levels for additional categorization.
+
+```tsx
+<Menu button="Format">
+  <Item value="bold">Bold</Item>
+  <Item value="italic">Italic</Item>
+  <Item value="text-size" type="next">
+    Text size
+    <Menu>
+      <Item value="small">Small</Item>
+      <Item value="medium">Medium</Item>
+      <Item value="large">Large</Item>
+    </Menu>
+  </Item>
+</Menu>
+```
+
+### Placement
+
+The default menu placement is `bottom-start`. Override it with the `placement` prop.
+
+```tsx
+<Menu button="Open upward" placement="top-start">
+  <Item value="option-1">Option 1</Item>
+  <Item value="option-2">Option 2</Item>
+</Menu>
+```
+
+### Size
+
+Menus can be default or compact. The compact size reduces vertical padding on items.
+
+```tsx
+<Menu button="Compact menu" isCompact>
+  <Item value="option-1">Option 1</Item>
+  <Item value="option-2">Option 2</Item>
+</Menu>
+```
+
+## Iterating over items
+
+Use `Array.map` to render items from data:
+
+```tsx
+const ITEMS = [
+  { value: 'sunflower', label: 'Sunflower' },
+  { value: 'violet', label: 'Violet' },
+  { value: 'daisy', label: 'Daisy' },
+];
+
+<Menu button="Choose a flower">
+  {ITEMS.map(item => (
+    <Item key={item.value} value={item.value}>
+      {item.label}
+    </Item>
+  ))}
+</Menu>
+```
+
+For groups:
+
+```tsx
+const GROUPS = [
+  {
+    legend: 'Common',
+    items: [{ value: 'sunflower', label: 'Sunflower' }],
+  },
+  {
+    legend: 'Rare',
+    items: [
+      { value: 'violet', label: 'Violet' },
+      { value: 'daisy', label: 'Daisy' },
+    ],
+  },
+];
+
+<Menu button="Choose a flower">
+  {GROUPS.map(group => (
+    <ItemGroup key={group.legend} legend={group.legend}>
+      {group.items.map(item => (
+        <Item key={item.value} value={item.value}>
+          {item.label}
+        </Item>
+      ))}
+    </ItemGroup>
+  ))}
+</Menu>
+```
+
+## Keyboard navigation
+
+| Key | Behavior |
+|---|---|
+| `Enter` / `Space` | Opens the menu when focus is on the trigger; selects the focused item |
+| `ArrowDown` | Moves focus to the next item |
+| `ArrowUp` | Moves focus to the previous item |
+| `ArrowRight` | Opens a nested menu |
+| `ArrowLeft` / `Escape` | Closes a nested menu or the root menu |
+| `Home` | Moves focus to the first item |
+| `End` | Moves focus to the last item |
+| `Tab` | Closes the menu and moves focus to the next focusable element |
+
+## API
+
+The `Menu` component follows this structure:
+
+```tsx
+<Menu button="Trigger label">
+  <Item value="..." />
+  <ItemGroup legend="...">
+    <Item value="..." />
+  </ItemGroup>
+  <Separator />
+</Menu>
+```
+
+### Menu props
+
+<ParamField path="props.button" type="string | ((props: object) => ReactElement)">
+  The trigger for the menu. Pass a string to use the default Garden button, or a render function to use a custom trigger element.
+</ParamField>
+
+<ParamField path="props.onSelect" type="(item: { value: string }) => void">
+  Callback fired when a user selects an item. Receives the selected item object.
+</ParamField>
+
+<ParamField path="props.placement" type="string" default="'bottom-start'">
+  Placement of the menu relative to the trigger. Accepts any Floating UI placement value.
+</ParamField>
+
+<ParamField path="props.isCompact" type="boolean" default="false">
+  Reduces vertical padding on menu items.
+</ParamField>
+
+<ParamField path="props.hasArrow" type="boolean" default="false">
+  Renders a directional arrow pointing to the trigger element.
+</ParamField>
+
+<ParamField path="props.fallbackPlacements" type="string[]">
+  Alternative placement values for automatic repositioning when the preferred placement lacks space.
+</ParamField>
+
+### Item props
+
+<ParamField path="props.value" type="string" required>
+  Unique value for the item. Passed to the `onSelect` callback.
+</ParamField>
+
+<ParamField path="props.isDanger" type="boolean" default="false">
+  Applies danger styling.
+</ParamField>
+
+<ParamField path="props.disabled" type="boolean" default="false">
+  Prevents interaction with the item.
+</ParamField>
+
+<ParamField path="props.type" type="'next'">
+  Set to `'next'` to indicate the item opens a nested menu.
+</ParamField>
+
+### ItemGroup props
+
+<ParamField path="props.legend" type="string">
+  Accessible label for the group. Rendered as a visible group heading.
+</ParamField>
+
+<ParamField path="props.type" type="'checkbox' | 'radio'">
+  Enables selection behavior within the group. `'radio'` allows single selection; `'checkbox'` allows multiple.
+</ParamField>

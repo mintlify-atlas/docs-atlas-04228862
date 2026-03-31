@@ -1,0 +1,221 @@
+---
+title: "Grid"
+description: "A 12-column flex-based layout system modeled on Bootstrap's Grid, with responsive breakpoints, offsets, and nesting."
+---
+
+```tsx
+import { Grid } from '@zendeskgarden/react-grid';
+```
+
+The Grid component is a framework for building modular layouts. It uses a 12-column flex-based system modeled on Bootstrap's Grid. Use it to structure the layout of a page.
+
+<Note>
+  Do not use Grid to display tabular data. For data tables, use the [Table](/components/table) component.
+</Note>
+
+## Basic usage — equal columns
+
+Auto-layout columns share available space equally. Add as many `Grid.Col` components as needed.
+
+```tsx
+import { Grid } from '@zendeskgarden/react-grid';
+
+const Example = () => (
+  <Grid>
+    <Grid.Row>
+      <Grid.Col>Column 1</Grid.Col>
+      <Grid.Col>Column 2</Grid.Col>
+    </Grid.Row>
+    <Grid.Row>
+      <Grid.Col>Column 1</Grid.Col>
+      <Grid.Col>Column 2</Grid.Col>
+      <Grid.Col>Column 3</Grid.Col>
+    </Grid.Row>
+  </Grid>
+);
+```
+
+## Explicit column sizes
+
+The grid has 12 columns. Use the `size` prop for a fixed-width column or responsive props (`xs`, `sm`, `md`, `lg`, `xl`) for breakpoint-specific sizes.
+
+```tsx
+<Grid>
+  <Grid.Row>
+    <Grid.Col size={8}>Col 8</Grid.Col>
+    <Grid.Col size={4}>Col 4</Grid.Col>
+  </Grid.Row>
+  <Grid.Row>
+    <Grid.Col size={4}>Col 4</Grid.Col>
+    <Grid.Col size={4}>Col 4</Grid.Col>
+    <Grid.Col size={4}>Col 4</Grid.Col>
+  </Grid.Row>
+</Grid>
+```
+
+## Responsive breakpoints
+
+Use responsive props to change column widths at different viewport sizes. Breakpoints follow Bootstrap's conventions: `xs` (all), `sm` (≥576px), `md` (≥768px), `lg` (≥992px), `xl` (≥1200px).
+
+```tsx
+<Grid>
+  <Grid.Row>
+    {/* Full-width on small screens, half-width on medium and up */}
+    <Grid.Col xs={12} md={6}>Left</Grid.Col>
+    <Grid.Col xs={12} md={6}>Right</Grid.Col>
+  </Grid.Row>
+</Grid>
+```
+
+Stacked to horizontal — columns stack on small viewports and become horizontal at `sm`:
+
+```tsx
+<Grid>
+  <Grid.Row>
+    <Grid.Col sm={8}>Main content</Grid.Col>
+    <Grid.Col sm={4}>Sidebar</Grid.Col>
+  </Grid.Row>
+</Grid>
+```
+
+## Offsetting columns
+
+Use offset props (`offsetXs`, `offsetSm`, `offsetMd`, `offsetLg`, `offsetXl`) to shift a column to the right by a given number of columns.
+
+```tsx
+<Grid>
+  <Grid.Row>
+    <Grid.Col md={4}>Col 4</Grid.Col>
+    <Grid.Col md={4} offsetMd={4}>Col 4 offset by 4</Grid.Col>
+  </Grid.Row>
+  <Grid.Row>
+    <Grid.Col md={3} offsetMd={3}>Col 3 offset by 3</Grid.Col>
+    <Grid.Col md={3} offsetMd={3}>Col 3 offset by 3</Grid.Col>
+  </Grid.Row>
+  <Grid.Row>
+    <Grid.Col md={6} offsetMd={3}>Col 6 centered</Grid.Col>
+  </Grid.Row>
+</Grid>
+```
+
+## Nesting
+
+Nest a `Grid.Row` inside a `Grid.Col` to create nested grid layouts. Nested rows span the width of their parent column.
+
+```tsx
+<Grid>
+  <Grid.Row>
+    <Grid.Col sm={9}>
+      Level 1 — column 9
+      <Grid.Row>
+        <Grid.Col sm={6}>Nested level 2 — col 6</Grid.Col>
+        <Grid.Col sm={6}>Nested level 2 — col 6</Grid.Col>
+      </Grid.Row>
+    </Grid.Col>
+    <Grid.Col sm={3}>Level 1 — column 3</Grid.Col>
+  </Grid.Row>
+</Grid>
+```
+
+## Alignment
+
+### Vertical alignment
+
+```tsx
+<Grid>
+  <Grid.Row alignItems="center" style={{ height: '100px' }}>
+    <Grid.Col>Centered vertically</Grid.Col>
+    <Grid.Col>Centered vertically</Grid.Col>
+  </Grid.Row>
+</Grid>
+```
+
+### Horizontal alignment
+
+```tsx
+<Grid>
+  <Grid.Row justifyContent="center">
+    <Grid.Col size={4}>Centered horizontally</Grid.Col>
+  </Grid.Row>
+  <Grid.Row justifyContent="end">
+    <Grid.Col size={4}>Aligned to the end</Grid.Col>
+  </Grid.Row>
+</Grid>
+```
+
+### No gutters
+
+Remove column gutters with `gutters={false}` on the `Grid.Row`.
+
+```tsx
+<Grid>
+  <Grid.Row gutters={false}>
+    <Grid.Col>No gutter</Grid.Col>
+    <Grid.Col>No gutter</Grid.Col>
+  </Grid.Row>
+</Grid>
+```
+
+## Props
+
+### Grid
+
+<ParamField path="columns" type="number">
+  The total number of columns. Defaults to `12`.
+</ParamField>
+
+<ParamField path="gutters" type="'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | false">
+  The gutter size between columns. Defaults to `'lg'`. Pass `false` to remove gutters.
+</ParamField>
+
+<ParamField path="debug" type="boolean">
+  Renders visual column outlines to aid layout development. Defaults to `false`.
+</ParamField>
+
+### Grid.Row
+
+<ParamField path="alignItems" type="'start' | 'center' | 'end' | 'baseline' | 'stretch'">
+  Vertically aligns child columns within the row.
+</ParamField>
+
+<ParamField path="justifyContent" type="'start' | 'center' | 'end' | 'between' | 'around'">
+  Horizontally distributes child columns within the row.
+</ParamField>
+
+<ParamField path="gutters" type="'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | false">
+  Overrides the parent Grid's gutter setting for this row.
+</ParamField>
+
+### Grid.Col
+
+<ParamField path="size" type="number | 'auto'">
+  Fixed column span (1–12) at all breakpoints.
+</ParamField>
+
+<ParamField path="xs" type="number | 'auto'">
+  Column span at the `xs` breakpoint (all viewport sizes).
+</ParamField>
+
+<ParamField path="sm" type="number | 'auto'">
+  Column span at the `sm` breakpoint (≥576px).
+</ParamField>
+
+<ParamField path="md" type="number | 'auto'">
+  Column span at the `md` breakpoint (≥768px).
+</ParamField>
+
+<ParamField path="lg" type="number | 'auto'">
+  Column span at the `lg` breakpoint (≥992px).
+</ParamField>
+
+<ParamField path="xl" type="number | 'auto'">
+  Column span at the `xl` breakpoint (≥1200px).
+</ParamField>
+
+<ParamField path="offsetMd" type="number">
+  Shifts the column right by the given number of columns at the `md` breakpoint. Similar offset props exist for each breakpoint (`offsetXs`, `offsetSm`, `offsetLg`, `offsetXl`).
+</ParamField>
+
+<ParamField path="textAlign" type="'start' | 'center' | 'end' | 'justify'">
+  Aligns text content within the column.
+</ParamField>

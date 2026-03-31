@@ -1,0 +1,186 @@
+---
+title: "Modal"
+description: "A dialog box that sits on top of the current page, blocking access to the rest of the UI until dismissed."
+---
+
+```tsx
+import { Modal } from '@zendeskgarden/react-modals';
+```
+
+A Modal is used to interrupt users with a dialog that requests information or an action. It blocks access to the rest of the page and forces user interaction before they can continue.
+
+<Warning>
+  Do not use a Modal to display information that does not require interruption. For passive updates, use a [Notification](/components/notifications) instead.
+</Warning>
+
+## Basic usage
+
+Control visibility with a boolean state value. Pass `onClose` to handle backdrop clicks and the Escape key.
+
+```tsx
+import React, { useState } from 'react';
+import { Button } from '@zendeskgarden/react-buttons';
+import { Modal } from '@zendeskgarden/react-modals';
+
+const Example = () => {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <>
+      <Button onClick={() => setVisible(true)}>Open modal</Button>
+
+      {visible && (
+        <Modal onClose={() => setVisible(false)}>
+          <Modal.Header tag="h2">Do you need plant food?</Modal.Header>
+          <Modal.Body>
+            To boost your plant's chances of success, use a combination of top-quality soil and
+            the right plant food. Try growing in containers filled with plant food, which can
+            help protect plants from over-watering.
+          </Modal.Body>
+          <Modal.Footer>
+            <Modal.FooterItem>
+              <Button onClick={() => setVisible(false)} isBasic>
+                Cancel
+              </Button>
+            </Modal.FooterItem>
+            <Modal.FooterItem>
+              <Button isPrimary onClick={() => setVisible(false)}>
+                Add plant food
+              </Button>
+            </Modal.FooterItem>
+          </Modal.Footer>
+          <Modal.Close aria-label="Close modal" />
+        </Modal>
+      )}
+    </>
+  );
+};
+```
+
+## Variants
+
+<Tabs>
+  <Tab title="Default">
+    The standard modal with a header, body, and footer.
+
+    ```tsx
+    <Modal onClose={handleClose}>
+      <Modal.Header tag="h2">Modal title</Modal.Header>
+      <Modal.Body>Modal body content goes here.</Modal.Body>
+      <Modal.Footer>
+        <Modal.FooterItem>
+          <Button isBasic onClick={handleClose}>Cancel</Button>
+        </Modal.FooterItem>
+        <Modal.FooterItem>
+          <Button isPrimary onClick={handleClose}>Confirm</Button>
+        </Modal.FooterItem>
+      </Modal.Footer>
+      <Modal.Close aria-label="Close modal" />
+    </Modal>
+    ```
+  </Tab>
+  <Tab title="Danger">
+    Use `isDanger` on `Modal.Header` for destructive actions. Pair with a danger-styled primary button.
+
+    ```tsx
+    <Modal onClose={handleClose}>
+      <Modal.Header tag="h2" isDanger>
+        Delete item permanently?
+      </Modal.Header>
+      <Modal.Body>
+        This action cannot be undone. The item will be permanently removed.
+      </Modal.Body>
+      <Modal.Footer>
+        <Modal.FooterItem>
+          <Button isBasic onClick={handleClose}>Cancel</Button>
+        </Modal.FooterItem>
+        <Modal.FooterItem>
+          <Button isDanger isPrimary onClick={handleClose}>Delete</Button>
+        </Modal.FooterItem>
+      </Modal.Footer>
+      <Modal.Close aria-label="Close modal" />
+    </Modal>
+    ```
+  </Tab>
+  <Tab title="Large">
+    Pass `isLarge` to the `Modal` component for a wider dialog.
+
+    ```tsx
+    <Modal isLarge onClose={handleClose}>
+      <Modal.Header tag="h2">Large modal</Modal.Header>
+      <Modal.Body>
+        Use a large modal when content requires more horizontal space.
+      </Modal.Body>
+      <Modal.Footer>
+        <Modal.FooterItem>
+          <Button isPrimary onClick={handleClose}>Done</Button>
+        </Modal.FooterItem>
+      </Modal.Footer>
+      <Modal.Close aria-label="Close modal" />
+    </Modal>
+    ```
+  </Tab>
+</Tabs>
+
+## Component structure
+
+```tsx
+<Modal onClose={handleClose}>
+  <Modal.Header tag="h2">{/* title */}</Modal.Header>
+  <Modal.Body>{/* scrollable content */}</Modal.Body>
+  <Modal.Footer>
+    <Modal.FooterItem>{/* cancel action */}</Modal.FooterItem>
+    <Modal.FooterItem>{/* primary action */}</Modal.FooterItem>
+  </Modal.Footer>
+  <Modal.Close aria-label="Close modal" />
+</Modal>
+```
+
+## Props
+
+<ParamField path="onClose" type="() => void" required>
+  Callback fired when the user clicks the backdrop or presses Escape. Use this to set your visibility state to `false`.
+</ParamField>
+
+<ParamField path="isLarge" type="boolean">
+  Renders the modal in a wider format. Defaults to `false`.
+</ParamField>
+
+<ParamField path="isAnimated" type="boolean">
+  Enables entrance and exit animations. Defaults to `true`.
+</ParamField>
+
+<ParamField path="backdropProps" type="object">
+  Props spread onto the backdrop element. Use to add custom `data-*` attributes or event handlers.
+</ParamField>
+
+## Subcomponents
+
+### Modal.Header
+
+<ParamField path="tag" type="string">
+  The HTML heading element to render (`h1`–`h6`). Defaults to `div`. Always set an appropriate heading level for accessibility.
+</ParamField>
+
+<ParamField path="isDanger" type="boolean">
+  Applies danger styling to the header. Use for destructive confirmation dialogs.
+</ParamField>
+
+### Modal.Body
+
+Scrollable container for the modal's main content. When content overflows, this region scrolls independently of the header and footer.
+
+### Modal.Footer / Modal.FooterItem
+
+`Modal.Footer` is a flex container for action buttons. Wrap each button in a `Modal.FooterItem` to apply correct spacing.
+
+### Modal.Close
+
+An accessible close icon button. Always pass `aria-label` describing the action (e.g. `"Close modal"`).
+
+## Accessibility
+
+- Focus is trapped inside the modal while it is open. When closed, focus returns to the triggering element.
+- The modal root receives `role="dialog"` and `aria-modal="true"` automatically.
+- Set `tag="h2"` (or appropriate level) on `Modal.Header` so the heading is announced correctly.
+- Pass `aria-label` or `aria-labelledby` on `Modal` when a visible `Modal.Header` is not present.

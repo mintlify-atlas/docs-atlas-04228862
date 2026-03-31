@@ -1,0 +1,187 @@
+---
+title: "Progress indicators"
+description: "Four loading components from @zendeskgarden/react-loaders: Dots, Spinner, Progress bar, and Skeleton."
+---
+
+```tsx
+import { Dots, Spinner, Progress, Skeleton } from '@zendeskgarden/react-loaders';
+```
+
+The `@zendeskgarden/react-loaders` package provides four components for communicating loading states. Choose the right one based on what is loading and whether the duration is known.
+
+| Component | Best for | Duration known? |
+|-----------|----------|-----------------|
+| `Skeleton` | Page/section content with a predictable layout | No |
+| `Spinner` | Indeterminate full-page or section load | No |
+| `Dots` | Single component busy state (button, input) | No |
+| `Progress` | File upload/download with a measurable percentage | Yes |
+
+---
+
+## Dots
+
+An inline loading indicator that communicates ongoing activity after a user action. Use Dots when a **single component** — like a Button or Search input — is busy. For page loading, use Skeleton or Spinner.
+
+```tsx
+import { Dots } from '@zendeskgarden/react-loaders';
+
+const Example = () => <Dots />;
+```
+
+### With explicit size and color
+
+By default, size and color are inherited from the parent element's `font-size` and `color`.
+
+```tsx
+import { Dots } from '@zendeskgarden/react-loaders';
+
+const Example = () => (
+  <Dots size="24px" color="#1f73b7" />
+);
+```
+
+<ParamField path="size" type="string | number">
+  Explicit size for the loader. When omitted, inherits from the parent font size.
+</ParamField>
+
+<ParamField path="color" type="string">
+  Explicit color. When omitted, inherits from the parent element's `color`.
+</ParamField>
+
+<Tip>
+  The Dots component includes `role="progressbar"` and `aria-valuetext="Loading"` by default, identifying it as an indeterminate progress indicator for assistive technologies.
+</Tip>
+
+---
+
+## Spinner
+
+A circular spinner that communicates an **unknown loading time**. Use when page content is unknown or unpredictable. When the content layout can be estimated, use Skeleton instead. When a single component is busy, use Dots.
+
+```tsx
+import { Spinner } from '@zendeskgarden/react-loaders';
+
+const Example = () => <Spinner />;
+```
+
+### With explicit size and color
+
+Size and color are inherited from the parent by default.
+
+```tsx
+import { Spinner } from '@zendeskgarden/react-loaders';
+
+const Example = () => (
+  <Spinner size="48px" color="#1f73b7" />
+);
+```
+
+<ParamField path="size" type="string | number">
+  Explicit width/height for the spinner SVG. Inherits from parent font size when omitted.
+</ParamField>
+
+<ParamField path="color" type="string">
+  Explicit color. Inherits from the parent `color` property when omitted.
+</ParamField>
+
+<ParamField path="duration" type="number">
+  The animation duration in milliseconds. Defaults to `1250`.
+</ParamField>
+
+---
+
+## Progress
+
+A horizontal progress bar for communicating a **known percentage of completion** — typically file uploads or downloads. When loading time is unknown, use Spinner. When loading page content, use Skeleton.
+
+```tsx
+import { Progress } from '@zendeskgarden/react-loaders';
+
+const Example = () => (
+  <Progress value={50} aria-label="Preparing garden" />
+);
+```
+
+### Sizes
+
+The Progress loader is `medium` by default. It can also be `small` or `large`.
+
+```tsx
+<Progress value={25} size="small" aria-label="Upload progress" />
+<Progress value={50} size="medium" aria-label="Upload progress" />
+<Progress value={75} size="large" aria-label="Upload progress" />
+```
+
+### Custom color
+
+The default foreground color is the success color. You can override it with the `color` prop.
+
+```tsx
+<Progress value={60} color="#d93f4c" aria-label="Critical task" />
+```
+
+<ParamField path="value" type="number" required>
+  The current progress as a number from `0` to `100`.
+</ParamField>
+
+<ParamField path="size" type="'small' | 'medium' | 'large'">
+  The height of the progress bar. Defaults to `'medium'`.
+</ParamField>
+
+<ParamField path="color" type="string">
+  The fill color of the progress bar. Defaults to the Garden success color.
+</ParamField>
+
+<ParamField path="aria-label" type="string">
+  Accessible label describing what is loading. Required when no visible label is present.
+</ParamField>
+
+---
+
+## Skeleton
+
+A content placeholder shown while the layout is loading. Skeleton is the **default loader** when the system can predict the format of the incoming content. It avoids large layout shifts by reserving space.
+
+Use Skeleton for progressive page loading. When the content format is unknown, use Spinner. When indicating a component is busy, use Dots.
+
+```tsx
+import { Skeleton } from '@zendeskgarden/react-loaders';
+import { MD, XXL } from '@zendeskgarden/react-typography';
+
+const Example = () => (
+  <>
+    <XXL>
+      <Skeleton />
+    </XXL>
+    <MD>
+      <Skeleton />
+      <Skeleton />
+      <Skeleton />
+    </MD>
+  </>
+);
+```
+
+### Light variant
+
+Skeleton loaders can be inverted for use on dark backgrounds.
+
+```tsx
+<Skeleton isLight />
+```
+
+### Explicit size
+
+By default, Skeleton height is 60% of the parent font size. Set explicit `height` and `width` to create placeholders for non-text components (e.g., buttons, avatars).
+
+```tsx
+<Skeleton style={{ width: '120px', height: '36px', borderRadius: '4px' }} />
+```
+
+<ParamField path="isLight" type="boolean">
+  Inverts the skeleton color for use on dark backgrounds. Defaults to `false`.
+</ParamField>
+
+<Tip>
+  Nest `Skeleton` inside typography components (`MD`, `LG`, `XXL`, etc.) to automatically match the font size of the text it is replacing.
+</Tip>

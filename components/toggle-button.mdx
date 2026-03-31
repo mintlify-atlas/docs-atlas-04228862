@@ -1,0 +1,126 @@
+---
+title: "Toggle button"
+description: "A Toggle button lets users turn something on and off — like a light switch. Use it for immediate activation, not selection."
+---
+
+## Installation
+
+```bash
+npm install @zendeskgarden/react-buttons styled-components
+```
+
+```tsx
+import { ToggleButton } from '@zendeskgarden/react-buttons';
+```
+
+## When to use
+
+**Use a Toggle button:**
+- To see or compare the results of a settings change in real time
+- To activate a mode (such as bold text or dark mode) that takes immediate effect
+
+**Do not use a Toggle button:**
+- To let users select from a list of settings — use [Checkboxes](/components/checkbox) instead
+
+<Note>
+  Unlike a Checkbox (which is used for selection), a Toggle button is used for activation. The key distinction is immediacy: toggling it takes effect right away, without a form submission step.
+</Note>
+
+## Usage
+
+### Default
+
+The `isPressed` prop controls the on/off state. `ToggleButton` communicates its state to assistive technologies via the `aria-pressed` attribute.
+
+```tsx
+import { useState } from 'react';
+import { ToggleButton } from '@zendeskgarden/react-buttons';
+
+function Example() {
+  const [isPressed, setIsPressed] = useState(false);
+
+  return (
+    <ToggleButton
+      isPressed={isPressed}
+      onClick={() => setIsPressed(prev => !prev)}
+    >
+      {isPressed ? 'Bold on' : 'Bold off'}
+    </ToggleButton>
+  );
+}
+```
+
+### Disabled
+
+A disabled Toggle button prevents user interaction. It does not appear in the tab order, cannot receive focus, and may not be read aloud by a screen reader.
+
+```tsx
+<ToggleButton disabled isPressed={false}>
+  Unavailable
+</ToggleButton>
+```
+
+### Sizes
+
+Toggle buttons can be small, medium, or large. The default size is medium.
+
+```tsx
+<ToggleButton size="small" isPressed={false}>Small</ToggleButton>
+<ToggleButton size="medium" isPressed={false}>Medium</ToggleButton>
+<ToggleButton size="large" isPressed={false}>Large</ToggleButton>
+```
+
+### Types
+
+Toggle buttons share the same visual types as `Button`: default, primary, and basic.
+
+```tsx
+<ToggleButton isPressed={false}>Default</ToggleButton>
+<ToggleButton isPrimary isPressed={true}>Primary (pressed)</ToggleButton>
+<ToggleButton isBasic isPressed={false}>Basic</ToggleButton>
+```
+
+## Accessibility
+
+`ToggleButton` automatically sets `aria-pressed="true"` when `isPressed` is `true` and `aria-pressed="false"` when it is `false`. This communicates the button's current state to screen readers without any additional markup.
+
+```tsx
+{/* renders: <button aria-pressed="true"> */}
+<ToggleButton isPressed={true}>Dark mode</ToggleButton>
+```
+
+## API
+
+### ToggleButton props
+
+<ParamField path="props.isPressed" type="boolean" required>
+  The current pressed (on/off) state of the button. Maps to `aria-pressed`.
+</ParamField>
+
+<ParamField path="props.isPrimary" type="boolean" default="false">
+  Applies filled primary styling.
+</ParamField>
+
+<ParamField path="props.isBasic" type="boolean" default="false">
+  Applies text-only basic styling (no border or background).
+</ParamField>
+
+<ParamField path="props.isDanger" type="boolean" default="false">
+  Applies danger styling.
+</ParamField>
+
+<ParamField path="props.isNeutral" type="boolean" default="false">
+  Applies neutral styling, reducing visual emphasis.
+</ParamField>
+
+<ParamField path="props.isStretched" type="boolean" default="false">
+  Stretches the button to fill its container's full width.
+</ParamField>
+
+<ParamField path="props.size" type="'small' | 'medium' | 'large'" default="'medium'">
+  Controls the button's size.
+</ParamField>
+
+<ParamField path="props.disabled" type="boolean" default="false">
+  Prevents user interaction and applies disabled styling.
+</ParamField>

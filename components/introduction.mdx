@@ -1,0 +1,90 @@
+---
+title: "Components overview"
+description: "Garden is Zendesk's React component library — accessible, themeable, and fully typed components published under the @zendeskgarden scope on npm."
+---
+
+Garden provides a complete set of React UI components for building Zendesk product interfaces. Every component is built with accessibility, right-to-left (RTL) layout, and theming as first-class concerns.
+
+## Key features
+
+- **TypeScript** — all packages ship with full type definitions
+- **Accessibility** — components implement ARIA patterns and keyboard navigation out of the box
+- **Theming** — a single `ThemeProvider` controls colors, spacing, typography, and border radii across your entire application
+- **RTL support** — set `rtl: true` on the theme object to flip layout direction for right-to-left languages
+- **Styled Components** — components use styled-components v5 under the hood, making custom overrides straightforward
+
+## Installation
+
+Every Garden component package lives under the `@zendeskgarden` scope. To get started, install the theming package and its peer dependency:
+
+<Tabs>
+  <Tab title="npm">
+    ```bash
+    npm install @zendeskgarden/react-theming styled-components
+    ```
+  </Tab>
+  <Tab title="yarn">
+    ```bash
+    yarn add @zendeskgarden/react-theming styled-components
+    ```
+  </Tab>
+  <Tab title="pnpm">
+    ```bash
+    pnpm add @zendeskgarden/react-theming styled-components
+    ```
+  </Tab>
+</Tabs>
+
+Then install whichever component packages you need, for example:
+
+```bash
+npm install @zendeskgarden/react-buttons @zendeskgarden/react-dropdowns
+```
+
+Wrap your application with `ThemeProvider` to activate Garden styling:
+
+```tsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Button } from '@zendeskgarden/react-buttons';
+
+function App() {
+  return (
+    <ThemeProvider>
+      <Button isPrimary>Get started</Button>
+    </ThemeProvider>
+  );
+}
+```
+
+## Foundations
+
+<Note>
+  Garden components layer on top of two lower-level packages that you can use independently.
+</Note>
+
+**Bedrock CSS** (`@zendeskgarden/css-bedrock`) provides a minimal CSS reset that normalises browser defaults without overriding application styles. Include it once at the top level of your application.
+
+**Container utilities** (`@zendeskgarden/container-utilities`) expose headless, framework-agnostic state containers for complex interaction patterns such as selection, focus management, and disclosure. They underpin many Garden components and are useful when you need behaviour without Garden's visual layer.
+
+## Component groups
+
+<CardGroup cols={2}>
+  <Card title="Actions" icon="bolt" href="/components/button">
+    Button, Icon button, Split button, Toggle button, Anchor, and Menu.
+  </Card>
+  <Card title="Forms" icon="pen-to-square" href="/components/input">
+    Input, Checkbox, Radio, Toggle, Combobox, Select, Textarea, Range, and more.
+  </Card>
+  <Card title="Feedback & Overlays" icon="bell" href="/components/modal">
+    Modal, Drawer, Tooltip, Notification, Alert, and Global alert.
+  </Card>
+  <Card title="Layout & Navigation" icon="table-columns" href="/components/grid">
+    Grid, Tabs, Pagination, Breadcrumbs, Stepper, and Pane.
+  </Card>
+  <Card title="Display" icon="eye" href="/components/avatar">
+    Avatar, Tags, Table, Loaders, Timeline, Well, and Typography.
+  </Card>
+  <Card title="Theming" icon="palette" href="/components/theming">
+    ThemeProvider, ColorSchemeProvider, theme object, and utilities.
+  </Card>
+</CardGroup>

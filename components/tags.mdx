@@ -1,0 +1,197 @@
+---
+title: "Tags"
+description: "Tags let users categorize content using a keyword, communicate status, or represent filter parameters."
+---
+
+Tags are small, label-like elements from the `@zendeskgarden/react-tags` package. Use them to add metadata to content (category, attribute, property), communicate status, or represent active filter parameters.
+
+<Note>
+  To prompt a user action, use a [Button](/components/button) instead of a Tag.
+</Note>
+
+## Installation
+
+```bash
+npm install @zendeskgarden/react-tags
+```
+
+```tsx
+import { Tag } from '@zendeskgarden/react-tags';
+```
+
+## Usage
+
+### Default
+
+A basic Tag wraps short text content.
+
+```tsx
+import { Tag } from '@zendeskgarden/react-tags';
+
+const Example = () => (
+  <Tag>
+    <span>Algae</span>
+  </Tag>
+);
+```
+
+### Size
+
+Tags come in three sizes. The default size is `medium`.
+
+```tsx
+import { Tag } from '@zendeskgarden/react-tags';
+
+const Example = () => (
+  <>
+    <Tag size="small">
+      <span>Moss</span>
+    </Tag>
+    <Tag size="medium">
+      <span>Algae</span>
+    </Tag>
+    <Tag size="large">
+      <span>Conifer</span>
+    </Tag>
+  </>
+);
+```
+
+### Color
+
+Tags can be colored using a theme palette hue name or a hex value.
+
+```tsx
+import { Tag } from '@zendeskgarden/react-tags';
+
+const Example = () => (
+  <>
+    <Tag hue="blue">
+      <span>Conifer</span>
+    </Tag>
+    <Tag hue="dangerHue">
+      <span>Moss</span>
+    </Tag>
+    <Tag hue="yellow">
+      <span>Cactus</span>
+    </Tag>
+    <Tag hue="#3A3A3A">
+      <span>Succulent</span>
+    </Tag>
+  </>
+);
+```
+
+### Shape
+
+Tags are rectangular by default. Use `isPill` for a pill shape or `isRound` for circular tags (reserved for very short content like two-digit numbers).
+
+```tsx
+import { Tag } from '@zendeskgarden/react-tags';
+
+const Example = () => (
+  <>
+    <Tag>
+      <span>Algae</span>
+    </Tag>
+    <Tag isPill>
+      <span>Moss</span>
+    </Tag>
+    <Tag isRound>
+      <span>8</span>
+    </Tag>
+  </>
+);
+```
+
+### With avatar
+
+Medium and large Tags can contain a `Tag.Avatar`. Place it as the first child inside the Tag.
+
+```tsx
+import { Tag } from '@zendeskgarden/react-tags';
+import { ReactComponent as LeafIcon } from '@zendeskgarden/svg-icons/src/12/leaf-stroke.svg';
+
+const Example = () => (
+  <>
+    <Tag>
+      <Tag.Avatar>
+        <LeafIcon />
+      </Tag.Avatar>
+      <span>Conifer</span>
+    </Tag>
+    <Tag size="large">
+      <Tag.Avatar>
+        <LeafIcon />
+      </Tag.Avatar>
+      <span>Conifer</span>
+    </Tag>
+  </>
+);
+```
+
+### Closeable tag
+
+Add `Tag.Close` as the last child to allow a tag to be dismissed. Always provide an `aria-label` for accessibility.
+
+```tsx
+import { Tag } from '@zendeskgarden/react-tags';
+
+const Example = () => (
+  <Tag tabIndex={0} aria-label="Algae, press delete to remove">
+    <span>Algae</span>
+    <Tag.Close
+      aria-label="Remove tag"
+      onClick={() => {
+        /* handle removal */
+      }}
+    />
+  </Tag>
+);
+```
+
+<Tip>
+  Handle `onKeyDown` on the Tag itself to support Delete and Backspace keyboard dismissal, and on `Tag.Close` to support Space and Enter in addition to those keys.
+</Tip>
+
+## Component structure
+
+```tsx
+<Tag>
+  <Tag.Avatar /> {/* optional — must be first child */}
+  {/* tag text */}
+  <Tag.Close /> {/* optional — must be last child */}
+</Tag>
+```
+
+## Props
+
+### Tag
+
+<ParamField path="size" type="'small' | 'medium' | 'large'" default="'medium'">
+  Controls the height and text size of the tag.
+</ParamField>
+
+<ParamField path="hue" type="string">
+  A theme palette hue key (e.g. `'blue'`, `'dangerHue'`) or a hex color string (e.g. `'#3A3A3A'`). Sets the background color of the tag.
+</ParamField>
+
+<ParamField path="isPill" type="boolean" default="false">
+  Renders the tag with fully rounded (pill) corners.
+</ParamField>
+
+<ParamField path="isRound" type="boolean" default="false">
+  Renders the tag as a circle. Reserve for very short content such as two-digit numbers.
+</ParamField>
+
+<ParamField path="isBold" type="boolean" default="true">
+  Tag text is bold by default. Set to `false` for regular weight.
+</ParamField>
+
+### Tag.Avatar
+
+Displays child media (icon or image) inside the tag with appropriate sizing. Must be placed as the first child of `Tag`.
+
+### Tag.Close
+
+Renders a close icon with accessibility attributes for tag dismissal. Must be placed as the last child of `Tag`.

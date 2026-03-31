@@ -1,0 +1,86 @@
+---
+title: "Getting started with Garden design"
+description: "How designers access the Garden Figma library, design tokens, and component library to build with Garden."
+---
+
+Garden provides a complete design toolkit for Zendesk product designers. This page covers how to access and use the Figma library, work with design tokens, and apply Garden's color palette to your designs.
+
+## Set up the Figma library
+
+<Steps>
+  <Step title="Request access to the Garden Figma workspace">
+    Garden's component library is a shared Figma library published in the Zendesk Figma organization. Contact your design ops team or Figma workspace admin to have the Garden library enabled for your Figma projects.
+  </Step>
+  <Step title="Enable the library in your file">
+    Once access is granted, open your Figma file and go to **Assets** → **Libraries**. Find "Garden" in the list of available shared libraries and toggle it on. Garden components, color variables, and typography styles will appear in your Assets panel.
+  </Step>
+  <Step title="Browse components and variants">
+    Use the Assets panel to search for Garden components. Each component includes documented variants and interactive states (default, hover, active, focus, disabled). Drag components directly onto your canvas.
+  </Step>
+  <Step title="Apply design tokens">
+    Rather than applying raw hex values, use Garden's color variables. In Figma's color picker, switch to the Variables tab and select from the semantic variable groups: **Foreground**, **Background**, **Border**, and **Shadows**. This ensures your designs stay in sync with the token layer used in code.
+  </Step>
+</Steps>
+
+## Working with design tokens
+
+Garden's design tokens are the bridge between design and engineering. Instead of hardcoding visual values, tokens give shared names to colors, spacing, and type that both Figma and code reference.
+
+Garden uses two levels of token:
+
+- **Primitive variables** — raw palette values like `blue-700` or `grey-300`. These are the source of truth for the palette but are not used directly in component designs.
+- **Semantic variables** — context-aware names like `color.background.primary` or `color.foreground.default`. Use these when designing components or layouts.
+
+<Tip>
+  Always apply semantic variables to your designs. This ensures that your work automatically adapts to light and dark mode theming without manual adjustments.
+</Tip>
+
+## Color palette
+
+Garden's palette is organized into primary and secondary hue groups. Each hue has 12 shades (100–1200).
+
+### Primary hues
+
+Primary hues are used for the structure of interfaces, actionable items, and validation states.
+
+| Hue | Primary use |
+| :-- | :---------- |
+| `grey` | Neutral backgrounds, borders, and non-interactive text |
+| `kale` | Zendesk brand accent and chrome surfaces |
+| `blue` | Interactive elements: buttons, links, focus rings, selection states |
+| `green` | Success states and positive validation |
+| `red` | Danger states, error validation, and destructive actions |
+| `yellow` | Warning states and cautionary indicators |
+
+### Secondary hues
+
+Secondary hues are used in supplementary UI elements such as icons, tags, status badges, and illustrations.
+
+`purple`, `royal`, `fuschia`, `azure`, `pink`, `teal`, `crimson`, `mint`, `orange`, `lime`, `lemon`
+
+<Info>
+  Secondary hues are not used for interactive elements or validation states. Reserve them for decorative, categorical, or illustrative contexts.
+</Info>
+
+## Light and dark mode
+
+Garden supports both light and dark mode through the semantic token layer. Designers do not need to maintain separate design files for each mode.
+
+- **Light mode** uses shade 700 as the prevailing shade for actionable elements.
+- **Dark mode** uses shade 600 as the base. Colors in dark mode have slightly less saturation to prevent light bleed on dark backgrounds.
+- Interaction states work in reverse: in light mode, hover moves to a darker shade; in dark mode, hover moves to a lighter shade.
+
+In Figma, toggle between light and dark mode at the frame level by switching the color mode variable scope. All semantic variables update automatically.
+
+## RTL layout support
+
+Garden is built for right-to-left (RTL) layout support. When designing for RTL audiences:
+
+- Mirror directional icons (arrows, navigation chevrons) using Figma's flip controls.
+- Text alignment and flow reverse automatically when RTL is applied in code — match this in Figma by setting your text frames to right-aligned where appropriate.
+- Avoid embedding directional meaning into purely decorative icons or illustrations without also providing a mirrored version.
+- Garden components handle RTL at the code level via CSS logical properties, so designers need only ensure their Figma mockups communicate directionality clearly in handoff notes.
+
+<Note>
+  RTL support applies to layout and directionality. It does not affect the color palette, typography scale, or elevation system.
+</Note>

@@ -1,0 +1,161 @@
+---
+title: "Icon button"
+description: "Icon buttons let users take action using only an icon, simplifying the UI for repeated or persistent actions."
+---
+
+## Installation
+
+```bash
+npm install @zendeskgarden/react-buttons styled-components
+```
+
+```tsx
+import { IconButton } from '@zendeskgarden/react-buttons';
+```
+
+## When to use
+
+**Use an Icon button:**
+- To simplify the appearance of repeated or persistent actions on a page
+- To enable action in a toolbar where space is limited
+
+**Do not use an Icon button:**
+- To enable primary or secondary actions on a page — use a [Button](/components/button) instead, which provides a visible label
+
+## Usage
+
+### Default
+
+Wrap the `IconButton` in a `Tooltip` and always provide an `aria-label` that describes the action. This ensures the button is accessible to screen reader users and users unfamiliar with the icon.
+
+```tsx
+import { IconButton } from '@zendeskgarden/react-buttons';
+import { Tooltip } from '@zendeskgarden/react-tooltips';
+import { ReactComponent as SettingsIcon } from '@zendeskgarden/svg-icons/src/16/settings-stroke.svg';
+
+function Example() {
+  return (
+    <Tooltip content="Settings">
+      <IconButton aria-label="Settings">
+        <SettingsIcon />
+      </IconButton>
+    </Tooltip>
+  );
+}
+```
+
+### Danger
+
+Use danger styling for icon buttons that enable a destructive action.
+
+```tsx
+<Tooltip content="Delete">
+  <IconButton aria-label="Delete" isDanger>
+    <TrashIcon />
+  </IconButton>
+</Tooltip>
+```
+
+### Disabled
+
+A disabled Icon button prevents user interaction. It does not appear in the tab order, cannot receive focus, and may not be read aloud by a screen reader.
+
+```tsx
+<IconButton aria-label="Edit" disabled>
+  <EditIcon />
+</IconButton>
+```
+
+### Shape
+
+Icon buttons are circular by default. Set `isRound={false}` to use a square shape.
+
+```tsx
+{/* Circular (default) */}
+<IconButton aria-label="Search">
+  <SearchIcon />
+</IconButton>
+
+{/* Square */}
+<IconButton aria-label="Search" isRound={false}>
+  <SearchIcon />
+</IconButton>
+```
+
+### Sizes
+
+Icon buttons can be small, medium, or large. The default size is medium.
+
+```tsx
+<IconButton aria-label="Small action" size="small"><PlusIcon /></IconButton>
+<IconButton aria-label="Medium action" size="medium"><PlusIcon /></IconButton>
+<IconButton aria-label="Large action" size="large"><PlusIcon /></IconButton>
+```
+
+### Types
+
+Icon buttons have three visual types: basic (default), outline, and primary.
+
+```tsx
+<IconButton aria-label="Basic action"><StarIcon /></IconButton>
+<IconButton aria-label="Outline action" isPrimary={false}><StarIcon /></IconButton>
+<IconButton aria-label="Primary action" isPrimary><StarIcon /></IconButton>
+```
+
+## Accessibility
+
+<Warning>
+  Always provide an `aria-label` on every `IconButton`. Without a visible text label, screen reader users and keyboard-only users have no way to understand the button's purpose.
+</Warning>
+
+Pair each `IconButton` with a `Tooltip` so that users unfamiliar with the icon can discover its function by hovering or focusing the button.
+
+```tsx
+<Tooltip content="Open notifications">
+  <IconButton aria-label="Open notifications">
+    <BellIcon />
+  </IconButton>
+</Tooltip>
+```
+
+## API
+
+The `IconButton` component follows this structure:
+
+```tsx
+<Tooltip content="Action label"> {/* recommended */}
+  <IconButton aria-label="Action label">
+    {/* SVG icon */}
+  </IconButton>
+</Tooltip>
+```
+
+### IconButton props
+
+<ParamField path="props.aria-label" type="string" required>
+  Accessible label for the button. Required for screen reader support.
+</ParamField>
+
+<ParamField path="props.isPrimary" type="boolean" default="false">
+  Applies filled primary styling.
+</ParamField>
+
+<ParamField path="props.isBasic" type="boolean" default="true">
+  Applies basic (no border, no background) styling. This is the default.
+</ParamField>
+
+<ParamField path="props.isDanger" type="boolean" default="false">
+  Applies danger (destructive action) styling.
+</ParamField>
+
+<ParamField path="props.isRound" type="boolean" default="true">
+  Renders the button as a circle. Set to `false` for a square shape.
+</ParamField>
+
+<ParamField path="props.size" type="'small' | 'medium' | 'large'" default="'medium'">
+  Controls the button's size.
+</ParamField>
+
+<ParamField path="props.disabled" type="boolean" default="false">
+  Prevents user interaction and applies disabled styling.
+</ParamField>

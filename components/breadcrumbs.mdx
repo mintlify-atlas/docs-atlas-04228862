@@ -1,0 +1,75 @@
+---
+title: "Breadcrumbs"
+description: "Navigation trail that marks a user's location in a nested hierarchy and provides quick access to ancestor pages."
+---
+
+```tsx
+import { Breadcrumb } from '@zendeskgarden/react-breadcrumbs';
+```
+
+Breadcrumbs show the user where they are in a nested navigation structure and provide a quick way to navigate to ancestor pages. Use them when the product has a clear hierarchical structure with more than two levels.
+
+## Basic usage
+
+Combine `Breadcrumb` with `Anchor` (for navigable crumbs) and `Span` (for the current non-navigable page). Each crumb is automatically separated by an arrow chevron.
+
+```tsx
+import { Anchor } from '@zendeskgarden/react-buttons';
+import { Span } from '@zendeskgarden/react-typography';
+import { Breadcrumb } from '@zendeskgarden/react-breadcrumbs';
+
+const Example = () => (
+  <Breadcrumb>
+    <Anchor href="/flowers" isUnderlined={false}>
+      Flowers
+    </Anchor>
+    <Anchor href="/flowers/roses" isUnderlined={false}>
+      Roses
+    </Anchor>
+    <Span>Floribunda</Span>
+  </Breadcrumb>
+);
+```
+
+<Note>
+  The last item in a breadcrumb trail represents the current page and should **not** be a link. Use `Span` or plain text for the current page crumb.
+</Note>
+
+## With router links
+
+When using a client-side router (React Router, Next.js), render an `Anchor` with the appropriate `as` prop or use your router's `Link` component via the `tag` prop.
+
+```tsx
+import { Link } from 'react-router-dom';
+import { Anchor } from '@zendeskgarden/react-buttons';
+import { Span } from '@zendeskgarden/react-typography';
+import { Breadcrumb } from '@zendeskgarden/react-breadcrumbs';
+
+const Example = () => (
+  <Breadcrumb>
+    <Anchor tag={Link} to="/" isUnderlined={false}>
+      Home
+    </Anchor>
+    <Anchor tag={Link} to="/settings" isUnderlined={false}>
+      Settings
+    </Anchor>
+    <Span>Notifications</Span>
+  </Breadcrumb>
+);
+```
+
+## Props
+
+The `Breadcrumb` component does not accept additional props beyond standard HTML attributes. Styling and separators are applied automatically to its children.
+
+## Accessibility
+
+- `Breadcrumb` renders a `<nav>` element with `aria-label="breadcrumb"` automatically.
+- The ordered list of crumbs uses `<ol>` so assistive technologies announce the list count.
+- The current page crumb (the final non-link item) should have `aria-current="page"` to signal the active location. When using `Span`, add this attribute manually:
+
+  ```tsx
+  <Span aria-current="page">Floribunda</Span>
+  ```
+
+- Breadcrumbs are a secondary navigation landmark. Ensure each page has a unique and descriptive label for the current crumb.

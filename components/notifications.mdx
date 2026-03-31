@@ -1,0 +1,228 @@
+---
+title: "Notifications & Alerts"
+description: "Inline alerts, full-width global banners, and floating toast notifications from @zendeskgarden/react-notifications."
+---
+
+The `@zendeskgarden/react-notifications` package exports three distinct feedback components. Use the right one based on scope and urgency.
+
+| Component | Scope | Urgency |
+|-----------|-------|---------|
+| `Alert` | Inline, contextual | High — read first by screen readers |
+| `GlobalAlert` | Full-width page banner | System-wide announcements |
+| `Notification` | Floating toast | Passive status updates |
+
+## Installation
+
+```tsx
+npm install @zendeskgarden/react-notifications
+```
+
+---
+
+## Alert
+
+An Alert provides **urgent contextual feedback** in response to a user action or system event. It is persistent until the user dismisses it and is read first by a screen reader.
+
+Use an Alert for urgent feedback or contextual communication inline with page content. For passive system updates, use a [Notification](#notification) instead.
+
+### Basic usage
+
+```tsx
+import { Alert } from '@zendeskgarden/react-notifications';
+
+const Example = () => (
+  <Alert type="warning">
+    <Alert.Title>Warning</Alert.Title>
+    Turnip greens yarrow ricebean rutabaga endive cauliflower sea lettuce kohlrabi amaranth water.
+    <Alert.Close aria-label="Close Alert" />
+  </Alert>
+);
+```
+
+### All types
+
+```tsx
+import { Alert } from '@zendeskgarden/react-notifications';
+
+const Example = () => (
+  <>
+    <Alert type="info">
+      <Alert.Title>Info</Alert.Title>
+      Turnip greens yarrow endive cauliflower sea lettuce kohlrabi amaranth water.
+      <Alert.Close aria-label="Close Info Alert" />
+    </Alert>
+
+    <Alert type="warning">
+      <Alert.Title>Warning</Alert.Title>
+      Corn amaranth salsify bunya nuts nori azuki bean chickweed potato bell pepper artichoke.
+      <Alert.Close aria-label="Close Warning Alert" />
+    </Alert>
+
+    <Alert type="error">
+      <Alert.Title>Error</Alert.Title>
+      Celery quandong swiss chard chicory earthnut pea potato. Salsify taro catsear garlic.
+      <Alert.Close aria-label="Close Error Alert" />
+    </Alert>
+
+    <Alert type="success">
+      <Alert.Title>Success</Alert.Title>
+      Corn amaranth salsify bunya nuts nori azuki bean chickweed potato bell pepper artichoke.
+      <Alert.Close aria-label="Close Success Alert" />
+    </Alert>
+  </>
+);
+```
+
+<ParamField path="type" type="'info' | 'success' | 'warning' | 'error'" required>
+  Sets the semantic type of the alert. Controls the icon and color scheme applied.
+</ParamField>
+
+### Subcomponents
+
+**`Alert.Title`** — Bold heading rendered above the alert body text.
+
+**`Alert.Paragraph`** — Use for multi-paragraph body content inside an alert.
+
+**`Alert.Close`** — Icon button to dismiss the alert. Always provide an `aria-label`.
+
+---
+
+## GlobalAlert
+
+A GlobalAlert appears as a **full-width banner at the top of the page** and pushes content down. It is read first by screen readers. It is persistent — it should only be dismissed by the user or when the underlying issue is resolved.
+
+Use a GlobalAlert to announce new product versions, inform users of trial status, signal editing modes, or communicate system maintenance.
+
+<Note>
+  GlobalAlert is the first element of a page. Do not auto-dismiss it with a timer. Provide one clear action button and an optional "learn more" link.
+</Note>
+
+### Basic usage
+
+```tsx
+import { GlobalAlert } from '@zendeskgarden/react-notifications';
+
+const Example = () => (
+  <GlobalAlert type="info">
+    <GlobalAlert.Content>
+      <GlobalAlert.Title>Info</GlobalAlert.Title>
+      Gumbo beet greens corn soko endive gumbo gourd.
+    </GlobalAlert.Content>
+    <GlobalAlert.Close aria-label="Close Global Alert" />
+  </GlobalAlert>
+);
+```
+
+### With an action button
+
+```tsx
+import { GlobalAlert } from '@zendeskgarden/react-notifications';
+
+const Example = () => (
+  <GlobalAlert type="warning">
+    <GlobalAlert.Content>
+      <GlobalAlert.Title>Maintenance scheduled</GlobalAlert.Title>
+      The system will be unavailable on Saturday from 2–4 AM UTC.
+    </GlobalAlert.Content>
+    <GlobalAlert.Button>Learn more</GlobalAlert.Button>
+    <GlobalAlert.Close aria-label="Close Global Alert" />
+  </GlobalAlert>
+);
+```
+
+### Component structure
+
+```tsx
+<GlobalAlert type="info | success | warning | error">
+  <GlobalAlert.Content>
+    <GlobalAlert.Title>{/* optional bold title */}</GlobalAlert.Title>
+    {/* main text and optional anchors */}
+  </GlobalAlert.Content>
+  <GlobalAlert.Button>{/* optional single action */}</GlobalAlert.Button>
+  <GlobalAlert.Close aria-label="Close" />
+</GlobalAlert>
+```
+
+<ParamField path="type" type="'info' | 'success' | 'warning' | 'error'" required>
+  Determines the icon and color theme applied to the banner.
+</ParamField>
+
+---
+
+## Notification
+
+A Notification is a **floating toast** that communicates passive status updates about user or system activity. It occupies the `top-end` position of the viewport by default and is managed via `ToastProvider`.
+
+Use a Notification for passive status updates. For contextual feedback that may require a decision, use an [Alert](#alert) instead.
+
+### Basic usage
+
+```tsx
+import { Notification } from '@zendeskgarden/react-notifications';
+
+const Example = () => (
+  <Notification type="info">
+    <Notification.Title>Info</Notification.Title>
+    Turnip greens yarrow ricebean endive cauliflower sea kohlrabi amaranth water.
+    <Notification.Close aria-label="Close Notification" />
+  </Notification>
+);
+```
+
+### With ToastProvider
+
+`ToastProvider` manages the placement and lifecycle of toast notifications. Wrap it around the part of your app that triggers notifications.
+
+```tsx
+import { ToastProvider, Notification, useToast } from '@zendeskgarden/react-notifications';
+
+const NotificationTrigger = () => {
+  const { addToast } = useToast();
+
+  const handleClick = () => {
+    addToast(
+      ({ close }) => (
+        <Notification type="success">
+          <Notification.Title>Upload complete</Notification.Title>
+          Your file was uploaded successfully.
+          <Notification.Close aria-label="Close" onClick={close} />
+        </Notification>
+      ),
+      { placement: 'top-end' }
+    );
+  };
+
+  return <button onClick={handleClick}>Trigger toast</button>;
+};
+
+const App = () => (
+  <ToastProvider>
+    <NotificationTrigger />
+  </ToastProvider>
+);
+```
+
+### Placement options
+
+There are 6 placement options. The default is `top-end`.
+
+| Value | Position |
+|-------|----------|
+| `top-start` | Top left of the viewport |
+| `top-end` | Top right (default) |
+| `bottom-start` | Bottom left |
+| `bottom-end` | Bottom right |
+| `top` | Top center |
+| `bottom` | Bottom center |
+
+<ParamField path="type" type="'info' | 'success' | 'warning' | 'error'" required>
+  Sets the semantic type of the notification toast.
+</ParamField>
+
+### Subcomponents
+
+**`Notification.Title`** — Bold heading rendered at the top of the toast.
+
+**`Notification.Paragraph`** — Multi-paragraph body content.
+
+**`Notification.Close`** — Dismiss button. Always provide an `aria-label`.

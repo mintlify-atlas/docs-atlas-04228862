@@ -1,0 +1,186 @@
+---
+title: "Pagination"
+description: "Split large datasets into pages with offset-based or cursor-based navigation controls."
+---
+
+```tsx
+import { OffsetPagination, CursorPagination } from '@zendeskgarden/react-pagination';
+```
+
+Pagination separates content into pages and allows users to navigate between them. The package provides two patterns:
+
+| Component | Use when |
+|-----------|----------|
+| `OffsetPagination` | You know the total number of pages and want users to jump to any page |
+| `CursorPagination` | No concept of total pages; navigate sequentially (e.g. API cursor) |
+
+## OffsetPagination
+
+Offset-based pagination shows the total number of pages and allows users to jump to a specific position.
+
+```tsx
+import React, { useState } from 'react';
+import { OffsetPagination } from '@zendeskgarden/react-pagination';
+
+const Example = () => {
+  const [page, setPage] = useState(1);
+
+  return (
+    <nav aria-label="Results pagination">
+      <OffsetPagination
+        totalPages={6}
+        currentPage={page}
+        onChange={setPage}
+      />
+    </nav>
+  );
+};
+```
+
+### Gap indicator
+
+When there are many pages, a gap indicator (`...`) represents overflowing page numbers. Control where gaps appear with the `pagePadding` and `pageGap` props.
+
+```tsx
+<OffsetPagination
+  totalPages={20}
+  currentPage={10}
+  onChange={setPage}
+  pageGap={2}
+/>
+```
+
+### Page padding
+
+Sets the number of pages that appear between the current page and a gap indicator.
+
+```tsx
+<OffsetPagination
+  totalPages={20}
+  currentPage={5}
+  onChange={setPage}
+  pagePadding={3}
+/>
+```
+
+### Props
+
+<ParamField path="currentPage" type="number" required>
+  The currently active page number (1-indexed).
+</ParamField>
+
+<ParamField path="totalPages" type="number" required>
+  The total number of pages to display.
+</ParamField>
+
+<ParamField path="onChange" type="(currentPage: number) => void" required>
+  Callback fired when the user selects a different page.
+</ParamField>
+
+<ParamField path="pageGap" type="number">
+  The minimum number of pages between the current page indicator and a gap (`...`). Defaults to `2`.
+</ParamField>
+
+<ParamField path="pagePadding" type="number">
+  The number of pages that appear between the current page and the gap indicator. Defaults to `2`.
+</ParamField>
+
+---
+
+## CursorPagination
+
+Cursor-based pagination works by returning a pointer to a specific item in a dataset. There is no concept of total pages. Users navigate sequentially with First, Previous, Next, and Last controls.
+
+```tsx
+import React, { useState } from 'react';
+import { CursorPagination } from '@zendeskgarden/react-pagination';
+
+const Example = () => {
+  const [cursor, setCursor] = useState(0);
+  const pages = [0, 1, 2, 3, 4];
+
+  return (
+    <CursorPagination aria-label="Cursor pagination">
+      <CursorPagination.First
+        onClick={() => setCursor(0)}
+        disabled={cursor === 0}
+      >
+        First
+      </CursorPagination.First>
+      <CursorPagination.Previous
+        onClick={() => cursor > 0 && setCursor(cursor - 1)}
+        disabled={cursor === 0}
+      >
+        Previous
+      </CursorPagination.Previous>
+      <CursorPagination.Next
+        onClick={() => cursor < pages.length - 1 && setCursor(cursor + 1)}
+        disabled={cursor === pages.length - 1}
+      >
+        Next
+      </CursorPagination.Next>
+      <CursorPagination.Last
+        onClick={() => setCursor(pages.length - 1)}
+        disabled={cursor === pages.length - 1}
+      >
+        Last
+      </CursorPagination.Last>
+    </CursorPagination>
+  );
+};
+```
+
+### Props
+
+<ParamField path="aria-label" type="string" required>
+  Accessible label for the `nav` element wrapping the pagination controls.
+</ParamField>
+
+### CursorPagination subcomponents
+
+**`CursorPagination.First`** — Navigates to the first item in the set.
+
+**`CursorPagination.Previous`** — Navigates to the previous item.
+
+**`CursorPagination.Next`** — Navigates to the next item.
+
+**`CursorPagination.Last`** — Navigates to the last item in the set.
+
+Each subcomponent accepts `disabled` (boolean) and an `onClick` handler.
+
+---
+
+## Combining with Table
+
+Pagination is commonly paired with a Table. Render the `OffsetPagination` below the table and slice your data based on `currentPage`.
+
+```tsx
+const ROWS_PER_PAGE = 10;
+
+const PaginatedTable = ({ data }) => {
+  const [page, setPage] = useState(1);
+  const totalPages = Math.ceil(data.length / ROWS_PER_PAGE);
+  const pageData = data.slice((page - 1) * ROWS_PER_PAGE, page * ROWS_PER_PAGE);
+
+  return (
+    <>
+      <Table>
+        {/* render pageData rows */}
+      </Table>
+      <nav aria-label="Table pagination">
+        <OffsetPagination
+          totalPages={totalPages}
+          currentPage={page}
+          onChange={setPage}
+        />
+      </nav>
+    </>
+  );
+};
+```
+
+## Accessibility
+
+- Wrap `OffsetPagination` and `CursorPagination` in a `<nav>` element with a descriptive `aria-label` (e.g. `"Results pagination"`).
+- The current page button receives `aria-current="page"` automatically.
+- Disabled navigation buttons receive `disabled` attributes to prevent interaction and screen reader activation.

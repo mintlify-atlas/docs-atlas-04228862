@@ -1,0 +1,51 @@
+---
+title: "Design overview"
+description: "Garden is Zendesk's design system — a purposeful, accessible, and consistent foundation for building product UI."
+---
+
+Garden is Zendesk's open-source design system. It provides a shared visual language, component library, and set of design principles that teams use to build cohesive, accessible product experiences across Zendesk's suite.
+
+## Design philosophy
+
+### Purpose-driven
+
+Every color choice, spacing decision, and typographic scale in Garden exists to serve a specific function. Decoration that does not communicate meaning is avoided. Color conveys status. Hierarchy guides attention. Components are built around the tasks users need to complete.
+
+### Accessible by default
+
+Garden is designed to meet [WCAG 2.1](https://www.w3.org/TR/WCAG21/) accessibility requirements. Color contrast ratios, keyboard navigation, focus indicators, and semantic markup are treated as non-negotiable constraints, not optional enhancements. The system supports screen readers, keyboard-only interaction, and users with color vision impairment.
+
+### Consistent and scalable
+
+A shared token layer — design variables for color, spacing, and typography — connects Figma and code. Changes to the token layer propagate consistently across all components. This makes the system easy to theme, maintain, and extend.
+
+## Figma integration
+
+Garden's component library is available as a Figma shared library. Designers get access to the same tokens and components that engineers use in production, ensuring parity between design files and shipped UI.
+
+The Figma library includes:
+- All Garden UI components with their variants and states
+- Color variables organized by semantic purpose (foreground, background, border, shadows)
+- Typography styles mapped to the Garden type scale
+- Light mode and dark mode support
+
+<Note>
+  To access the Garden Figma library, request access through your Zendesk Figma workspace. The library is published as a shared team library.
+</Note>
+
+## Foundations
+
+<CardGroup cols={2}>
+  <Card title="Color" icon="palette" href="/design/color">
+    Color principles, semantic variables, light and dark mode, and accessibility requirements.
+  </Card>
+  <Card title="Color palette" icon="swatches" href="/design/palette">
+    The full Garden palette with 12-shade hues for primary and secondary colors.
+  </Card>
+  <Card title="Icons" icon="shapes" href="/design/icons">
+    The `@zendeskgarden/svg-icons` package with installation and usage guidance.
+  </Card>
+  <Card title="Typography" icon="text-size" href="/design/typography">
+    Type scale, hierarchy, and the `@zendeskgarden/react-typography` component API.
+  </Card>
+</CardGroup>

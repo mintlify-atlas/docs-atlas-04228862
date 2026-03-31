@@ -1,0 +1,168 @@
+---
+title: "Color"
+description: "Color principles, semantic variables, elevation levels, and light and dark mode application in Garden."
+---
+
+## Principles
+
+### Purpose
+
+In the user interface, color carries specific meaning and sets consistent user expectations. Use red, green, and yellow to provide status feedback such as success, warning, or danger. Limit their application to avoid visual clutter. Use blue to emphasize interactive elements.
+
+- Use the appropriate hue to communicate function.
+- Do not use a hue that is misaligned with the expected action.
+
+### Hierarchy
+
+Color is a powerful tool for presenting the hierarchy of elements on a screen. It helps highlight key elements that require interaction and de-emphasize secondary ones.
+
+Primary color (blue) is dedicated to buttons, links, and selection states. Neutral shades (grey) are commonly used for non-interactive foregrounds, backgrounds, and borders — except in validation cases. This distinction helps users easily understand which areas on the screen are responsible for completing a task. Supplement colors with text and icons to reinforce hierarchy and relevance.
+
+- Draw the user's attention only to what is important for achieving their goals.
+- Do not use color to decorate or to distract.
+
+### Elevation
+
+A common practice is to communicate element hierarchy through levels. Garden uses color, shadows, backdrops, borders, and fills to present the spatial relationships between elements.
+
+| Depth | Usage |
+| :---- | :---- |
+| `recessed` | Surfaces that sit below the main surface (e.g., Well) |
+| `default` | Main background surfaces |
+| `subtle` | Surfaces positioned on the main surface that need emphasis (e.g., Alert) |
+| `raised` | Surfaces floating above the main surface (e.g., Modal, Tooltip dialog, Notification) |
+
+- Use color to communicate depth.
+- Do not add shadow to elements that should not be elevated.
+
+### Opacity
+
+Colors with opacity applied help visually indicate layering of elements on different backgrounds. Opacity is primarily used for background colors and follows predefined values. Interactive elements such as basic buttons and tables are good examples where opacity can be applied.
+
+- Use opacity to layer colors together.
+- Do not apply opacity in a way that makes other elements unusable.
+
+### Accessibility
+
+Do not rely solely on color to indicate the state or status of a component. Use text or icons to support the visual affordance. The most effective measure of color accessibility is the contrast ratio, as regulated by [WCAG 2.1 guidelines](https://www.w3.org/TR/WCAG21/#contrast-minimum).
+
+| Element type | Minimum contrast ratio |
+| :----------- | :--------------------- |
+| Text | 4.5:1 |
+| Graphical elements (icons, borders) | 3:1 |
+
+<Warning>
+  Never use color alone to indicate state or status. Always pair color changes with a text label or icon so that the meaning is accessible to users with color vision impairment.
+</Warning>
+
+## Variables
+
+### Primitive and semantic variables
+
+Garden distinguishes two levels of color variables that serve distinct but complementary purposes.
+
+**Primitive variables** represent the option level — the most fundamental values in the design system. Their names describe visual attributes or represent basic palette values (for example, `red-500` or `blue-100`). They are the source for higher-level variables and are not applied directly to components.
+
+**Semantic variables** are built on top of primitive variables and represent the context level. Their names are descriptive and carry intended use or meaning rather than appearance (for example, `border.warning`). Garden uses semantic variables in components as the only variables that support theming.
+
+### Taxonomy
+
+Variable names are composed from parts that move from generic to specific:
+
+```
+Application → Group → Element → Modifier → State
+```
+
+- **Application** — the type of variable (`color`)
+- **Group** — whether the variable belongs to an object group (`chrome` or `tag`)
+- **Element** — where the variable is applied (`background`, `foreground`, or `border`)
+- **Modifier** — variant or prominence (`primary`, `default`, or `emphasis`)
+- **State** — interaction state (`hover` or `active`)
+
+| Variable example | Description |
+| :--------------- | :---------- |
+| `color.border.success.emphasis` | Strong success border color applied to Input |
+| `color.chrome.foreground.default` | Default text color applied in a Chrome component |
+| `color.background.primary.hover` | Hover background color applied to a Primary button |
+
+Always aim to simplify variable names and avoid overspecification. Use `camelCase` or `.` notation when stitching parts together to separate categories.
+
+### Semantic variable categories
+
+Garden's semantic color variables are grouped into four main categories.
+
+#### Foreground
+
+Foreground variables apply to text and icons.
+
+| Modifier | Use |
+| :------- | :-- |
+| `foreground.default` | Primary text color for body content |
+| `foreground.subtle` | De-emphasized text, placeholders, disabled labels |
+| `foreground.emphasis` | Strongly emphasized text |
+| `foreground.primary` | Interactive text such as links and active selections |
+| `foreground.success` | Success state text and icons |
+| `foreground.warning` | Warning state text and icons |
+| `foreground.danger` | Danger or error state text and icons |
+| `foreground.onEmphasis` | Text on filled/emphasis backgrounds (typically white) |
+
+#### Background
+
+Background variables apply to fill areas.
+
+| Modifier | Use |
+| :------- | :-- |
+| `background.default` | Main page or panel background |
+| `background.recessed` | Surfaces below the main surface (e.g., Well) |
+| `background.subtle` | Surfaces slightly above the main surface (e.g., Alert) |
+| `background.raised` | Floating surfaces (e.g., Modal, Menu) |
+| `background.primary` | Filled interactive element background (e.g., Primary button) |
+| `background.success` | Success state fill |
+| `background.warning` | Warning state fill |
+| `background.danger` | Danger state fill |
+
+#### Border
+
+Border variables apply to interactive and non-interactive borders.
+
+| Modifier | Use |
+| :------- | :-- |
+| `border.default` | Standard borders on inputs and containers |
+| `border.subtle` | Low-emphasis dividers and separators |
+| `border.emphasis` | High-contrast or active focus borders |
+| `border.success` | Success validation border |
+| `border.warning` | Warning validation border |
+| `border.danger` | Error validation border |
+
+#### Shadows
+
+Shadow variables apply to elevation. In light mode, raised surfaces cast outward shadows. In dark mode, raised surfaces use a lighter tint.
+
+| Shadow size | Used for |
+| :---------- | :------- |
+| Small | Tooltip only |
+| Medium | Components without backdrop (Tooltip dialog, Menu) |
+| Large | Components with a backdrop (Modal, Drawer) |
+
+## Theming
+
+### Light mode vs. dark mode
+
+| Aspect | Light mode | Dark mode |
+| :----- | :--------- | :-------- |
+| Prevailing shade for actionable elements | Shade 700 | Shade 600 |
+| Saturation | Full | Slightly reduced (less light bleed) |
+| Hover interaction direction | Increases shade (darker) | Decreases shade (lighter) |
+| Filled element text | Dark on light fill | Dark on light fill (same) |
+
+### Elevation in each mode
+
+In light mode, default and raised surfaces are lighter than recessed and subtle surfaces. In dark mode, surfaces closer to the light source use a lighter tint; recessed surfaces that are further from the light source use a darker shade. In both modes, raised surfaces cast a shadow.
+
+### Opacity
+
+Opacity values are consistent in both light and dark mode. Light mode uses shade 700 and dark mode uses shade 500 as the primary shade for opacity-based colors.
+
+<Info>
+  Hover and active states programmatically change color by a 100 or 200 shade offset from the base hue. This is handled automatically by the Garden theme — you do not need to define hover/active values manually.
+</Info>

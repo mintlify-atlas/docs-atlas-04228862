@@ -1,0 +1,264 @@
+---
+title: "Button patterns"
+description: "Guidance on button anatomy, sizing, alignment, states, content, accessibility, and RTL support."
+---
+
+A button is an element on a page or view that tells a user what they can do and triggers an action.
+
+## Anatomy
+
+Buttons come in three types with distinct visual priority:
+
+1. **Primary** — the most important action in a given view. Use one primary button per page or view.
+2. **Default** — secondary actions.
+3. **Basic** — repetitive or deemphasized actions in a given view.
+
+```tsx
+import { Button } from '@zendeskgarden/react-buttons';
+
+// Primary — one per view
+<Button isPrimary>Save changes</Button>
+
+// Default — secondary action
+<Button>Cancel</Button>
+
+// Basic — deemphasized
+<Button isBasic>Learn more</Button>
+```
+
+## Formatting
+
+### Size
+
+Button size plays a part in content and user interaction. Clear labels and visual signifiers such as shape, color, and size help communicate the types of actions available and their priority in the process.
+
+- The default button size is **medium**
+- Use **small** buttons on screens that have greater information density
+
+<Warning>
+Avoid mixing button sizes and input sizes within the same flow. Use matching sizes throughout a form or action group.
+</Warning>
+
+### Alignment
+
+When a basic or default button is placed in conjunction with a primary button, the primary button should always be placed at the end.
+
+```tsx
+// Correct — primary at the end
+<div style={{ display: 'flex', gap: '8px' }}>
+  <Button isBasic>Cancel</Button>
+  <Button isPrimary>Save changes</Button>
+</div>
+```
+
+<Note>
+Do not place primary buttons at the start of action groupings. Users read left-to-right and expect the most important action last.
+</Note>
+
+### Variations
+
+#### Buttons with media (icons)
+
+Buttons can contain icon media positioned at the start or end, to provide additional context. Only use icons when necessary.
+
+```tsx
+import { Button } from '@zendeskgarden/react-buttons';
+import { ReactComponent as PlusIcon } from '@zendeskgarden/svg-icons/src/16/plus-stroke.svg';
+
+<Button isPrimary>
+  <Button.StartIcon>
+    <PlusIcon />
+  </Button.StartIcon>
+  Add agent
+</Button>
+```
+
+Use task-specific verbs for button labels. Do not add icons to buttons when buttons are grouped — it adds visual noise without value.
+
+#### Icon buttons
+
+Where possible, avoid using icon-only buttons over buttons with labels. Labeled buttons maximize inclusivity for primary and secondary actions.
+
+```tsx
+import { IconButton } from '@zendeskgarden/react-buttons';
+import { ReactComponent as EditIcon } from '@zendeskgarden/svg-icons/src/16/pencil-stroke.svg';
+
+// Always include aria-label on icon buttons
+<IconButton aria-label="Edit record">
+  <EditIcon />
+</IconButton>
+```
+
+Icon buttons are appropriate for toolbars and dense contexts where space is constrained, but their meaning can be open to interpretation — use them with care.
+
+## States
+
+### Loading
+
+Loading buttons display a [Dots loader](/components/progress) inside the button to show loading progress. The Dots loader appears after the user has initiated an action, signifying the site is loading the next action to occur. Buttons should not change size while loading.
+
+```tsx
+import { Button } from '@zendeskgarden/react-buttons';
+import { Dots } from '@zendeskgarden/react-loaders';
+import { useState } from 'react';
+
+function SaveButton() {
+  const [loading, setLoading] = useState(false);
+
+  const handleClick = async () => {
+    setLoading(true);
+    await performSave();
+    setLoading(false);
+  };
+
+  return (
+    <Button isPrimary onClick={handleClick} disabled={loading}>
+      {loading ? <Dots aria-label="Saving…" /> : 'Save changes'}
+    </Button>
+  );
+}
+```
+
+### Disabled
+
+A disabled button prevents user interaction. Disabled buttons do not appear in the tab order, cannot receive focus, and may not be read aloud by a screen reader.
+
+<Warning>
+If a button action might result in an error, prefer showing an error message over disabling the button. Error messages guide the user's next action; a disabled button with no explanation provides no useful information and is frustrating for users.
+</Warning>
+
+<Tabs>
+  <Tab title="Do">
+    Keep buttons interactive. Add contextual, inline error notifications that set users up for success.
+
+    ```tsx
+    <>
+      <Button isPrimary onClick={handleSubmit}>Submit</Button>
+      {hasError && (
+        <Message validation="error">
+          Please fill in all required fields before submitting.
+        </Message>
+      )}
+    </>
+    ```
+  </Tab>
+  <Tab title="Avoid">
+    Disabling a button with no direction on how to proceed.
+
+    ```tsx
+    // Avoid — user has no idea why the button is disabled
+    <Button isPrimary disabled>Submit</Button>
+    ```
+  </Tab>
+</Tabs>
+
+## Flows
+
+### Buttons vs anchors
+
+| | Button | Anchor |
+|---|---|---|
+| **Purpose** | Trigger an action on a page or view | Navigate from one location to another |
+| **Examples** | Save, Submit, Delete, Open modal | Go to settings, View details, External link |
+| **Component** | `<Button>` | `<Anchor>` |
+
+```tsx
+import { Button } from '@zendeskgarden/react-buttons';
+import { Anchor } from '@zendeskgarden/react-buttons';
+
+// Button — triggers an action
+<Button isPrimary onClick={handleDelete}>Delete ticket</Button>
+
+// Anchor — navigates
+<Anchor href="/settings">View settings</Anchor>
+```
+
+## Content guidelines
+
+The button call-to-action (CTA) should guide the experience, not just finish a page. Typically, the CTA repeats the page heading when possible (e.g., "Add agent"). This phrase repetition confirms the action that will take place.
+
+| Guideline | Do | Avoid |
+|---|---|---|
+| Use verbs | "Save changes", "Add agent" | "OK", "Yes", "Confirm" |
+| Sentence case | "Save changes" | "Save Changes", "SAVE CHANGES" |
+| Length | 1–4 words, 20 character max | Long phrases with articles or pronouns |
+| Single action | "Delete ticket" | "Delete ticket and notify user" |
+| Context | "Add agent", "Create ticket" | "Yes", "No", "Maybe" |
+
+For more help with choosing the right verb, use clear, specific action verbs like "Save", "Delete", "Add", or "Send" that describe exactly what will happen.
+
+## Localization and internationalization
+
+### RTL (right-to-left)
+
+Actions need to accommodate different languages (making them wider or shorter) and both left-to-right and right-to-left direction. Keep in mind that the width of actions will change and act accordingly.
+
+For RTL languages, the layout of the button is mirrored. Split buttons automatically switch the position of the dropdown and label. Media elements such as icons are placed on the right side of the text in RTL.
+
+```tsx
+// Garden's Button component handles RTL automatically
+// when the page dir="rtl" attribute is set
+<html lang="ar" dir="rtl">
+  ...
+  <Button isPrimary>
+    <Button.StartIcon>
+      <PlusIcon /> {/* Renders on right side in RTL */}
+    </Button.StartIcon>
+    إضافة وكيل
+  </Button>
+```
+
+## Accessibility
+
+### Keyboard support
+
+Users must be able to activate a button by pressing `Enter` or `Space` while the button has focus.
+
+### ARIA attributes
+
+#### Toggle buttons
+
+Toggle buttons use the `aria-pressed` attribute to indicate the current pressed state.
+
+```tsx
+import { ToggleButton } from '@zendeskgarden/react-buttons';
+
+<ToggleButton aria-pressed={isActive} onClick={() => setIsActive(!isActive)}>
+  Mute
+</ToggleButton>
+```
+
+- Set `aria-pressed="false"` when the button has not been pressed
+- Set `aria-pressed="true"` once it has been pressed
+
+#### Icon buttons
+
+Icon buttons use the `aria-label` attribute to provide an accessible text label for the icon. Ensure the label is appropriately localized on implementation.
+
+```tsx
+<IconButton aria-label="Edit record">
+  <EditIcon />
+</IconButton>
+```
+
+#### Dropdown buttons
+
+When a button opens a dropdown menu:
+
+- Set `aria-expanded="false"` when the menu is closed; `aria-expanded="true"` when open
+- Set `aria-controls` to the `id` of the expandable menu
+- Set `aria-haspopup="true"`
+
+```tsx
+<Button
+  aria-haspopup="true"
+  aria-expanded={isOpen}
+  aria-controls="actions-menu"
+  onClick={() => setIsOpen(!isOpen)}
+>
+  Actions
+</Button>
+<Menu id="actions-menu" isExpanded={isOpen}>
+  {/* menu items */}
+</Menu>
+```

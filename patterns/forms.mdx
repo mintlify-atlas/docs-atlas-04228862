@@ -1,0 +1,299 @@
+---
+title: "Form patterns"
+description: "Layout, label placement, validation, field grouping, and accessibility guidance for Garden forms."
+---
+
+Forms are the primary mechanism for collecting user input. This page covers how to combine Garden's `Field`, `Label`, `Input`, and `Message` components into well-structured, accessible forms.
+
+## Form structure
+
+A typical Garden form field uses a consistent composition:
+
+```tsx
+import {
+  Field,
+  Label,
+  Input,
+  Message,
+} from '@zendeskgarden/react-forms';
+
+<Field>
+  <Label>Email address</Label>
+  <Input type="email" placeholder="name@example.com" />
+  <Message>We'll never share your email with anyone.</Message>
+</Field>
+```
+
+`Field` provides the semantic grouping and associates the label with its input automatically via `htmlFor`/`id`. Always wrap `Label` and `Input` in a `Field`.
+
+## Layout
+
+### Label placement
+
+Place labels **above** their associated inputs. This is the most scannable layout and works best across screen sizes and zoom levels.
+
+<Tabs>
+  <Tab title="Do">
+    ```tsx
+    <Field>
+      <Label>First name</Label>
+      <Input />
+    </Field>
+    ```
+
+    Labels are above inputs and clearly associated.
+  </Tab>
+  <Tab title="Avoid">
+    Inline or placeholder-only labels. Placeholder text disappears when the user starts typing, leaving them without context.
+
+    ```tsx
+    // Avoid — no persistent label
+    <Input placeholder="First name" />
+    ```
+  </Tab>
+</Tabs>
+
+### Field grouping
+
+Group related fields visually and semantically. Use `fieldset` and `legend` for groups of related inputs (such as an address or a set of radio buttons).
+
+```tsx
+import { Field, Label, Input, Fieldset, Legend } from '@zendeskgarden/react-forms';
+
+<Fieldset>
+  <Legend>Billing address</Legend>
+
+  <Field>
+    <Label>Street address</Label>
+    <Input />
+  </Field>
+
+  <Field>
+    <Label>City</Label>
+    <Input />
+  </Field>
+
+  <Field>
+    <Label>Postcode</Label>
+    <Input />
+  </Field>
+</Fieldset>
+```
+
+<Note>
+`Fieldset` and `Legend` are required for grouped inputs like radio buttons and checkboxes. Screen readers announce the legend text before each field inside the group, giving users essential context.
+</Note>
+
+### Form width
+
+Keep form fields to a width appropriate for the expected input:
+
+- Full-width fields for open-ended text (names, descriptions, email addresses)
+- Narrow fields for short, structured input (postcodes, phone extensions, years)
+
+Avoid stretching short inputs to full width — the field width communicates the expected length of input.
+
+## Required vs optional fields
+
+Mark the exception, not the rule:
+
+- If most fields are required, label only the **optional** ones (e.g., "Company (optional)")
+- If most fields are optional, label only the **required** ones with an asterisk and a legend
+
+```tsx
+// Required field with asterisk
+<Field>
+  <Label isRegular>
+    Email address <span aria-hidden="true">*</span>
+  </Label>
+  <Input type="email" required aria-required="true" />
+</Field>
+
+// Optional field
+<Field>
+  <Label isRegular>
+    Phone number <span style={{ color: 'gray' }}>(optional)</span>
+  </Label>
+  <Input type="tel" />
+</Field>
+```
+
+Always include a note at the top of the form: `* Required field` — paired with `aria-hidden="true"` on the visual asterisk so screen readers hear "required" from the `aria-required` attribute instead.
+
+## Validation feedback
+
+### Inline error messages
+
+Show errors **below** the field they relate to, using `<Message validation="error">`. This places the error closest to the cause.
+
+```tsx
+import { Field, Label, Input, Message } from '@zendeskgarden/react-forms';
+
+<Field>
+  <Label>Email address</Label>
+  <Input
+    type="email"
+    validation="error"
+    value={value}
+    onChange={handleChange}
+    aria-describedby="email-error"
+  />
+  {hasError && (
+    <Message validation="error" id="email-error">
+      Enter a valid email address, such as name@example.com.
+    </Message>
+  )}
+</Field>
+```
+
+### Validate on submit
+
+Trigger validation after the user attempts to submit, not on every keystroke. This avoids interrupting users as they work through a form.
+
+<Tabs>
+  <Tab title="Do">
+    Validate on submit. For severe issues (passwords too short, invalid email format), you may validate on blur (when the field loses focus).
+
+    ```tsx
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      const errors = validateForm(formValues);
+      if (errors) {
+        setErrors(errors);
+        return;
+      }
+      submitForm(formValues);
+    };
+    ```
+  </Tab>
+  <Tab title="Avoid">
+    Live validation that fires on every keypress. This is disruptive and flags errors before the user has finished typing.
+  </Tab>
+</Tabs>
+
+### Preserving invalid data
+
+When a form has errors, keep the values the user entered. Do not clear fields on validation failure.
+
+<Warning>
+Clearing invalid data forces users to re-enter information they already typed, and they may make the same mistake again without understanding why.
+</Warning>
+
+### Multiple errors
+
+When a form has several errors on submit, provide:
+
+1. An `Alert` at the top of the form summarizing what went wrong
+2. Inline `Message` error text below each individual field
+
+```tsx
+import { Alert, Title } from '@zendeskgarden/react-notifications';
+import { Field, Label, Input, Message } from '@zendeskgarden/react-forms';
+
+<>
+  {hasErrors && (
+    <Alert type="error">
+      <Title>Please fix the following errors:</Title>
+      <ul>
+        {errorList.map((err) => (
+          <li key={err.field}>{err.message}</li>
+        ))}
+      </ul>
+    </Alert>
+  )}
+
+  <Field>
+    <Label>Email address</Label>
+    <Input validation={errors.email ? 'error' : undefined} />
+    {errors.email && (
+      <Message validation="error">{errors.email}</Message>
+    )}
+  </Field>
+
+  <Field>
+    <Label>Password</Label>
+    <Input type="password" validation={errors.password ? 'error' : undefined} />
+    {errors.password && (
+      <Message validation="error">{errors.password}</Message>
+    )}
+  </Field>
+</>
+```
+
+## A complete form example
+
+```tsx
+import {
+  Field,
+  Label,
+  Input,
+  Textarea,
+  Message,
+  Fieldset,
+  Legend,
+  Checkbox,
+} from '@zendeskgarden/react-forms';
+import { Button } from '@zendeskgarden/react-buttons';
+
+function ContactForm() {
+  return (
+    <form onSubmit={handleSubmit} noValidate>
+      <Field>
+        <Label>Name</Label>
+        <Input required aria-required="true" />
+      </Field>
+
+      <Field>
+        <Label>Email address</Label>
+        <Input type="email" required aria-required="true" />
+        {errors.email && (
+          <Message validation="error">{errors.email}</Message>
+        )}
+      </Field>
+
+      <Field>
+        <Label>
+          Company <span style={{ color: 'gray' }}>(optional)</span>
+        </Label>
+        <Input />
+      </Field>
+
+      <Field>
+        <Label>Message</Label>
+        <Textarea minRows={4} />
+      </Field>
+
+      <Fieldset>
+        <Legend>Preferences</Legend>
+        <Field>
+          <Checkbox>
+            <Label isRegular>Send me product updates</Label>
+          </Checkbox>
+        </Field>
+      </Fieldset>
+
+      <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+        <Button isBasic type="button">Cancel</Button>
+        <Button isPrimary type="submit">Submit</Button>
+      </div>
+    </form>
+  );
+}
+```
+
+## Accessibility
+
+- Always use `<Field>` to associate labels and inputs — never use `placeholder` as a substitute for a label
+- Use `aria-required="true"` on required inputs alongside the `required` HTML attribute
+- Use `aria-describedby` to link inputs to their error messages so screen readers announce the error when the field is focused
+- Use `fieldset` and `legend` for all groups of related checkboxes or radio buttons
+- Focus the first field with an error after a failed submit so keyboard users are directed to the problem
+
+```tsx
+// After failed submit, focus the first error field
+useEffect(() => {
+  if (submitAttempted && firstErrorRef.current) {
+    firstErrorRef.current.focus();
+  }
+}, [submitAttempted, errors]);
+```

@@ -1,0 +1,288 @@
+---
+title: "Typography"
+description: "Typography components from @zendeskgarden/react-typography present content clearly and consistently, covering size scale, paragraphs, inline text, code, keyboard input, and lists."
+---
+
+All typography components come from `@zendeskgarden/react-typography`. They map to semantic HTML elements while applying Garden's type styles.
+
+## Installation
+
+```bash
+npm install @zendeskgarden/react-typography
+```
+
+## Type scale
+
+Garden provides six named size components: `SM`, `MD`, `LG`, `XL`, `XXL`, and `XXXL`. Each renders a `<div>` by default but accepts a `tag` prop to render any HTML element.
+
+```tsx
+import { SM, MD, LG, XL, XXL, XXXL } from '@zendeskgarden/react-typography';
+
+const Example = () => (
+  <>
+    <SM>SM — small body text</SM>
+    <MD>MD — default body text</MD>
+    <LG>LG — large body text</LG>
+    <XL>XL — section heading</XL>
+    <XXL>XXL — page heading</XXL>
+    <XXXL>XXXL — display heading</XXXL>
+  </>
+);
+```
+
+### Font modifiers
+
+Apply `isBold` for bold weight or `isMonospace` for a fixed-width treatment on any size component.
+
+```tsx
+import { MD } from '@zendeskgarden/react-typography';
+
+const Example = () => (
+  <>
+    <MD>Regular weight text</MD>
+    <MD isBold>Bold weight text</MD>
+    <MD isMonospace>Monospace text</MD>
+  </>
+);
+```
+
+## Paragraph
+
+`Paragraph` controls the spacing between consecutive blocks of text. The default size is `medium`.
+
+```tsx
+import { Paragraph, MD } from '@zendeskgarden/react-typography';
+
+const Example = () => (
+  <>
+    <Paragraph>
+      <MD tag="span">
+        Turnip greens yarrow ricebean rutabaga endive cauliflower sea lettuce kohlrabi amaranth
+        water spinach avocado daikon napa cabbage asparagus winter purslane kale.
+      </MD>
+    </Paragraph>
+    <Paragraph>
+      <MD tag="span">
+        Lotus root spinach fennel kombu maize bamboo shoot green bean swiss chard seakale pumpkin
+        onion chickpea gram corn pea.
+      </MD>
+    </Paragraph>
+  </>
+);
+```
+
+<Tip>
+  `Paragraph` controls inter-paragraph spacing. Use the size components (`SM`, `MD`, `LG`) inside it to control the type scale.
+</Tip>
+
+### Paragraph size prop
+
+<ParamField path="size" type="'small' | 'medium' | 'large'" default="'medium'">
+  Controls the amount of space between stacked `Paragraph` elements.
+</ParamField>
+
+## Span
+
+`Span` applies styles to short inline strings. Use it inside a type scale component.
+
+```tsx
+import { Paragraph, Span, MD } from '@zendeskgarden/react-typography';
+
+const Example = () => (
+  <Paragraph>
+    <MD tag="span">
+      Use <Span isBold>bold</Span> to emphasize without semantic importance.{' '}
+      Use <Span hue="foreground.primary">hue</Span> to apply a theme color.
+    </MD>
+  </Paragraph>
+);
+```
+
+### Inline icons
+
+Use `Span.StartIcon` for an icon at the beginning of the span and `Span.Icon` for icons elsewhere.
+
+```tsx
+import { Span } from '@zendeskgarden/react-typography';
+import { ReactComponent as LeafIcon } from '@zendeskgarden/svg-icons/src/12/leaf-stroke.svg';
+
+const Example = () => (
+  <Span>
+    <Span.StartIcon>
+      <LeafIcon />
+    </Span.StartIcon>
+    Text with a leading icon
+  </Span>
+);
+```
+
+### Span props
+
+<ParamField path="isBold" type="boolean" default="false">
+  Applies bold font weight without semantic importance.
+</ParamField>
+
+<ParamField path="isMonospace" type="boolean" default="false">
+  Applies a fixed-width (monospace) typeface.
+</ParamField>
+
+<ParamField path="hue" type="string">
+  Colors the text using a theme color variable key (e.g. `'foreground.primary'`) or a PALETTE color (e.g. `'fuschia'`).
+</ParamField>
+
+## Blockquote
+
+Use `Blockquote` to represent a body of text from another source.
+
+```tsx
+import { Blockquote, Paragraph, MD } from '@zendeskgarden/react-typography';
+
+const Example = () => (
+  <MD>
+    <Paragraph>
+      Veggies es bonus vobis, proinde vos postulo essum magis kohlrabi.
+    </Paragraph>
+    <Blockquote>Life begins the day you start a garden.</Blockquote>
+    <Paragraph>
+      Lotus root spinach fennel kombu maize bamboo shoot green bean swiss chard.
+    </Paragraph>
+  </MD>
+);
+```
+
+## Code
+
+`Code` styles inline `<code>` elements. Size is inherited from the parent by default.
+
+```tsx
+import { Code } from '@zendeskgarden/react-typography';
+
+const Example = () => (
+  <p>
+    Call the <Code>useState</Code> hook to manage local state.
+  </p>
+);
+```
+
+### Code props
+
+<ParamField path="size" type="'small' | 'medium' | 'large'">
+  Overrides inherited size. Default is inherited from the parent element.
+</ParamField>
+
+<ParamField path="hue" type="string">
+  Overrides the background and text color.
+</ParamField>
+
+## Kbd
+
+`Kbd` styles inline `<kbd>` elements for keyboard key representations. Size is inherited from the parent by default.
+
+```tsx
+import { Kbd } from '@zendeskgarden/react-typography';
+
+const Example = () => (
+  <p>
+    Press <Kbd>⌘</Kbd> <Kbd>K</Kbd> to open the command palette.
+  </p>
+);
+```
+
+### Kbd props
+
+<ParamField path="size" type="'small' | 'medium' | 'large'">
+  Overrides inherited size. Default is inherited from the parent element.
+</ParamField>
+
+## Lists
+
+`OrderedList` and `UnorderedList` style semantic `<ol>` and `<ul>` elements. Use `.Item` subcomponents for list entries.
+
+```tsx
+import { OrderedList, UnorderedList } from '@zendeskgarden/react-typography';
+
+const Example = () => (
+  <>
+    <OrderedList>
+      <OrderedList.Item>Plant</OrderedList.Item>
+      <OrderedList.Item>Water</OrderedList.Item>
+      <OrderedList.Item>Harvest</OrderedList.Item>
+    </OrderedList>
+
+    <UnorderedList>
+      <UnorderedList.Item>Garden trowel</UnorderedList.Item>
+      <UnorderedList.Item>Pruning shears</UnorderedList.Item>
+      <UnorderedList.Item>Hand cultivator</UnorderedList.Item>
+    </UnorderedList>
+  </>
+);
+```
+
+### Nesting
+
+Lists can be nested. Set the `type` prop on nested lists to use outline-style markers.
+
+```tsx
+import { UnorderedList } from '@zendeskgarden/react-typography';
+
+const Example = () => (
+  <UnorderedList>
+    <UnorderedList.Item>
+      Vegetables
+      <UnorderedList type="circle">
+        <UnorderedList.Item>Kale</UnorderedList.Item>
+        <UnorderedList.Item>Chard</UnorderedList.Item>
+      </UnorderedList>
+    </UnorderedList.Item>
+    <UnorderedList.Item>Herbs</UnorderedList.Item>
+  </UnorderedList>
+);
+```
+
+### List props
+
+<ParamField path="size" type="'small' | 'medium' | 'large'" default="'medium'">
+  Controls the text size and spacing of list items.
+</ParamField>
+
+<ParamField path="type" type="string">
+  Sets the list marker style (e.g. `'circle'`, `'square'` for unordered; `'lower-alpha'` for ordered). Useful for nested lists.
+</ParamField>
+
+## Ellipsis
+
+`Ellipsis` automatically applies `text-overflow: ellipsis` and adds a native `title` attribute containing the full text.
+
+```tsx
+import { Ellipsis } from '@zendeskgarden/react-typography';
+
+const Example = () => (
+  <div style={{ width: 200 }}>
+    <Ellipsis>
+      This text is too long and will be truncated with an ellipsis.
+    </Ellipsis>
+  </div>
+);
+```
+
+## Heading hierarchy pattern
+
+Combine size components with the `tag` prop to render correct semantic HTML while maintaining visual hierarchy.
+
+```tsx
+import { XXXL, XXL, XL, LG, MD } from '@zendeskgarden/react-typography';
+
+const Example = () => (
+  <article>
+    <XXXL tag="h1">Page title</XXXL>
+    <XXL tag="h2">Section heading</XXL>
+    <XL tag="h3">Subsection heading</XL>
+    <LG tag="h4">Minor heading</LG>
+    <MD tag="p">Body text paragraph content goes here.</MD>
+  </article>
+);
+```
+
+<Note>
+  Always use the correct semantic `tag` for document structure. The size component controls only the visual appearance.
+</Note>

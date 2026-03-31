@@ -1,0 +1,169 @@
+---
+title: "Button"
+description: "Buttons let users take action quickly. Use a Button to enable actions or decisions that are important to a user's workflow."
+---
+
+## Installation
+
+```bash
+npm install @zendeskgarden/react-buttons styled-components
+```
+
+```tsx
+import { Button } from '@zendeskgarden/react-buttons';
+```
+
+## When to use
+
+**Use a Button:**
+- To enable user action
+- To draw attention to relevant actions in a user's workflow
+
+**Do not use a Button:**
+- To navigate to another page — use [Anchor](/components/anchor) instead
+- To help users choose from parallel actions — use [Split button](/components/split-button) instead
+
+## Usage
+
+### Default
+
+The typical usage of a Button component. Three visual types are available: default (outlined), primary (filled), and basic (text-only).
+
+```tsx
+import { Button } from '@zendeskgarden/react-buttons';
+
+function Example() {
+  return (
+    <div style={{ display: 'flex', gap: 8 }}>
+      <Button>Default</Button>
+      <Button isPrimary>Primary</Button>
+      <Button isBasic>Basic</Button>
+    </div>
+  );
+}
+```
+
+### Danger
+
+Use danger styling for buttons that enable a destructive or irreversible action.
+
+```tsx
+<Button isDanger>Delete item</Button>
+<Button isDanger isPrimary>Delete item</Button>
+```
+
+### Disabled
+
+A disabled Button prevents user interaction. It does not appear in the tab order, cannot receive focus, and may not be read aloud by a screen reader.
+
+```tsx
+<Button disabled>Disabled</Button>
+<Button disabled isPrimary>Disabled primary</Button>
+```
+
+<Warning>
+  Do not rely solely on the disabled state to communicate unavailability. Provide visible context that explains why the action is unavailable when possible.
+</Warning>
+
+### Media (icons)
+
+Nest `Button.StartIcon` or `Button.EndIcon` inside a Button to add an icon before or after the label text.
+
+```tsx
+import { Button } from '@zendeskgarden/react-buttons';
+import { ReactComponent as LeafIcon } from '@zendeskgarden/svg-icons/src/16/leaf-stroke.svg';
+import { ReactComponent as ChevronIcon } from '@zendeskgarden/svg-icons/src/16/chevron-down-stroke.svg';
+
+function Example() {
+  return (
+    <div style={{ display: 'flex', gap: 8 }}>
+      <Button>
+        <Button.StartIcon>
+          <LeafIcon />
+        </Button.StartIcon>
+        Start icon
+      </Button>
+      <Button>
+        End icon
+        <Button.EndIcon>
+          <ChevronIcon />
+        </Button.EndIcon>
+      </Button>
+    </div>
+  );
+}
+```
+
+### Sizes
+
+Buttons come in small, medium, and large. The default size is medium.
+
+```tsx
+<Button size="small">Small</Button>
+<Button size="medium">Medium</Button>
+<Button size="large">Large</Button>
+```
+
+### Stretched
+
+A stretched Button fills the full width of its container.
+
+```tsx
+<Button isStretched isPrimary>
+  Confirm and continue
+</Button>
+```
+
+## API
+
+The Button component follows this structure:
+
+```tsx
+<Button>
+  <Button.StartIcon /> {/* optional */}
+  {/* button label */}
+  <Button.EndIcon />   {/* optional */}
+</Button>
+```
+
+### Button props
+
+<ParamField path="props.isPrimary" type="boolean" default="false">
+  Applies filled primary styling.
+</ParamField>
+
+<ParamField path="props.isBasic" type="boolean" default="false">
+  Applies text-only basic styling (no border or background).
+</ParamField>
+
+<ParamField path="props.isDanger" type="boolean" default="false">
+  Applies danger (destructive action) styling.
+</ParamField>
+
+<ParamField path="props.isNeutral" type="boolean" default="false">
+  Applies neutral styling, reducing visual emphasis.
+</ParamField>
+
+<ParamField path="props.isStretched" type="boolean" default="false">
+  Stretches the button to fill its container's full width.
+</ParamField>
+
+<ParamField path="props.size" type="'small' | 'medium' | 'large'" default="'medium'">
+  Controls the button's size.
+</ParamField>
+
+<ParamField path="props.disabled" type="boolean" default="false">
+  Prevents user interaction and applies disabled styling.
+</ParamField>
+
+### Button.StartIcon props
+
+<ParamField path="props.isRotated" type="boolean" default="false">
+  Rotates the icon 180 degrees. Useful for expand/collapse patterns.
+</ParamField>
+
+### Button.EndIcon props
+
+<ParamField path="props.isRotated" type="boolean" default="false">
+  Rotates the icon 180 degrees. Useful for expand/collapse patterns.
+</ParamField>

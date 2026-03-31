@@ -1,0 +1,111 @@
+---
+title: "Drawer"
+description: "A side-panel overlay anchored to the edge of the page for supplementary content and actions."
+---
+
+```tsx
+import { Drawer } from '@zendeskgarden/react-modals';
+```
+
+A Drawer is a container for supplementary content that slides in from the edge of the page. Unlike a Modal, a Drawer does not fully replace the primary view — it sits alongside it.
+
+Use a Drawer to display information or actions that supplement the screen's primary content (such as filtering data), or to show a list of contextual actions. It is not designed to contain standalone primary flows — for that, use a [Modal](/components/modal).
+
+## Basic usage
+
+Control open/close state with a boolean. Pass `isOpen` and `onClose` to the `Drawer`.
+
+```tsx
+import React, { useState } from 'react';
+import { Button } from '@zendeskgarden/react-buttons';
+import { Drawer } from '@zendeskgarden/react-modals';
+
+const Example = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <>
+      <Button onClick={() => setIsOpen(true)}>Open Drawer</Button>
+
+      <Drawer isOpen={isOpen} onClose={() => setIsOpen(false)}>
+        <Drawer.Header tag="h2">Tending a garden</Drawer.Header>
+        <Drawer.Body>
+          Turnip greens yarrow ricebean rutabaga endive cauliflower sea lettuce kohlrabi amaranth
+          water spinach avocado daikon napa cabbage asparagus winter purslane kale. Celery potato
+          scallion desert raisin horseradish spinach carrot soko.
+        </Drawer.Body>
+        <Drawer.Footer>
+          <Drawer.FooterItem>
+            <Button isBasic onClick={() => setIsOpen(false)}>
+              Cancel
+            </Button>
+          </Drawer.FooterItem>
+          <Drawer.FooterItem>
+            <Button isPrimary onClick={() => setIsOpen(false)}>
+              Confirm
+            </Button>
+          </Drawer.FooterItem>
+        </Drawer.Footer>
+        <Drawer.Close />
+      </Drawer>
+    </>
+  );
+};
+```
+
+## Component structure
+
+```tsx
+<Drawer isOpen={isOpen} onClose={handleClose}>
+  <Drawer.Header tag="h2">{/* panel title */}</Drawer.Header>
+  <Drawer.Body>
+    {/* scrollable supplementary content */}
+  </Drawer.Body>
+  <Drawer.Footer>
+    <Drawer.FooterItem>{/* secondary action */}</Drawer.FooterItem>
+    <Drawer.FooterItem>{/* primary action */}</Drawer.FooterItem>
+  </Drawer.Footer>
+  <Drawer.Close />
+</Drawer>
+```
+
+## Props
+
+<ParamField path="isOpen" type="boolean" required>
+  Controls whether the drawer is visible. Manage this with local state.
+</ParamField>
+
+<ParamField path="onClose" type="() => void" required>
+  Callback fired when the user presses Escape or activates the close button. Use this to set `isOpen` to `false`.
+</ParamField>
+
+<ParamField path="isAnimated" type="boolean">
+  Enables slide-in and slide-out animations. Defaults to `true`.
+</ParamField>
+
+## Subcomponents
+
+### Drawer.Header
+
+<ParamField path="tag" type="string">
+  HTML heading element for the panel title (`h1`–`h6`). Defaults to `div`. Always set a meaningful heading level.
+</ParamField>
+
+### Drawer.Body
+
+Scrollable container for the main supplementary content. When the content exceeds the panel height, this region scrolls independently.
+
+### Drawer.Footer / Drawer.FooterItem
+
+`Drawer.Footer` is a flex container for action buttons. Wrap each button in a `Drawer.FooterItem` for correct spacing.
+
+### Drawer.Close
+
+An icon button to dismiss the drawer. Automatically receives `aria-label` based on the component defaults; override with a custom `aria-label` if needed.
+
+## Accessibility
+
+- When the Drawer opens, focus moves into it so keyboard and screen reader users can immediately access its content.
+- Focus is kept inside the Drawer until it is closed (focus trap).
+- When the Drawer closes, focus returns to the element that triggered it.
+- Use an appropriate heading level on `Drawer.Header` (via `tag`) to ensure correct document outline.

@@ -1,0 +1,293 @@
+---
+title: "Drag and drop"
+description: "Draggable component usage, drop zones, placeholders, collision algorithms, keyboard support, and screen reader guidance."
+---
+
+The drag-and-drop pattern is used to change the order of items in a list or to move and organize items between lists. Garden's `@zendeskgarden/react-draggable` package is built on top of [@dnd-kit/core](https://docs.dndkit.com) and provides pre-styled draggable components.
+
+## Anatomy
+
+A drag-and-drop interaction involves three core elements:
+
+1. **Draggable grip** — the visual affordance that communicates an item can be moved
+2. **Target placeholder** — whitespace that shows where the item will land
+3. **Draggable item being dragged** — the item following the cursor
+
+For multi-list scenarios, the anatomy expands to include:
+
+1. Draggable item
+2. Dropzone (target area)
+3. Source placeholder (where the item originated)
+4. Active dropzone state (highlighted when a dragged item is over it)
+
+## Installation
+
+```bash
+npm install @zendeskgarden/react-draggable @dnd-kit/core @dnd-kit/sortable
+```
+
+## Basic draggable item
+
+```tsx
+import { Draggable } from '@zendeskgarden/react-draggable';
+
+<Draggable>
+  <Draggable.Grip />
+  <Draggable.Content>
+    Drag me to reorder
+  </Draggable.Content>
+</Draggable>
+```
+
+Draggable items have three states:
+
+| State | Description |
+|---|---|
+| **Default** | Communicates what is draggable via grip handle and border |
+| **Grabbed** | Communicates the item is currently moving |
+| **Disabled** | Communicates a non-interactive item |
+
+### Large items with nested elements
+
+Items can contain nested interactive elements such as buttons, anchors, or form elements. When an item is tall and complex, transform it into a simpler preview while dragging rather than making it transparent.
+
+<Tabs>
+  <Tab title="Do">
+    Provide a simplified preview of the draggable item while it is being dragged.
+
+    ```tsx
+    // Use a drag overlay with a simplified representation
+    import { DragOverlay } from '@dnd-kit/core';
+
+    <DragOverlay>
+      {activeId ? (
+        <Draggable>
+          <Draggable.Grip />
+          <Draggable.Content>{activeItem.name}</Draggable.Content>
+        </Draggable>
+      ) : null}
+    </DragOverlay>
+    ```
+  </Tab>
+  <Tab title="Avoid">
+    Making the full complex item transparent while dragging. Transparency on large items with many children is visually confusing.
+  </Tab>
+</Tabs>
+
+## Placeholders and indicators
+
+Placeholders appear during the drag interaction to show where a grabbed item can be placed.
+
+### When to use each type
+
+| Type | When to use |
+|---|---|
+| **Empty placeholder** | Most basic interactions — reordering within a single list |
+| **Solid grey placeholder** | Moving items between multiple lists, to show source and destination |
+| **Target indicator** | Complex layouts where you do not want to transform the layout before the item is released |
+
+```tsx
+import { Draggable } from '@zendeskgarden/react-draggable';
+
+// Empty placeholder (default for single-list reorder)
+<Draggable.Placeholder />
+
+// Solid placeholder (for multi-list moves)
+<Draggable.Placeholder isSolid />
+```
+
+### Target indicators
+
+Use `Draggable.DropIndicator` in condensed layouts or when you want to show placement without shifting other items.
+
+- Use a **vertical indicator** for row-direction lists (items arranged left to right)
+- Use a **horizontal indicator** for column-direction lists (items arranged top to bottom)
+
+## Dropzones
+
+Dropzones are locations where items can be dropped. They are communicated through dashed borders, labels, or contextual cues.
+
+### Border treatment
+
+| State | Visual style |
+|---|---|
+| Default (empty) | `1px grey-600` border |
+| Active (item can be dropped here) | Dashed `1px blue-600` border |
+| Highlighted (item is over this zone) | Solid `2px blue-600` border |
+
+```tsx
+import { Draggable } from '@zendeskgarden/react-draggable';
+
+<Draggable.Dropzone>
+  Drop items here
+</Draggable.Dropzone>
+```
+
+### Empty vs populated dropzones
+
+- **Empty:** Use borders and labels to make the dropzone discoverable. Explain how to interact with it.
+- **Populated:** Keep it simple — show only the items inside. Remove the call-to-action.
+- Always provide a label for screen readers even if it is visually hidden.
+
+## Flows
+
+### Reordering a single list
+
+The most common drag-and-drop use case. The grip handle on each item is the interaction affordance.
+
+<Steps>
+  <Step title="User hovers a draggable item">
+    The grip handle becomes visible, communicating the item can be moved.
+  </Step>
+  <Step title="User grabs the item">
+    The item enters the "grabbed" state. Empty whitespace proportional to the item appears at the current position.
+  </Step>
+  <Step title="User drags to the desired position">
+    The empty placeholder shifts to show where the item will land.
+  </Step>
+  <Step title="User releases the item">
+    The item is placed instantly. If released outside the list, it snaps back to its original position.
+  </Step>
+</Steps>
+
+```tsx
+import { DndContext, closestCenter } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
+import { Draggable } from '@zendeskgarden/react-draggable';
+
+function SortableList({ items }) {
+  const [list, setList] = useState(items);
+
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+    if (active.id !== over?.id) {
+      setList((prev) => {
+        const oldIndex = prev.findIndex((i) => i.id === active.id);
+        const newIndex = prev.findIndex((i) => i.id === over.id);
+        return arrayMove(prev, oldIndex, newIndex);
+      });
+    }
+  };
+
+  return (
+    <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <SortableContext items={list.map((i) => i.id)} strategy={verticalListSortingStrategy}>
+        <Draggable.List>
+          {list.map((item) => (
+            <SortableItem key={item.id} id={item.id} label={item.label} />
+          ))}
+        </Draggable.List>
+      </SortableContext>
+    </DndContext>
+  );
+}
+```
+
+### Moving items between multiple lists
+
+Used in Kanban-style layouts or builder workflows.
+
+- Highlight active dropzones while an item is being dragged
+- Use highlighted styling on the dropzone the item will land in
+- Use solid grey placeholders to show where the interaction started and where it will end
+- Upon release, position the item at the end of the target list unless the user specified a placement
+- Communicate whether the change is saved immediately or requires a page-level save action
+
+### Nesting or replacing items
+
+Use target indicators to avoid transforming the list before release. Show the grabbed item instantly in the target location upon drop. Use text and icons to communicate intent (nesting vs. replacing).
+
+## Collision algorithms
+
+Collision algorithms control how the library detects when a draggable item is over a dropzone.
+
+| Algorithm | When to use |
+|---|---|
+| **Closest center** | Default. Recommended for most use cases, including simple sortable lists. More forgiving — allows collision without intersection. |
+| **Closest corner** | When there are many dropzones in a condensed interface. Measures all four corners for precision. |
+| **Rectangle intersection** | When precision is critical, such as for destructive dropzones (delete). Less forgiving, prevents accidental drops. |
+
+```tsx
+import { closestCenter, closestCorners, rectIntersection } from '@dnd-kit/core';
+
+// Default — simple lists
+<DndContext collisionDetection={closestCenter}>
+
+// Dense UI with many zones
+<DndContext collisionDetection={closestCorners}>
+
+// Destructive zone (must intentionally overlap)
+<DndContext collisionDetection={rectIntersection}>
+```
+
+## Localization and internationalization
+
+### Grip handle placement
+
+- Place the grip handle on the **left** for LTR languages
+- Place the grip handle on the **right** for RTL languages
+
+`Draggable` provides automatic language direction support when `dir="rtl"` is set.
+
+### Hidden labels
+
+Some labels are only visible during certain parts of the interaction or are visually hidden. These labels support assistive technologies and must be translated as well.
+
+## Accessibility
+
+### Keyboard controls
+
+| Key | Action |
+|---|---|
+| `Space` | Select the focused item, or release the item in a new dropzone |
+| `↑` / `↓` | Move the grabbed item up or down within a single list |
+| `←` / `→` | Move the grabbed item between different lists (swap bindings for RTL) |
+| `Esc` | Cancel the move and return the item to its original position |
+
+If the workflow supports Undo/Redo, those actions should also work for drag-and-drop interactions.
+
+### Screen reader announcements
+
+Announce all states of the interaction to screen readers:
+
+- When an item receives focus
+- When an item is grabbed (selected)
+- When the item's order changes
+- When the item moves to a different dropzone
+
+Ensure all items and dropzones have distinct, descriptive labels.
+
+```tsx
+import { DndContext } from '@dnd-kit/core';
+
+const announcements = {
+  onDragStart: ({ active }) => `Picked up item: ${active.data.current.label}`,
+  onDragOver: ({ active, over }) =>
+    over ? `Item ${active.data.current.label} is over ${over.data.current.label}` : undefined,
+  onDragEnd: ({ active, over }) =>
+    over
+      ? `Item ${active.data.current.label} dropped on ${over.data.current.label}`
+      : `Item ${active.data.current.label} returned to its original position`,
+  onDragCancel: ({ active }) => `Drag cancelled. Item ${active.data.current.label} returned.`,
+};
+
+<DndContext accessibility={{ announcements }}>
+  …
+</DndContext>
+```
+
+### Alternative interaction methods
+
+For complex workflows, consider providing alternative ways to move items alongside drag-and-drop. Buttons placed next to draggable items can offer "Move up", "Move down", or "Move to list" actions for users who cannot use drag-and-drop.
+
+```tsx
+<Draggable>
+  <Draggable.Grip />
+  <Draggable.Content>{item.label}</Draggable.Content>
+  <Button isBasic size="small" aria-label={`Move ${item.label} to done`}>
+    →
+  </Button>
+</Draggable>
+```
+
+These alternatives should be evaluated on a case-by-case basis — what works for one flow may not be appropriate for another.

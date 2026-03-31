@@ -1,0 +1,146 @@
+---
+title: "Tabs"
+description: "Organize related content into tabbed sections that users can navigate without switching contexts."
+---
+
+```tsx
+import { Tabs } from '@zendeskgarden/react-tabs';
+```
+
+Use Tabs to filter information into easily parsable views or to organize related content and controls within a single page. Tabs do not navigate to separate pages.
+
+Do not use Tabs to guide users through a task list (use a [Stepper](/components/accordion#stepper) instead), or as a secondary navigation bar spanning multiple pages (use Anchors instead).
+
+## Basic usage
+
+Manage the selected tab with a state value. Pass it to `selectedItem` and update it with `onChange`.
+
+```tsx
+import React, { useState } from 'react';
+import { Tabs } from '@zendeskgarden/react-tabs';
+
+const Example = () => {
+  const [selectedTab, setSelectedTab] = useState('tab-1');
+
+  return (
+    <Tabs selectedItem={selectedTab} onChange={setSelectedTab}>
+      <Tabs.TabList>
+        <Tabs.Tab item="tab-1">Elm</Tabs.Tab>
+        <Tabs.Tab item="tab-2">Sugar Maple</Tabs.Tab>
+        <Tabs.Tab item="tab-3">Dogwood</Tabs.Tab>
+      </Tabs.TabList>
+      <Tabs.TabPanel item="tab-1">
+        Elms are deciduous and semi-deciduous trees comprising the flowering plant genus Ulmus in
+        the plant family Ulmaceae.
+      </Tabs.TabPanel>
+      <Tabs.TabPanel item="tab-2">
+        The sugar maple is one of America's most-loved trees. In fact, more states have claimed it
+        as their state tree than any other single species—for New York, West Virginia, Wisconsin,
+        and Vermont, the maple tree stands alone.
+      </Tabs.TabPanel>
+      <Tabs.TabPanel item="tab-3">
+        Cornus is a genus of about 30–60 species of woody plants in the family Cornaceae, commonly
+        known as dogwoods.
+      </Tabs.TabPanel>
+    </Tabs>
+  );
+};
+```
+
+## Orientation
+
+<Tabs>
+  <Tab title="Horizontal (default)">
+    Tabs are horizontal by default. The `TabList` renders across the top of the content panels.
+
+    ```tsx
+    <Tabs selectedItem={selected} onChange={setSelected}>
+      <Tabs.TabList>
+        <Tabs.Tab item="tab-1">Tab one</Tabs.Tab>
+        <Tabs.Tab item="tab-2">Tab two</Tabs.Tab>
+      </Tabs.TabList>
+      <Tabs.TabPanel item="tab-1">Content one</Tabs.TabPanel>
+      <Tabs.TabPanel item="tab-2">Content two</Tabs.TabPanel>
+    </Tabs>
+    ```
+  </Tab>
+  <Tab title="Vertical">
+    Add `isVertical` to the `Tabs` component to stack tabs down the left side of the content.
+
+    ```tsx
+    <Tabs selectedItem={selected} onChange={setSelected} isVertical>
+      <Tabs.TabList>
+        <Tabs.Tab item="tab-1">Elm</Tabs.Tab>
+        <Tabs.Tab item="tab-2">Sugar Maple</Tabs.Tab>
+        <Tabs.Tab item="tab-3">Dogwood</Tabs.Tab>
+      </Tabs.TabList>
+      <Tabs.TabPanel item="tab-1">
+        Elms are deciduous and semi-deciduous trees...
+      </Tabs.TabPanel>
+      <Tabs.TabPanel item="tab-2">
+        The sugar maple is one of America's most-loved trees...
+      </Tabs.TabPanel>
+      <Tabs.TabPanel item="tab-3">
+        Cornus is a genus of about 30–60 species...
+      </Tabs.TabPanel>
+    </Tabs>
+    ```
+  </Tab>
+</Tabs>
+
+## Disabled tabs
+
+Individual tabs can be disabled to prevent interaction.
+
+```tsx
+<Tabs selectedItem={selected} onChange={setSelected}>
+  <Tabs.TabList>
+    <Tabs.Tab item="tab-1">Active</Tabs.Tab>
+    <Tabs.Tab item="tab-2" disabled>Disabled</Tabs.Tab>
+    <Tabs.Tab item="tab-3">Active</Tabs.Tab>
+  </Tabs.TabList>
+  <Tabs.TabPanel item="tab-1">First panel content</Tabs.TabPanel>
+  <Tabs.TabPanel item="tab-2">This panel is inaccessible</Tabs.TabPanel>
+  <Tabs.TabPanel item="tab-3">Third panel content</Tabs.TabPanel>
+</Tabs>
+```
+
+## Props
+
+### Tabs
+
+<ParamField path="selectedItem" type="any" required>
+  The `item` value of the currently active tab. Controlled by the parent component.
+</ParamField>
+
+<ParamField path="onChange" type="(item: any) => void" required>
+  Callback fired when a tab is selected. Receives the `item` value of the selected tab.
+</ParamField>
+
+<ParamField path="isVertical" type="boolean">
+  Stacks tabs vertically instead of horizontally. Defaults to `false`.
+</ParamField>
+
+### Tabs.Tab
+
+<ParamField path="item" type="any" required>
+  A unique identifier for the tab. Must match the `item` prop of the corresponding `Tabs.TabPanel`.
+</ParamField>
+
+<ParamField path="disabled" type="boolean">
+  Prevents the tab from being selected. Defaults to `false`.
+</ParamField>
+
+### Tabs.TabPanel
+
+<ParamField path="item" type="any" required>
+  Links this panel to the `Tabs.Tab` with the matching `item` value.
+</ParamField>
+
+## Accessibility
+
+- `Tabs.TabList` renders as `role="tablist"`.
+- Each `Tabs.Tab` renders as `role="tab"` with `aria-selected` and `aria-controls` set automatically.
+- Each `Tabs.TabPanel` renders as `role="tabpanel"` with `aria-labelledby` pointing to its tab.
+- Keyboard navigation: Arrow keys move focus between tabs. `Enter` or `Space` activates the focused tab. `Home`/`End` move to the first/last tab.
+- The active tab panel is the only one present in the DOM (others are unmounted), keeping focus management predictable.

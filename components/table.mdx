@@ -1,0 +1,283 @@
+---
+title: "Table"
+description: "Organize and display read-only relational data in columns and rows with sorting, selection, and striped row support."
+---
+
+```tsx
+import { Table } from '@zendeskgarden/react-tables';
+```
+
+A Table organizes data into columns and rows, making it easier for users to compare and analyze information. Use it to display read-only data with logical relationships.
+
+<Note>
+  To structure the layout of a page, use the [Grid](/components/grid) component instead. Tables are for data, not layout.
+</Note>
+
+## Basic usage
+
+```tsx
+import { Table } from '@zendeskgarden/react-tables';
+
+const Example = () => (
+  <Table style={{ minWidth: 500 }}>
+    <Table.Head>
+      <Table.HeaderRow>
+        <Table.HeaderCell>Fruit</Table.HeaderCell>
+        <Table.HeaderCell>Sun exposure</Table.HeaderCell>
+        <Table.HeaderCell>Soil</Table.HeaderCell>
+      </Table.HeaderRow>
+    </Table.Head>
+    <Table.Body>
+      <Table.Row>
+        <Table.Cell>Raspberries</Table.Cell>
+        <Table.Cell>Partial shade</Table.Cell>
+        <Table.Cell>Moist and slightly acidic</Table.Cell>
+      </Table.Row>
+      <Table.Row>
+        <Table.Cell>Strawberries</Table.Cell>
+        <Table.Cell>Full sun</Table.Cell>
+        <Table.Cell>Medium moisture</Table.Cell>
+      </Table.Row>
+      <Table.Row>
+        <Table.Cell>Grapes</Table.Cell>
+        <Table.Cell>Full sun</Table.Cell>
+        <Table.Cell>Rich and well draining</Table.Cell>
+      </Table.Row>
+    </Table.Body>
+  </Table>
+);
+```
+
+## Component structure
+
+```tsx
+<Table>
+  <Table.Caption />                   {/* optional accessible caption */}
+  <Table.Head>
+    <Table.HeaderRow>
+      <Table.HeaderCell />
+      <Table.SortableCell />          {/* use for sortable columns */}
+    </Table.HeaderRow>
+  </Table.Head>
+  <Table.Body>
+    <Table.GroupRow>                  {/* optional category row */}
+      <Table.Cell />
+    </Table.GroupRow>
+    <Table.Row>
+      <Table.Cell />
+    </Table.Row>
+  </Table.Body>
+</Table>
+```
+
+## Sortable columns
+
+Use `Table.SortableCell` in header rows to make columns sortable. It renders an interactive button with the correct ARIA attributes. Manage sort state yourself and pass the current direction via the `sort` prop.
+
+```tsx
+import React, { useState } from 'react';
+import { Table } from '@zendeskgarden/react-tables';
+
+type Direction = 'asc' | 'desc' | undefined;
+
+const Example = () => {
+  const [requesterSort, setRequesterSort] = useState<Direction>();
+  const [typeSort, setTypeSort] = useState<Direction>();
+
+  const data = [
+    { id: '1', subject: 'Custom ticket view 1', requester: 'John Smith', type: 'Ticket' },
+    { id: '2', subject: 'Custom ticket view 2', requester: 'Jane Doe', type: 'Incident' },
+    { id: '3', subject: 'Custom ticket view 3', requester: 'John Smith', type: 'Ticket' },
+  ];
+
+  return (
+    <Table style={{ minWidth: 500 }}>
+      <Table.Head>
+        <Table.HeaderRow>
+          <Table.HeaderCell>Subject</Table.HeaderCell>
+          <Table.SortableCell
+            sort={requesterSort}
+            onClick={() => {
+              setRequesterSort(
+                requesterSort === 'asc' ? 'desc' : requesterSort === 'desc' ? undefined : 'asc'
+              );
+              setTypeSort(undefined);
+            }}
+          >
+            Requester
+          </Table.SortableCell>
+          <Table.SortableCell
+            sort={typeSort}
+            onClick={() => {
+              setTypeSort(
+                typeSort === 'asc' ? 'desc' : typeSort === 'desc' ? undefined : 'asc'
+              );
+              setRequesterSort(undefined);
+            }}
+          >
+            Type
+          </Table.SortableCell>
+        </Table.HeaderRow>
+      </Table.Head>
+      <Table.Body>
+        {data.map(row => (
+          <Table.Row key={row.id}>
+            <Table.Cell>{row.subject}</Table.Cell>
+            <Table.Cell>{row.requester}</Table.Cell>
+            <Table.Cell>{row.type}</Table.Cell>
+          </Table.Row>
+        ))}
+      </Table.Body>
+    </Table>
+  );
+};
+```
+
+<ParamField path="sort" type="'asc' | 'desc' | undefined">
+  The current sort direction for the column. Pass `undefined` for unsorted.
+</ParamField>
+
+## Row selection
+
+Combine table rows with `Checkbox` from `@zendeskgarden/react-forms` to make rows selectable. A checkbox in the header selects all rows on the page.
+
+```tsx
+import { Checkbox } from '@zendeskgarden/react-forms';
+import { Table } from '@zendeskgarden/react-tables';
+
+const rows = ['Raspberries', 'Strawberries', 'Grapes'];
+
+const Example = () => {
+  const [selected, setSelected] = React.useState<Set<string>>(new Set());
+
+  const allSelected = selected.size === rows.length;
+  const someSelected = selected.size > 0 && !allSelected;
+
+  const toggleAll = () => {
+    setSelected(allSelected ? new Set() : new Set(rows));
+  };
+
+  return (
+    <Table>
+      <Table.Head>
+        <Table.HeaderRow>
+          <Table.HeaderCell isMinimum>
+            <Checkbox
+              checked={allSelected}
+              indeterminate={someSelected}
+              onChange={toggleAll}
+            >
+              <label className="sr-only">Select all</label>
+            </Checkbox>
+          </Table.HeaderCell>
+          <Table.HeaderCell>Fruit</Table.HeaderCell>
+        </Table.HeaderRow>
+      </Table.Head>
+      <Table.Body>
+        {rows.map(fruit => (
+          <Table.Row key={fruit} isSelected={selected.has(fruit)}>
+            <Table.Cell isMinimum>
+              <Checkbox
+                checked={selected.has(fruit)}
+                onChange={() => {
+                  const next = new Set(selected);
+                  next.has(fruit) ? next.delete(fruit) : next.add(fruit);
+                  setSelected(next);
+                }}
+              >
+                <label className="sr-only">Select {fruit}</label>
+              </Checkbox>
+            </Table.Cell>
+            <Table.Cell>{fruit}</Table.Cell>
+          </Table.Row>
+        ))}
+      </Table.Body>
+    </Table>
+  );
+};
+```
+
+## Striped rows
+
+Alternate row background color with `isStriped` on `Table.Row` to help users scan long rows. Do not combine striped rows with grouped rows.
+
+```tsx
+{rowData.map((row, index) => (
+  <Table.Row key={row.id} isStriped={index % 2 === 0}>
+    <Table.Cell>{row.fruit}</Table.Cell>
+    <Table.Cell>{row.sun}</Table.Cell>
+  </Table.Row>
+))}
+```
+
+## Size
+
+Row size comes in `small`, `medium`, and `large`. The default is `medium`.
+
+```tsx
+<Table size="small">...</Table>
+<Table size="large">...</Table>
+```
+
+## Scroll handling
+
+For large tables, wrap the `Table` in a container with `overflow-x: auto` to enable horizontal scrolling. Set a `minWidth` on the table itself so columns don't collapse.
+
+```tsx
+<div style={{ overflowX: 'auto' }}>
+  <Table style={{ minWidth: 700 }}>
+    {/* ... */}
+  </Table>
+</div>
+```
+
+<Tip>
+  For very large datasets, use `react-window` for virtual scrolling to avoid rendering thousands of DOM nodes. See the Garden virtual scrolling example for an implementation reference.
+</Tip>
+
+## Props
+
+<ParamField path="size" type="'small' | 'medium' | 'large'">
+  Controls the row height. Defaults to `'medium'`.
+</ParamField>
+
+### Table.Row
+
+<ParamField path="isSelected" type="boolean">
+  Applies a selected background style to the row.
+</ParamField>
+
+<ParamField path="isStriped" type="boolean">
+  Applies a subtle alternate background color for striped table patterns.
+</ParamField>
+
+<ParamField path="isFocused" type="boolean">
+  Applies a focused style to the row. Useful when implementing keyboard navigation.
+</ParamField>
+
+### Table.Cell
+
+<ParamField path="isMinimum" type="boolean">
+  Shrinks the cell to the minimum required width. Use for checkbox or action cells.
+</ParamField>
+
+<ParamField path="isTruncated" type="boolean">
+  Truncates overflowing text with an ellipsis instead of wrapping.
+</ParamField>
+
+### Table.SortableCell
+
+<ParamField path="sort" type="'asc' | 'desc' | undefined">
+  Current sort direction. Pass `undefined` for no sort.
+</ParamField>
+
+<ParamField path="width" type="string | number">
+  Fixed width for the header cell.
+</ParamField>
+
+## Accessibility
+
+- Follow the [MDN Table Accessibility Practices](https://developer.mozilla.org/en-US/docs/Learn/HTML/Tables/Advanced) to ensure table data is accessible to screen readers.
+- Use `Table.Caption` to provide an accessible title for the table.
+- Use `Table.SortableCell` (not a plain `Table.HeaderCell` with a click handler) for sortable columns — it renders correct `aria-sort` attributes.
+- For scrollable tables, follow the [W3C Grid accessibility pattern](https://www.w3.org/TR/wai-aria-practices-1.1/examples/grid/dataGrids.html).

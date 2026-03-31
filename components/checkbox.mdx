@@ -1,0 +1,254 @@
+---
+title: "Checkbox"
+description: "A Checkbox lets users select and unselect options from a list."
+---
+
+Package: `@zendeskgarden/react-forms`
+
+```tsx
+import { Field, Checkbox, Fieldset } from '@zendeskgarden/react-forms';
+```
+
+## When to use it
+
+- To let users compare options from a list and select all, any, or none of those items.
+- To turn a single option on or off.
+
+<Note>
+  For mutually exclusive choices, use [Radio](/components/radio) instead. To activate an option with immediate effect, use [Toggle](/components/toggle) instead.
+</Note>
+
+## Basic usage
+
+A Checkbox label is part of its touch target.
+
+```tsx
+import React, { useState } from 'react';
+import { Field, Checkbox, Fieldset } from '@zendeskgarden/react-forms';
+
+const Example = () => {
+  const [pest, setPest] = useState(true);
+  const [light, setLight] = useState(false);
+  const [drought, setDrought] = useState(false);
+
+  return (
+    <Fieldset>
+      <Fieldset.Legend>Plant preference</Fieldset.Legend>
+      <Field>
+        <Checkbox checked={pest} onChange={() => setPest(!pest)}>
+          <Field.Label>Pest resistant</Field.Label>
+        </Checkbox>
+      </Field>
+      <Field>
+        <Checkbox checked={light} onChange={() => setLight(!light)}>
+          <Field.Label>Needs direct light</Field.Label>
+        </Checkbox>
+      </Field>
+      <Field>
+        <Checkbox checked={drought} onChange={() => setDrought(!drought)}>
+          <Field.Label>Drought-tolerant</Field.Label>
+        </Checkbox>
+      </Field>
+    </Fieldset>
+  );
+};
+
+export default Example;
+```
+
+## Hint text
+
+Use `Field.Hint` inside the `Checkbox` to add more context to the label.
+
+```tsx
+import React from 'react';
+import { Field, Checkbox } from '@zendeskgarden/react-forms';
+
+const Example = () => (
+  <Field>
+    <Checkbox defaultChecked>
+      <Field.Label>Pest resistant</Field.Label>
+      <Field.Hint>Safe for outdoor planting beds</Field.Hint>
+    </Checkbox>
+  </Field>
+);
+
+export default Example;
+```
+
+## Indeterminate state
+
+When child checkboxes have mixed states, set `indeterminate` on the parent checkbox to display a dash indicator.
+
+```tsx
+import React, { useReducer } from 'react';
+import { Field, Checkbox } from '@zendeskgarden/react-forms';
+
+const initialState = { pest: true, light: false };
+
+const reducer = (state: typeof initialState, action: { type: string }) => {
+  switch (action.type) {
+    case 'all':   return { pest: true, light: true };
+    case 'none':  return { pest: false, light: false };
+    case 'pest':  return { ...state, pest: !state.pest };
+    case 'light': return { ...state, light: !state.light };
+    default:      return state;
+  }
+};
+
+const Example = () => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const { pest, light } = state;
+
+  const allChecked = pest && light;
+  const someChecked = pest || light;
+
+  return (
+    <>
+      <Field>
+        <Checkbox
+          checked={allChecked}
+          indeterminate={someChecked && !allChecked}
+          onChange={() => dispatch({ type: allChecked ? 'none' : 'all' })}
+        >
+          <Field.Label>Outdoor readiness</Field.Label>
+        </Checkbox>
+      </Field>
+      <Field style={{ marginLeft: 24 }}>
+        <Checkbox checked={pest} onChange={() => dispatch({ type: 'pest' })}>
+          <Field.Label isRegular>Pest resistant</Field.Label>
+        </Checkbox>
+      </Field>
+      <Field style={{ marginLeft: 24 }}>
+        <Checkbox checked={light} onChange={() => dispatch({ type: 'light' })}>
+          <Field.Label isRegular>Needs direct light</Field.Label>
+        </Checkbox>
+      </Field>
+    </>
+  );
+};
+
+export default Example;
+```
+
+## Validation states
+
+Show success, warning, or error messages using `Field.Message` below the `Checkbox`.
+
+```tsx
+import React from 'react';
+import { Field, Checkbox } from '@zendeskgarden/react-forms';
+
+const Example = () => (
+  <>
+    <Field>
+      <Checkbox defaultChecked>
+        <Field.Label>Pest resistant</Field.Label>
+      </Checkbox>
+      <Field.Message validation="success">Safe for outdoor beds</Field.Message>
+    </Field>
+    <Field>
+      <Checkbox>
+        <Field.Label>Needs direct light</Field.Label>
+      </Checkbox>
+      <Field.Message validation="warning">Requires 4 hours of sun per day</Field.Message>
+    </Field>
+    <Field>
+      <Checkbox>
+        <Field.Label>Drought-tolerant</Field.Label>
+      </Checkbox>
+      <Field.Message validation="error">Not appropriate for greenhouse</Field.Message>
+    </Field>
+  </>
+);
+
+export default Example;
+```
+
+## Component structure
+
+```tsx
+<Field>
+  <Checkbox>
+    <Field.Label />
+    <Field.Hint />
+  </Checkbox>
+  <Field.Message />
+</Field>
+```
+
+Group related checkboxes in a `Fieldset`:
+
+```tsx
+<Fieldset>
+  <Fieldset.Legend />
+  <Field>
+    <Checkbox>
+      <Field.Label />
+    </Checkbox>
+  </Field>
+  {/* more Field + Checkbox items */}
+</Fieldset>
+```
+
+## API reference
+
+### Field
+
+Wraps a Checkbox and its label, hint, and message. Associates child elements for accessibility.
+
+### Field.Label
+
+Renders a `<label>` associated with the Checkbox. Nest inside `Checkbox`.
+
+<ParamField path="body.isRegular" type="boolean">
+  Renders label text at regular font weight instead of bold (default).
+</ParamField>
+
+<ParamField path="body.hidden" type="boolean">
+  Visually hides the label while keeping it accessible to screen readers.
+</ParamField>
+
+### Field.Hint
+
+Renders supplementary hint text. Nest inside `Checkbox`.
+
+### Field.Message
+
+Renders a validation message below the Checkbox. Nest inside `Field`.
+
+<ParamField path="body.validation" type="'success' | 'warning' | 'error'">
+  Determines the icon and color of the message.
+</ParamField>
+
+### Checkbox
+
+A styled `<input type="checkbox">`. Nest inside `Field`. Place `Field.Label` and `Field.Hint` as children.
+
+<ParamField path="body.checked" type="boolean">
+  Controls the checked state (controlled usage).
+</ParamField>
+
+<ParamField path="body.defaultChecked" type="boolean">
+  Sets the initial checked state (uncontrolled usage).
+</ParamField>
+
+<ParamField path="body.indeterminate" type="boolean">
+  Displays a dash indicator to signal a mixed child state.
+</ParamField>
+
+<ParamField path="body.disabled" type="boolean">
+  Prevents user interaction and removes the element from the tab order.
+</ParamField>
+
+<ParamField path="body.onChange" type="(event: React.ChangeEvent<HTMLInputElement>) => void">
+  Called when the checked state changes.
+</ParamField>
+
+### Fieldset
+
+Provides styles for grouping related `Field` + `Checkbox` components. Wrap with a `Fieldset.Legend` for an accessible group label.
+
+### Fieldset.Legend
+
+Renders a `<legend>` inside a `Fieldset`.

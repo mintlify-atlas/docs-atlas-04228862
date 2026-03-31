@@ -1,0 +1,233 @@
+---
+title: "Loader patterns"
+description: "When and how to use each Garden loader: Skeleton, Spinner, Dots, Progress, and Inline."
+---
+
+Loaders are used when certain elements or parts of the page could take longer to display. Different loaders communicate structure and context of the content being loaded, each tailored to a specific use case.
+
+## Loader overview
+
+| Component | Package | Best for |
+|---|---|---|
+| [Skeleton](/components/progress) | `@zendeskgarden/react-loaders` | Pages and sections with predictable, known layout |
+| [Spinner](/components/progress) | `@zendeskgarden/react-loaders` | Pages or components with unknown/unpredictable content |
+| [Dots](/components/progress) | `@zendeskgarden/react-loaders` | Inside buttons, search inputs, menus — small busy states |
+| [Progress](/components/progress) | `@zendeskgarden/react-loaders` | File uploads, downloads — determinate 0–100% progress |
+| [Inline](/components/progress) | `@zendeskgarden/react-loaders` | Typing indicators in chat/messaging interfaces |
+
+<Tip>
+Skeleton is the preferred loader in most situations. It provides a sense of progress, helps orient the user, and sets expectations about the type of content they can expect.
+</Tip>
+
+## Skeleton — predictable content
+
+Use `Skeleton` when loading pages or sections with a predictable layout. It shows a blank stand-in version of the content that has not fully loaded yet.
+
+```tsx
+import { Skeleton } from '@zendeskgarden/react-loaders';
+
+// Approximate the shape of the content being loaded
+function ArticleSkeleton() {
+  return (
+    <div>
+      <Skeleton height="24px" width="60%" />   {/* Title */}
+      <Skeleton height="16px" />               {/* Body line 1 */}
+      <Skeleton height="16px" width="90%" />   {/* Body line 2 */}
+      <Skeleton height="16px" width="75%" />   {/* Body line 3 */}
+    </div>
+  );
+}
+```
+
+**Guidelines:**
+- Show a few skeleton loaders to orient the user — you do not need to map every element
+- Skeletons in the header/first few body rows are enough to convey the loading process
+- The skeleton's size should approximately reflect the content it represents
+- Use the default skeleton on white or light backgrounds
+- Use the light skeleton variant on dark backgrounds
+- Keep the skeleton visible until the content is fully loaded
+
+<Warning>
+Avoid mapping every line of a page with a skeleton loader. Excessive skeletons create visual noise and paradoxically feel slower because there is so much "loading" on screen.
+</Warning>
+
+### Skeleton in tables
+
+For loading table data, show skeleton rows in the first 3 data rows. Keep header cells visible at all times.
+
+```tsx
+import { Skeleton } from '@zendeskgarden/react-loaders';
+import { Body, Row, Cell } from '@zendeskgarden/react-tables';
+
+{isLoading
+  ? Array.from({ length: 3 }).map((_, i) => (
+      <Row key={i}>
+        <Cell><Skeleton /></Cell>
+        <Cell><Skeleton width="60%" /></Cell>
+        <Cell><Skeleton width="40%" /></Cell>
+      </Row>
+    ))
+  : data.map((row) => <DataRow key={row.id} {...row} />)
+}
+```
+
+## Spinner — unpredictable content
+
+Use `Spinner` when content is unknown or unpredictable. Spinner assures the user that content is on its way when you cannot estimate its shape in advance.
+
+```tsx
+import { Spinner } from '@zendeskgarden/react-loaders';
+
+function PageLoader() {
+  return (
+    <div
+      role="status"
+      aria-label="Loading content"
+      style={{ display: 'flex', justifyContent: 'center', padding: '48px' }}
+    >
+      <Spinner size="128" />
+    </div>
+  );
+}
+```
+
+**Guidelines:**
+- Center the spinner in the container or content area you are applying it to
+- Use for page-level loading, table loading, or section-level loading when content layout cannot be predicted
+- Spinner is also appropriate as an alternative to Skeleton when the content cannot be easily estimated but progress feedback is still important
+
+## Dots — completing actions
+
+Use `Dots` inside interactive components to represent a busy state after a user has triggered an action.
+
+```tsx
+import { Button } from '@zendeskgarden/react-buttons';
+import { Dots } from '@zendeskgarden/react-loaders';
+import { useState } from 'react';
+
+function SubmitButton() {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleClick = async () => {
+    setIsLoading(true);
+    await submitForm();
+    setIsLoading(false);
+  };
+
+  return (
+    <Button isPrimary onClick={handleClick} disabled={isLoading}>
+      {isLoading
+        ? <Dots aria-label="Submitting…" />
+        : 'Submit'
+      }
+    </Button>
+  );
+}
+```
+
+**Guidelines:**
+- Use inside **buttons** when an action takes several seconds
+- Use inside **search inputs** when a query takes several seconds to complete
+- Use inside **menus** when menu items are loaded asynchronously
+- Use for icon buttons when the user needs to be informed that an action is in progress
+- Buttons should not change size while the Dots loader is shown
+
+```tsx
+// Inside a search input
+<Input
+  start={isSearching ? <Dots aria-label="Searching…" size="small" /> : <SearchIcon />}
+  value={query}
+  onChange={handleChange}
+/>
+
+// Inside an async menu
+<Menu>
+  {isLoading
+    ? <Item><Dots aria-label="Loading options…" /></Item>
+    : options.map((opt) => <Item key={opt.id} value={opt.id}>{opt.label}</Item>)
+  }
+</Menu>
+```
+
+## Progress — determinate loading
+
+Use `Progress` to communicate progress from 0 to 100% when the user is uploading or downloading content. The most common use is with the `FileUpload` component.
+
+```tsx
+import { Progress } from '@zendeskgarden/react-loaders';
+
+<Progress
+  value={uploadPercent}
+  aria-label={`Uploading ${fileName}: ${uploadPercent}% complete`}
+/>
+```
+
+**Guidelines:**
+- Always pair with descriptive text so the user knows what is in progress
+- Use only when you have a reliable, meaningful progress value (0–100%)
+- Do not use for indeterminate operations — use Spinner instead
+
+```tsx
+// With file upload
+<div>
+  <span>{fileName}</span>
+  <Progress value={progress} aria-label={`Uploading ${fileName}`} />
+  <span>{progress}%</span>
+</div>
+```
+
+## Inline — typing indicators
+
+Use `Inline` as a typing indicator in chat and messaging interfaces. It signals that the other party is present and preparing a reply.
+
+```tsx
+import { Inline } from '@zendeskgarden/react-loaders';
+
+{otherPartyIsTyping && (
+  <div role="status" aria-label="Agent is typing">
+    <Inline aria-hidden="true" />
+  </div>
+)}
+```
+
+**Guidelines:**
+- Center the loader inside the message bubble
+- Other content should appear above or below the loader, not inline with it
+- Provide an accessible `role="status"` container with an `aria-label` so screen readers announce the typing state
+
+## Localization
+
+### Right-to-left languages
+
+Some loaders are direction-agnostic (Dots, Spinner) — they always animate in the same direction regardless of language direction.
+
+Loaders that change for RTL:
+
+| Loader | RTL behavior |
+|---|---|
+| Skeleton | Animation and layout direction are mirrored |
+| Progress | Fills from right (0%) to left (100%) |
+| Inline | Animation direction is reversed |
+
+Garden handles these RTL adjustments automatically when `dir="rtl"` is set on the document.
+
+## Accessibility
+
+| Loader | ARIA role | Notes |
+|---|---|---|
+| Progress | `role="progressbar"` | Built in. Set `aria-valuenow`, `aria-valuemin`, `aria-valuemax`. |
+| Dots | `role="img"` | Provide `aria-label` describing the loading action. |
+| Spinner | `role="img"` | Provide `aria-label` or wrap in a `role="status"` container. |
+| Inline | `role="img"` | Provide an outer `role="status"` with `aria-label` for screen readers. |
+| Skeleton | None by default | Wrap the loading region in `role="status"` if announcing load completion is important. |
+
+```tsx
+// Announcing page load completion
+<div role="status" aria-live="polite" aria-label={isLoading ? 'Loading' : 'Content loaded'}>
+  {isLoading ? <Spinner /> : <Content />}
+</div>
+```
+
+`aria-live`, `alert`, and `status` roles are not added to loaders by default. Extend them on a case-by-case basis, based on the part of the page that is loading and whether the user needs immediate notification of the state change.
+
+Before, during, and after loading, browser focus should remain where the user placed it.
